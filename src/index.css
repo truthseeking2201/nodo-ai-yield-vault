@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
@@ -109,6 +108,10 @@
   .bg-gradient-radial {
     background-image: radial-gradient(var(--tw-gradient-stops));
   }
+
+  .risk-moderate {
+    @apply bg-orion-500;
+  }
 }
 
 /* Custom card styles for the new design */
@@ -120,11 +123,8 @@
   @apply bg-emerald-500;
 }
 
-.risk-moderate {
-  @apply bg-orion-500;
-}
+
 
 .risk-high {
   @apply bg-red-500;
 }
-

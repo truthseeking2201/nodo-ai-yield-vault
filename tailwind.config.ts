@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -37,6 +36,7 @@ export default {
 					DEFAULT: "#F59E0B",
 					light: "#FCD34D",
 					dark: "#B45309",
+					"500": "#F59E0B",
 				},
 				emerald: {
 					DEFAULT: "#10B981",
