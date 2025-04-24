@@ -14,7 +14,25 @@ export function useVaultDetail(vaultId: string) {
     enabled: !!vaultId,
   });
 
-  const getVaultStyles = (type?: 'nova' | 'orion' | 'emerald') => {
+  const getVaultStyles = (id?: string) => {
+    if (!id) return {
+      gradientText: '',
+      gradientBg: '',
+      shadow: '',
+      bgOpacity: ''
+    };
+    
+    // Determine vault type based on ID
+    let type: 'nova' | 'orion' | 'emerald' | undefined;
+    
+    if (id.includes('deep')) {
+      type = 'nova';
+    } else if (id.includes('cetus')) {
+      type = 'orion';
+    } else if (id.includes('sui-usdc')) {
+      type = 'emerald';
+    }
+    
     if (!type) return {
       gradientText: '',
       gradientBg: '',

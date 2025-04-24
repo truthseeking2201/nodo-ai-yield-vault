@@ -1,3 +1,4 @@
+
 import { VaultData, UserInvestment, TransactionHistory } from "@/types/vault";
 
 // Mock data for the vaults
@@ -94,10 +95,10 @@ const mockVaults: VaultData[] = [
   }
 ];
 
-// Mock user investments
+// Mock user investments - Update to use new IDs
 const mockUserInvestments: UserInvestment[] = [
   {
-    vaultId: "nova-yield",
+    vaultId: "deep-sui", // Changed from nova-yield to deep-sui
     principal: 500,
     shares: 48.25,
     depositDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
@@ -108,7 +109,7 @@ const mockUserInvestments: UserInvestment[] = [
     isWithdrawable: false
   },
   {
-    vaultId: "orion-stable",
+    vaultId: "cetus-sui", // Changed from orion-stable to cetus-sui
     principal: 750,
     shares: 73.12,
     depositDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
@@ -120,14 +121,14 @@ const mockUserInvestments: UserInvestment[] = [
   }
 ];
 
-// Mock transaction history
+// Mock transaction history - Update to use new IDs
 const mockTransactions: TransactionHistory[] = [
   {
     id: "tx1",
     type: "deposit",
     amount: 500,
-    vaultId: "nova-yield",
-    vaultName: "Nova Yield",
+    vaultId: "deep-sui", // Changed from nova-yield to deep-sui
+    vaultName: "DEEP-SUI", // Updated vault name
     timestamp: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   },
@@ -135,8 +136,8 @@ const mockTransactions: TransactionHistory[] = [
     id: "tx2",
     type: "deposit",
     amount: 750,
-    vaultId: "orion-stable",
-    vaultName: "Orion Stable",
+    vaultId: "cetus-sui", // Changed from orion-stable to cetus-sui
+    vaultName: "CETUS-SUI", // Updated vault name
     timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   },
@@ -144,8 +145,8 @@ const mockTransactions: TransactionHistory[] = [
     id: "tx3",
     type: "withdraw",
     amount: 250,
-    vaultId: "emerald-growth",
-    vaultName: "Emerald Growth",
+    vaultId: "sui-usdc", // Changed from emerald-growth to sui-usdc
+    vaultName: "SUI-USDC", // Updated vault name
     timestamp: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   }
