@@ -54,6 +54,15 @@ export function VaultActivityTicker() {
     return () => clearInterval(interval);
   }, []);
 
+  const getActivityColor = (type: string) => {
+    switch (type) {
+      case 'deposit': return 'text-[#10B981]';
+      case 'harvest': return 'text-[#06B6D4]';
+      case 'withdraw': return 'text-[#EF4444]';
+      default: return '';
+    }
+  };
+
   return (
     <div className="space-y-4">
       <h3 className="flex items-center gap-2 text-lg font-medium">
@@ -64,13 +73,13 @@ export function VaultActivityTicker() {
         {activities.map((activity) => (
           <div
             key={activity.id}
-            className="flex items-center justify-between p-2 rounded-lg bg-white/5 animate-fade-in"
+            className="flex items-center justify-between p-2 h-8 rounded-lg bg-white/5 animate-[fade-in_250ms_cubic-bezier(.22,1,.36,1)]"
           >
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">
+              <span className={`text-sm font-medium ${getActivityColor(activity.type)}`}>
                 {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
               </span>
-              <span className="text-sm text-white/60">{activity.address}</span>
+              <span className="text-sm text-[#9CA3AF]">{activity.address}</span>
             </div>
             <div className="text-sm font-mono">
               {activity.type === 'deposit' ? '+' : '-'}${activity.amount.toLocaleString()}

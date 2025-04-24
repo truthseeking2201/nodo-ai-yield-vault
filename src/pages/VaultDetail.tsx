@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +20,7 @@ export default function VaultDetail() {
   const { isConnected } = useWallet();
   const [isDepositDrawerOpen, setIsDepositDrawerOpen] = useState(false);
   const [timeRange, setTimeRange] = useState<"daily" | "weekly" | "monthly">("daily");
-  const [projectedAmount, setProjectedAmount] = useState<string>("");
+  const [projectedAmount, setProjectedAmount] = useState<string>("1000");
   const [unlockProgress, setUnlockProgress] = useState<number>(0);
 
   const { 
@@ -29,19 +30,42 @@ export default function VaultDetail() {
     getVaultStyles
   } = useVaultDetail(vaultId || '');
 
+  // Effect to auto-open deposit drawer when wallet connects
+  // if user has already interacted with the page
+  const [hasInteracted, setHasInteracted] = useState(false);
+  
+  useEffect(() => {
+    if (isConnected && hasInteracted && !isDepositDrawerOpen) {
+      setIsDepositDrawerOpen(true);
+    }
+  }, [isConnected, hasInteracted, isDepositDrawerOpen]);
+
+  const handleActionClick = () => {
+    setHasInteracted(true);
+    
+    if (isConnected) {
+      setIsDepositDrawerOpen(true);
+    } else {
+      const walletBtn = document.querySelector('[data-wallet-connect]');
+      if (walletBtn) {
+        (walletBtn as HTMLElement).click();
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <PageContainer>
         <div className="space-y-8">
-          <div className="h-16 bg-white/10 rounded animate-shimmer w-1/4"></div>
+          <div className="h-16 bg-white/10 rounded-lg animate-shimmer w-1/4"></div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <div className="h-64 bg-white/10 rounded animate-shimmer"></div>
-              <div className="h-64 bg-white/10 rounded animate-shimmer"></div>
+              <div className="h-[300px] bg-white/10 rounded-lg animate-shimmer"></div>
+              <div className="h-64 bg-white/10 rounded-lg animate-shimmer"></div>
             </div>
             <div className="space-y-6">
-              <div className="h-64 bg-white/10 rounded animate-shimmer"></div>
-              <div className="h-48 bg-white/10 rounded animate-shimmer"></div>
+              <div className="h-64 bg-white/10 rounded-lg animate-shimmer"></div>
+              <div className="h-48 bg-white/10 rounded-lg animate-shimmer"></div>
             </div>
           </div>
         </div>
@@ -54,7 +78,7 @@ export default function VaultDetail() {
       <PageContainer>
         <Card className="glass-card p-8 text-center">
           <h2 className="text-xl font-bold text-red-500 mb-4">Error Loading Vault</h2>
-          <p className="text-white/60 mb-6">
+          <p className="text-[#9CA3AF] mb-6">
             We couldn't load the vault information. Please try again later.
           </p>
           <Button onClick={() => navigate('/')}>Return to Vault Catalog</Button>
@@ -64,16 +88,6 @@ export default function VaultDetail() {
   }
 
   const styles = getVaultStyles(vault.type);
-  const handleActionClick = () => {
-    if (isConnected) {
-      setIsDepositDrawerOpen(true);
-    } else {
-      const walletBtn = document.querySelector('[data-wallet-connect]');
-      if (walletBtn) {
-        (walletBtn as HTMLElement).click();
-      }
-    }
-  };
 
   return (
     <PageContainer>
@@ -91,7 +105,7 @@ export default function VaultDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 max-w-[640px] space-y-6">
           <VaultPerformanceSection
             vault={vault}
             timeRange={timeRange}
@@ -112,7 +126,7 @@ export default function VaultDetail() {
               />
               <div>
                 <h3 className="text-lg font-medium mb-2">Investment Strategy</h3>
-                <p className="text-white/80">{vault.strategy}</p>
+                <p className="text-[#9CA3AF]">{vault.strategy}</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium mb-2">Risk Level</h3>
@@ -137,7 +151,7 @@ export default function VaultDetail() {
           </Card>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 w-full max-w-[312px] lg:ml-auto">
           <VaultMetricsCard
             vault={vault}
             styles={styles}

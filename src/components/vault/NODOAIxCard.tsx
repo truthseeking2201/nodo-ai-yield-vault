@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Shield, Copy, HelpCircle, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import {
   Tooltip,
   TooltipContent,
@@ -45,6 +46,7 @@ export function NODOAIxCard({
   const { toast } = useToast();
   const [currentBalance, setCurrentBalance] = useState(balance);
   const [timeLeft, setTimeLeft] = useState<string>("");
+  const [unlockProgress, setUnlockProgress] = useState<number>(0);
   const isLocked = unlockTime && new Date() < unlockTime;
 
   useEffect(() => {
@@ -73,12 +75,19 @@ export function NODOAIxCard({
       
       if (diff <= 0) {
         setTimeLeft("");
+        setUnlockProgress(100);
         return;
       }
 
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       setTimeLeft(`${hours} h ${minutes} m`);
+      
+      // Calculate progress (assuming a 24 hour lockup)
+      const totalLockupTime = 24 * 60 * 60 * 1000; // 24 hours in ms
+      const elapsed = totalLockupTime - diff;
+      const progress = Math.min(100, Math.max(0, (elapsed / totalLockupTime) * 100));
+      setUnlockProgress(progress);
     };
 
     updateCountdown();
@@ -117,7 +126,7 @@ export function NODOAIxCard({
               <PopoverContent className="w-[280px]">
                 <div className="space-y-4">
                   <h4 className="font-medium text-lg">What is NODOAIx?</h4>
-                  <ul className="space-y-2 text-sm text-white/80">
+                  <ul className="space-y-2 text-sm text-[#9CA3AF]">
                     <li>• 1 NODOAIx = your deposited USDC + fees earned by the AI Market-Making Agent.</li>
                     <li>• It's minted when you deposit and burned when you redeem.</li>
                     <li>
@@ -136,7 +145,7 @@ export function NODOAIxCard({
               </PopoverContent>
             </Popover>
           </CardTitle>
-          <p className="text-sm text-white/60">{holderCount.toLocaleString()} holders</p>
+          <p className="text-sm text-[#9CA3AF]">{holderCount.toLocaleString()} holders</p>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -147,12 +156,19 @@ export function NODOAIxCard({
         </div>
         
         <div className="space-y-1">
-          <p className="text-white/80">
+          <p className="text-[#9CA3AF]">
             Current value: {principal.toLocaleString()} USDC principal + {fees.toFixed(1)} USDC fees
           </p>
-          <p className="text-sm text-white/60 flex items-center gap-2">
+          {isLocked && (
+            <Progress 
+              value={unlockProgress} 
+              className="h-[3px] mt-3 mb-1" 
+              indicatorClassName="bg-[#F59E0B]" 
+            />
+          )}
+          <p className="text-sm text-[#9CA3AF] flex items-center gap-2">
             1 NODOAIx always equals your deposit plus all yield generated
-            <Check className="w-4 h-4 text-emerald" />
+            <Check className="w-4 h-4 text-[#10B981]" />
           </p>
         </div>
 
@@ -162,7 +178,7 @@ export function NODOAIxCard({
           </div>
         )}
 
-        <div className="flex items-center gap-4 text-sm text-white/60">
+        <div className="flex items-center gap-4 text-sm text-[#9CA3AF]">
           <a
             href={auditUrl}
             target="_blank"
@@ -187,7 +203,7 @@ export function NODOAIxCard({
               <div>
                 <Button
                   className={cn(
-                    "w-full",
+                    "w-full transition-transform duration-80 hover:scale-[1.02] active:scale-95",
                     isLocked ? "opacity-50 cursor-not-allowed" : styles.gradientBg
                   )}
                   disabled={isLocked}

@@ -1,8 +1,10 @@
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Info, ArrowRight, Wallet } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import {
   Tooltip,
   TooltipContent,
@@ -32,6 +34,24 @@ export function VaultMetricsCard({
   isConnected,
   onActionClick
 }: VaultMetricsCardProps) {
+  const [sliderValue, setSliderValue] = useState<number[]>([projectedAmount ? parseInt(projectedAmount) : 1000]);
+  const [sliderLabel, setSliderLabel] = useState<string>('');
+  
+  // Update projected amount when slider changes
+  useEffect(() => {
+    if (sliderValue[0]) {
+      onProjectedAmountChange(sliderValue[0].toString());
+      setSliderLabel(`$${sliderValue[0].toLocaleString()}`);
+    }
+  }, [sliderValue, onProjectedAmountChange]);
+  
+  // Update slider when projected amount changes externally
+  useEffect(() => {
+    const value = projectedAmount ? parseInt(projectedAmount) : 1000;
+    setSliderValue([value]);
+    setSliderLabel(`$${value.toLocaleString()}`);
+  }, [projectedAmount]);
+
   const formatPercentage = (value?: number) => {
     return value !== undefined ? `${value.toFixed(1)}%` : '-';
   };
@@ -79,19 +99,30 @@ export function VaultMetricsCard({
           </span>
         </div>
 
-        <div className="space-y-2">
-          <Input
-            type="number"
-            placeholder="Enter amount"
-            value={projectedAmount}
-            onChange={(e) => onProjectedAmountChange(e.target.value)}
-            className="bg-white/5"
-          />
-          {projectedAmount && (
-            <div className="text-sm text-white/80">
-              Est. earnings in 30 days ≈ ${calculateProjectedEarnings(projectedAmount).toFixed(2)} USDC
+        <div className="space-y-6">
+          <div className="relative pt-6 pb-2">
+            <div 
+              className="absolute -top-1 left-1/2 transform -translate-x-1/2 bg-background/90 text-white px-3 py-1 rounded-full text-sm shadow-md z-10 backdrop-blur-sm"
+              style={{ boxShadow: '0 2px 4px -1px rgba(0,0,0,.4)' }}
+            >
+              {sliderLabel}
             </div>
-          )}
+            
+            <Slider
+              value={sliderValue}
+              min={100}
+              max={10000}
+              step={50}
+              className="[&_.relative]:h-[4px] [&_.absolute]:bg-[#6F3BFF] [&_button]:h-5 [&_button]:w-5"
+              onValueChange={(value) => setSliderValue(value)}
+            />
+            
+            {projectedAmount && (
+              <div className="text-sm text-[#9CA3AF] mt-4">
+                Est. earnings in 30 days ≈ ${calculateProjectedEarnings(projectedAmount).toFixed(2)} USDC
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex justify-between items-center border-b border-white/10 pb-3">
@@ -121,11 +152,11 @@ export function VaultMetricsCard({
         </div>
 
         <Button 
-          className={`w-full mt-6 ${styles.gradientBg} ${styles.shadow} animate-fade-in`}
+          className={`w-full mt-6 h-12 ${styles.gradientBg} ${styles.shadow} animate-fade-in transition-transform duration-80 hover:scale-[1.02] active:scale-95`}
           onClick={onActionClick}
         >
           {isConnected ? (
-            <>Deposit Now <ArrowRight className="ml-2 h-4 w-4" /></>
+            <>Deposit USDC <ArrowRight className="ml-2 h-4 w-4" /></>
           ) : (
             <>Connect Wallet <Wallet className="ml-2 h-4 w-4" /></>
           )}

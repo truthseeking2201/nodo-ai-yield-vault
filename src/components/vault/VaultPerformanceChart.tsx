@@ -10,9 +10,16 @@ interface ChartData {
 interface VaultPerformanceChartProps {
   data: ChartData[];
   vaultType: 'nova' | 'orion' | 'emerald';
+  showAxisLabels?: boolean;
+  highlightLastDataPoint?: boolean;
 }
 
-export function VaultPerformanceChart({ data, vaultType }: VaultPerformanceChartProps) {
+export function VaultPerformanceChart({ 
+  data, 
+  vaultType,
+  showAxisLabels = false,
+  highlightLastDataPoint = false
+}: VaultPerformanceChartProps) {
   // Get color based on vault type
   const getColor = (type: 'nova' | 'orion' | 'emerald') => {
     switch (type) {
@@ -26,6 +33,25 @@ export function VaultPerformanceChart({ data, vaultType }: VaultPerformanceChart
 
   // Memoize gradient ID to prevent re-rendering issues
   const gradientId = useMemo(() => `gradient-${vaultType}-${Math.random().toString(36).substring(2, 9)}`, [vaultType]);
+
+  // Calculate Y-axis ticks for even 25% intervals
+  const yAxisTicks = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    
+    const values = data.map(item => item.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min;
+    
+    // Create ticks at 25% intervals
+    const ticks = [];
+    const step = range / 4;
+    for (let i = 0; i <= 4; i++) {
+      ticks.push(min + (step * i));
+    }
+    
+    return ticks;
+  }, [data]);
 
   // Custom tooltip
   const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
@@ -43,14 +69,35 @@ export function VaultPerformanceChart({ data, vaultType }: VaultPerformanceChart
     return null;
   };
 
+  // Render a dot for the last data point if requested
+  const renderDot = (props: any) => {
+    const { cx, cy, index } = props;
+    const isLast = index === data.length - 1;
+    
+    if (highlightLastDataPoint && isLast) {
+      return (
+        <circle 
+          cx={cx} 
+          cy={cy} 
+          r={6} 
+          fill={color} 
+          stroke="#fff" 
+          strokeWidth={2} 
+        />
+      );
+    }
+    
+    return null;
+  };
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         data={data}
         margin={{
           top: 5,
-          right: 10,
-          left: 10,
+          right: 20,
+          left: showAxisLabels ? 20 : 10,
           bottom: 5,
         }}
       >
@@ -80,7 +127,10 @@ export function VaultPerformanceChart({ data, vaultType }: VaultPerformanceChart
           stroke="rgba(255,255,255,0.6)" 
           fontSize={12}
           tickMargin={10}
+          ticks={showAxisLabels ? yAxisTicks : undefined}
           domain={['dataMin - 1', 'dataMax + 1']}
+          tickFormatter={(value) => value.toFixed(1)}
+          width={showAxisLabels ? 40 : 30}
         />
         <Tooltip content={<CustomTooltip />} />
         <Line
@@ -88,10 +138,23 @@ export function VaultPerformanceChart({ data, vaultType }: VaultPerformanceChart
           dataKey="value"
           stroke={color}
           strokeWidth={2.5}
+          dot={false}
           activeDot={{ r: 6 }}
           fill={`url(#${gradientId})`}
           fillOpacity={0.2}
+          animationDuration={1000}
+          animationEasing="cubic-bezier(.22,1,.36,1)"
         />
+        {highlightLastDataPoint && (
+          <Line
+            type="monotone"
+            dataKey="value"
+            stroke="transparent"
+            dot={renderDot}
+            activeDot={false}
+            isAnimationActive={false}
+          />
+        )}
       </LineChart>
     </ResponsiveContainer>
   );

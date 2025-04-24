@@ -63,6 +63,8 @@ export function VaultPerformanceSection({
           <VaultPerformanceChart 
             data={vault.performance[timeRange]} 
             vaultType={vault.type}
+            showAxisLabels={true}
+            highlightLastDataPoint={true}
           />
         </div>
       </CardContent>
