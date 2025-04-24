@@ -21,6 +21,7 @@ export interface NODOAIxCardProps {
     shadow: string;
     bgOpacity?: string;
   };
+  unlockProgress?: number;
 }
 
 export function NODOAIxCard({
@@ -32,6 +33,7 @@ export function NODOAIxCard({
   contractAddress,
   auditUrl,
   styles,
+  unlockProgress = 0
 }: NODOAIxCardProps) {
   const [timeUntilUnlock, setTimeUntilUnlock] = useState<string>("");
   

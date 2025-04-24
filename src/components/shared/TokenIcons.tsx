@@ -1,6 +1,4 @@
 
-import Image from "@/components/ui/image";
-
 const TOKEN_ICONS = {
   USDC: "/lovable-uploads/77821401-b055-4857-ad36-bf928d64b288.png",
   SUI: "/lovable-uploads/e98fb767-5c17-48d9-8040-d6e980c817c6.png",
