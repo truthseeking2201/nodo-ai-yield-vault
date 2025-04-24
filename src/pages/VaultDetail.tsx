@@ -1,14 +1,12 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { vaultService } from "@/services/vaultService";
 import { DepositDrawer } from "@/components/vault/DepositDrawer";
 import { VaultPerformanceChart } from "@/components/vault/VaultPerformanceChart";
 import { useWallet } from "@/hooks/useWallet";
+import { useVaultDetail } from "@/hooks/useVaultDetail";
 import { ArrowRight, ChartBar, Wallet } from "lucide-react";
 
 export default function VaultDetail() {
@@ -18,49 +16,12 @@ export default function VaultDetail() {
   const [isDepositDrawerOpen, setIsDepositDrawerOpen] = useState(false);
   const [timeRange, setTimeRange] = useState<"daily" | "weekly" | "monthly">("daily");
   
-  // Fetch vault data
   const { 
-    data: vault, 
+    vault, 
     isLoading, 
-    error 
-  } = useQuery({
-    queryKey: ['vault', vaultId],
-    queryFn: () => vaultId ? vaultService.getVaultById(vaultId) : null,
-  });
-
-  // Helper functions
-  const getVaultStyles = (type?: 'nova' | 'orion' | 'emerald') => {
-    if (!type) return {
-      gradientText: '',
-      gradientBg: '',
-      shadow: '',
-      bgOpacity: ''
-    };
-    
-    switch (type) {
-      case 'nova':
-        return {
-          gradientText: 'gradient-text-nova',
-          gradientBg: 'gradient-bg-nova',
-          shadow: 'hover:shadow-neon-nova',
-          bgOpacity: 'bg-nova/20'
-        };
-      case 'orion':
-        return {
-          gradientText: 'gradient-text-orion',
-          gradientBg: 'gradient-bg-orion',
-          shadow: 'hover:shadow-neon-orion',
-          bgOpacity: 'bg-orion/20'
-        };
-      case 'emerald':
-        return {
-          gradientText: 'gradient-text-emerald',
-          gradientBg: 'gradient-bg-emerald',
-          shadow: 'hover:shadow-neon-emerald',
-          bgOpacity: 'bg-emerald/20'
-        };
-    }
-  };
+    error,
+    getVaultStyles
+  } = useVaultDetail(vaultId || '');
 
   const formatPercentage = (value?: number) => {
     return value !== undefined ? `${value.toFixed(1)}%` : '-';
@@ -74,10 +35,8 @@ export default function VaultDetail() {
     }).format(value) : '-';
   };
 
-  // Get styles based on vault type
   const styles = getVaultStyles(vault?.type);
 
-  // Load skeleton
   if (isLoading) {
     return (
       <PageContainer>
@@ -98,7 +57,6 @@ export default function VaultDetail() {
     );
   }
 
-  // Handle error
   if (error || !vault) {
     return (
       <PageContainer>
@@ -129,9 +87,7 @@ export default function VaultDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main content - left column (2 cols wide) */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Performance Chart */}
           <Card className="glass-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
@@ -178,7 +134,6 @@ export default function VaultDetail() {
             </CardContent>
           </Card>
 
-          {/* Strategy & Risk */}
           <Card className="glass-card">
             <CardHeader>
               <CardTitle>Strategy & Risk Profile</CardTitle>
@@ -206,9 +161,7 @@ export default function VaultDetail() {
           </Card>
         </div>
 
-        {/* Sidebar - right column */}
         <div className="space-y-6">
-          {/* Vault metrics */}
           <Card className="glass-card">
             <CardHeader>
               <CardTitle>Vault Metrics</CardTitle>
@@ -249,7 +202,6 @@ export default function VaultDetail() {
             </CardContent>
           </Card>
 
-          {/* Deposit Card */}
           <Card className="glass-card">
             <CardHeader>
               <CardTitle>Ready to Invest?</CardTitle>
@@ -262,7 +214,6 @@ export default function VaultDetail() {
                   if (isConnected) {
                     setIsDepositDrawerOpen(true);
                   } else {
-                    // This will trigger the connect wallet modal from Header
                     const walletBtn = document.querySelector('[data-wallet-connect]');
                     if (walletBtn) {
                       (walletBtn as HTMLElement).click();
@@ -281,7 +232,6 @@ export default function VaultDetail() {
         </div>
       </div>
 
-      {/* Deposit Drawer */}
       <DepositDrawer 
         open={isDepositDrawerOpen}
         onClose={() => setIsDepositDrawerOpen(false)}

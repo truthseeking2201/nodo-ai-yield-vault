@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Sheet,
@@ -13,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useWallet } from "@/hooks/useWallet";
 import { vaultService } from "@/services/vaultService";
-import { VaultData, LockupPeriod } from "@/types/vault";
+import { VaultData } from "@/types/vault";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -97,7 +96,6 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Only allow numbers and decimals
     if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
       setAmount(value);
     }
@@ -127,7 +125,7 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
   };
 
   // Helper to get the selected lockup period object
-  const getSelectedLockupPeriod = (): LockupPeriod => {
+  const getSelectedLockupPeriod = () => {
     return vault.lockupPeriods.find(period => period.days === selectedLockup) || vault.lockupPeriods[0];
   };
 
