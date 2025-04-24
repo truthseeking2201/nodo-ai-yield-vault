@@ -1,5 +1,7 @@
 
 import React from "react";
+import { KpiRibbon } from "./KpiRibbon";
+import { FeaturedVaultPill } from "./FeaturedVaultPill";
 
 export function HeroSection() {
   return (
@@ -10,6 +12,9 @@ export function HeroSection() {
       <p className="text-[#C9CDD3] max-w-2xl mx-auto text-base">
         AI-powered yield-generating vaults designed to maximize your returns while managing risk.
       </p>
+      
+      <KpiRibbon />
+      <FeaturedVaultPill />
     </div>
   );
 }

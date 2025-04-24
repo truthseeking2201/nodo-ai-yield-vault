@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { vaultService } from "@/services/vaultService";
@@ -11,6 +11,11 @@ import { VaultActivitySection } from "@/components/vault/VaultActivitySection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { RiskLegend } from "@/components/vault/RiskLegend";
+import { LiveTicker } from "@/components/vault/LiveTicker";
+import { PromoRibbon } from "@/components/vault/PromoRibbon";
+import { TestimonialCarousel } from "@/components/vault/TestimonialCarousel";
+import { HowNodoWorks } from "@/components/vault/HowNodoWorks";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
@@ -22,9 +27,10 @@ export default function VaultCatalog() {
   const [showStickyButton, setShowStickyButton] = useState(false);
   const [activeVaultId, setActiveVaultId] = useState<string | null>(null);
   const [carouselApi, setCarouselApi] = useState<any>(null);
+  const [showPromo, setShowPromo] = useState(true);
 
   // Track scroll position for sticky button on mobile
-  useState(() => {
+  useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       const pageHeight = document.body.scrollHeight;
@@ -34,7 +40,10 @@ export default function VaultCatalog() {
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  });
+  }, []);
+
+  // Feature flag for catalog v2 (always true for this implementation)
+  const catalogV2Enabled = true;
 
   const activeVault = vaults?.find(vault => vault.id === activeVaultId);
 
@@ -52,7 +61,11 @@ export default function VaultCatalog() {
       <div className="flex flex-col space-y-8 relative z-0">
         <HeroSection />
 
-        <div className="relative pt-8">
+        {catalogV2Enabled && showPromo && <PromoRibbon />}
+
+        <div className="relative pt-4">
+          {catalogV2Enabled && <RiskLegend />}
+
           {isLoading ? (
             <div className="space-y-6">
               {Array.from({ length: 3 }).map((_, index) => (
@@ -91,10 +104,17 @@ export default function VaultCatalog() {
         
         <VaultActivitySection />
 
+        {catalogV2Enabled && (
+          <>
+            <TestimonialCarousel />
+            <HowNodoWorks />
+          </>
+        )}
+
         {showStickyButton && isConnected && balance.usdc > 0 && activeVault && (
           <div className="fixed bottom-4 left-0 right-0 z-50 md:hidden px-4">
             <Button 
-              className="w-full gradient-bg-nova py-6 rounded-xl shadow-lg"
+              className="w-full gradient-bg-nova py-6 rounded-xl shadow-lg text-[#0E0F11]"
               asChild
             >
               <Link to={`/vaults/${activeVault.id}`}>
@@ -103,6 +123,8 @@ export default function VaultCatalog() {
             </Button>
           </div>
         )}
+
+        {catalogV2Enabled && <LiveTicker />}
       </div>
     </PageContainer>
   );

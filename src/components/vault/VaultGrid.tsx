@@ -6,7 +6,7 @@ import { VaultData } from "@/types/vault";
 interface VaultGridProps {
   vaults: VaultData[];
   isConnected: boolean;
-  balance: { usdc: number };
+  balance: { usdc: number; nodoaix: number };
   activeVaultId: string | null;
   onVaultHover: (id: string) => void;
 }
