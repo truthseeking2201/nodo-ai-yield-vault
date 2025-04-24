@@ -21,12 +21,18 @@ export function ConnectWalletButton() {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
+  // Add data attribute to help identify wallet connect buttons
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
   return (
     <>
       {!isConnected ? (
         <Button 
-          onClick={() => setIsModalOpen(true)} 
+          onClick={handleOpenModal} 
           className="gradient-bg-nova text-white hover:shadow-neon-nova transition-all duration-300"
+          data-wallet-connect="true"
         >
           <Wallet className="mr-2 h-4 w-4" /> Connect Wallet
         </Button>
@@ -55,7 +61,7 @@ export function ConnectWalletButton() {
               <span className="font-mono text-nova">{balance.nodoaix}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-white/10" />
-            <DropdownMenuItem onClick={disconnectWallet} className="text-red-500">
+            <DropdownMenuItem onClick={disconnectWallet} className="text-red-500 focus:bg-red-500/10">
               Disconnect
             </DropdownMenuItem>
           </DropdownMenuContent>

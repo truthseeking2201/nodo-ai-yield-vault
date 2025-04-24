@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +22,7 @@ export default function VaultDetail() {
   const [timeRange, setTimeRange] = useState<"daily" | "weekly" | "monthly">("daily");
   const [projectedAmount, setProjectedAmount] = useState<string>("1000");
   const [unlockProgress, setUnlockProgress] = useState<number>(0);
+  const nodoaixCardRef = useRef<HTMLDivElement>(null);
 
   const { 
     vault, 
@@ -39,6 +40,31 @@ export default function VaultDetail() {
       setIsDepositDrawerOpen(true);
     }
   }, [isConnected, hasInteracted, isDepositDrawerOpen]);
+  
+  // Check localStorage for security accordion state
+  useEffect(() => {
+    const securityCollapsed = localStorage.getItem("securityCollapsed");
+    // Implementation would depend on how the accordion is implemented
+  }, []);
+  
+  // Listen for deposit success event
+  useEffect(() => {
+    const handleDepositSuccess = (e: CustomEvent) => {
+      // Apply glow animation to NODOAIx card
+      if (nodoaixCardRef.current) {
+        nodoaixCardRef.current.classList.add('glow-animation');
+        setTimeout(() => {
+          nodoaixCardRef.current?.classList.remove('glow-animation');
+        }, 2000);
+      }
+    };
+    
+    window.addEventListener('deposit-success', handleDepositSuccess as EventListener);
+    
+    return () => {
+      window.removeEventListener('deposit-success', handleDepositSuccess as EventListener);
+    };
+  }, []);
 
   const handleActionClick = () => {
     setHasInteracted(true);
@@ -46,7 +72,8 @@ export default function VaultDetail() {
     if (isConnected) {
       setIsDepositDrawerOpen(true);
     } else {
-      const walletBtn = document.querySelector('[data-wallet-connect]');
+      // Find wallet connect button and click it
+      const walletBtn = document.querySelector('[data-wallet-connect="true"]');
       if (walletBtn) {
         (walletBtn as HTMLElement).click();
       }
@@ -104,6 +131,40 @@ export default function VaultDetail() {
         </h1>
       </div>
 
+      <style jsx global>{`
+        @keyframes glow {
+          0% { transform: scale(1); box-shadow: 0 0 0 rgba(111, 59, 255, 0); }
+          50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(111, 59, 255, 0.6); }
+          100% { transform: scale(1); box-shadow: 0 0 0 rgba(111, 59, 255, 0); }
+        }
+        
+        .glow-animation {
+          animation: glow 0.6s cubic-bezier(.22,1,.36,1);
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+          .glow-animation {
+            animation: none;
+          }
+        }
+        
+        .animate-shimmer {
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.05) 0%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 100%
+          );
+          background-size: 400% 400%;
+          animation: shimmer 1.4s ease infinite;
+        }
+        
+        @keyframes shimmer {
+          0% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 max-w-[640px] space-y-6">
           <VaultPerformanceSection
@@ -123,6 +184,7 @@ export default function VaultDetail() {
                 contractAddress="0x1234567890abcdef1234567890abcdef12345678"
                 isAudited={true}
                 explorerUrl="https://explorer.sui.io/address/0x1234567890abcdef1234567890abcdef12345678"
+                defaultOpen={true}
               />
               <div>
                 <h3 className="text-lg font-medium mb-2">Investment Strategy</h3>
@@ -161,16 +223,19 @@ export default function VaultDetail() {
             onActionClick={handleActionClick}
           />
 
-          <NODOAIxCard
-            balance={1000}
-            principal={1000}
-            fees={12.3}
-            unlockTime={new Date(Date.now() + 24 * 60 * 60 * 1000)}
-            holderCount={1203}
-            contractAddress="0xAB1234567890ABCDEF1234567890ABCDEF123456"
-            auditUrl="/audit.pdf"
-            styles={styles}
-          />
+          <div ref={nodoaixCardRef}>
+            <NODOAIxCard
+              balance={1000}
+              principal={1000}
+              fees={12.3}
+              unlockTime={new Date(Date.now() + 24 * 60 * 60 * 1000)}
+              holderCount={1203}
+              contractAddress="0xAB1234567890ABCDEF1234567890ABCDEF123456"
+              auditUrl="/audit.pdf"
+              styles={styles}
+              unlockProgress={unlockProgress}
+            />
+          </div>
         </div>
       </div>
 

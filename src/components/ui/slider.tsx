@@ -16,12 +16,15 @@ const Slider = React.forwardRef<
     )}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-[#1F2937]">
+    <SliderPrimitive.Track className="relative h-[4px] w-full grow overflow-hidden rounded-full bg-[#1F2937]">
       <SliderPrimitive.Range className="absolute h-full bg-[#6F3BFF]" />
     </SliderPrimitive.Track>
     <SliderPrimitive.Thumb 
       className="block h-5 w-5 rounded-full border-2 border-[#6F3BFF] bg-background ring-offset-background transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-      style={{ transition: "transform 80ms cubic-bezier(.22,1,.36,1)" }}
+      style={{ 
+        transition: "transform 80ms cubic-bezier(.22,1,.36,1)",
+        boxShadow: "0 2px 4px -1px rgba(0,0,0,0.4)"
+      }}
     />
   </SliderPrimitive.Root>
 ))

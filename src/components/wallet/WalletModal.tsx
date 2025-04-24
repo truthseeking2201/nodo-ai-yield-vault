@@ -35,7 +35,7 @@ export function WalletModal({ open, onClose }: WalletModalProps) {
           <Button 
             onClick={handleConnect} 
             disabled={isConnecting}
-            className="gradient-bg-nova hover:shadow-neon-nova w-full h-14 text-lg"
+            className="gradient-bg-nova hover:shadow-neon-nova w-full h-14 text-lg transition-all duration-300"
           >
             <Wallet className="mr-2 h-5 w-5" />
             {isConnecting ? "Connecting..." : "Sui Wallet"}
