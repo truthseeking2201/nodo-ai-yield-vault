@@ -3,7 +3,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface VaultDetailHeaderProps {
   vaultName: string;
@@ -19,17 +18,17 @@ export function VaultDetailHeader({ vaultName, styles }: VaultDetailHeaderProps)
     if (vaultName.includes('SUI-USDC')) {
       return {
         text: 'Low Risk',
-        variant: 'success' as const
+        class: 'bg-emerald/20 text-emerald'
       };
     } else if (vaultName.includes('Cetus')) {
       return {
         text: 'Moderate Risk',
-        variant: 'warning' as const
+        class: 'bg-orion/20 text-orion'
       };
     } else {
       return {
         text: 'High Risk',
-        variant: 'error' as const
+        class: 'bg-nova/20 text-nova'
       };
     }
   };
@@ -37,22 +36,22 @@ export function VaultDetailHeader({ vaultName, styles }: VaultDetailHeaderProps)
   const riskBadge = getRiskBadge();
   
   return (
-    <div className="mb-10 mt-10 animate-fade-in">
+    <div className="mb-10 mt-10">
       <Button 
         variant="ghost" 
-        className="mb-6 mt-2 flex items-center gap-2 text-text-secondary hover:text-text-primary font-medium text-sm" 
+        className="mb-4 mt-2 rounded-xl flex items-center gap-2 text-[#C9CDD3] hover:text-white font-medium text-xs tracking-wide" 
         onClick={() => navigate('/vaults')}
       >
         <ArrowLeft className="h-4 w-4" /> Back to Vaults
       </Button>
       <div className="flex items-center justify-between">
-        <h1 className={`text-h1 ${styles.gradientText}`}>
+        <h1 className={`text-3xl md:text-4xl font-bold ${styles.gradientText}`}>
           {vaultName}
         </h1>
-        <Badge variant={riskBadge.variant} className="flex items-center gap-1.5 text-caption">
+        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${riskBadge.class}`}>
           <ShieldCheck className="h-4 w-4" />
           {riskBadge.text}
-        </Badge>
+        </div>
       </div>
     </div>
   );
