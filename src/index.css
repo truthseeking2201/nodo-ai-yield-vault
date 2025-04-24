@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
@@ -283,5 +282,9 @@
       transition-property: background-color, border-color, color, fill, stroke !important;
       transition-duration: 0.15s !important;
     }
+  }
+
+  .text-shadow-neon {
+    text-shadow: 0 0 6px rgba(255,138,0,0.25);
   }
 }
