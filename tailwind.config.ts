@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,7 +19,31 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['DM Sans', 'sans-serif'],
+				mono: ['IBM Plex Mono', 'monospace'],
+			},
 			colors: {
+				// Nodo theme colors
+				"nodo-dark": "#1A1718",
+				"nodo-darker": "#12100F",
+				// Vault colors
+				nova: {
+					DEFAULT: "#F97316",
+					light: "#FDBA74",
+					dark: "#C2410C",
+				},
+				orion: {
+					DEFAULT: "#F59E0B",
+					light: "#FCD34D",
+					dark: "#B45309",
+				},
+				emerald: {
+					DEFAULT: "#10B981",
+					light: "#6EE7B7",
+					dark: "#047857",
+				},
+				// Original theme colors
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -63,6 +88,11 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			boxShadow: {
+				"neon-nova": "0 0 20px rgba(249, 115, 22, 0.5)",
+				"neon-orion": "0 0 20px rgba(245, 158, 11, 0.5)",
+				"neon-emerald": "0 0 20px rgba(16, 185, 129, 0.5)",
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -84,11 +114,16 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				shimmer: {
+					'0%': { backgroundPosition: '-500px 0' },
+					'100%': { backgroundPosition: '500px 0' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				shimmer: 'shimmer 2s linear infinite',
 			}
 		}
 	},
