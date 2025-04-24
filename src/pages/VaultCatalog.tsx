@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -11,7 +10,6 @@ import { VaultActivitySection } from "@/components/vault/VaultActivitySection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { AICanvas } from "@/components/background/AICanvas";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
@@ -41,11 +39,6 @@ export default function VaultCatalog() {
 
   return (
     <PageContainer>
-      {/* AI Canvas Background - positioned at the beginning */}
-      <div className="absolute inset-0 overflow-hidden z-[-1]">
-        <AICanvas />
-      </div>
-      
       <div className="flex flex-col space-y-8 relative z-0">
         <HeroSection />
 
@@ -88,7 +81,6 @@ export default function VaultCatalog() {
         
         <VaultActivitySection />
 
-        {/* Mobile Sticky CTA */}
         {showStickyButton && isConnected && balance.usdc > 0 && activeVault && (
           <div className="fixed bottom-4 left-0 right-0 z-50 md:hidden px-4">
             <Button 

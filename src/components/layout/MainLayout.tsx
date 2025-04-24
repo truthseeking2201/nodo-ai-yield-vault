@@ -9,9 +9,9 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="flex flex-col min-h-screen bg-[#0E0F11] relative overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-[#0E0F11]">
       <AppHeader />
-      <div className="flex-1 relative z-0">
+      <div className="flex-1">
         {children}
       </div>
       <AppFooter />
