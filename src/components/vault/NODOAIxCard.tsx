@@ -1,8 +1,10 @@
 
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, ExternalLink } from "lucide-react";
+import { formatDistanceToNowStrict } from "date-fns";
 
 export interface NODOAIxCardProps {
   balance: number;
@@ -17,7 +19,6 @@ export interface NODOAIxCardProps {
     gradientBg: string;
     shadow: string;
   };
-  unlockProgress?: number;
 }
 
 export function NODOAIxCard({
@@ -29,44 +30,41 @@ export function NODOAIxCard({
   contractAddress,
   auditUrl,
   styles,
-  unlockProgress = 0
 }: NODOAIxCardProps) {
-  // Calculate days until unlock
-  const daysUntilUnlock = () => {
-    const now = new Date();
-    const diffTime = Math.abs(unlockTime.getTime() - now.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
+  const [timeUntilUnlock, setTimeUntilUnlock] = useState<string>("");
   
-  // Format date for display
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
+  // Update countdown every minute
+  useEffect(() => {
+    const updateCountdown = () => {
+      const distance = formatDistanceToNowStrict(unlockTime, { 
+        unit: 'minute',
+        roundingMethod: 'floor'
+      });
+      setTimeUntilUnlock(distance);
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 60000); // Update every minute
+    
+    return () => clearInterval(interval);
+  }, [unlockTime]);
   
-  // Calculate profit or loss
   const profit = balance - principal;
   const isProfitable = profit >= 0;
 
   return (
-    <Card className="glass-card overflow-hidden">
-      <div className={`h-1 ${styles.gradientBg}`}></div>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex justify-between items-center">
+    <Card className="glass-card mt-4 overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+      <div className={`h-1 ${styles.gradientBg}`} />
+      <CardHeader className="pb-2 px-6 pt-6">
+        <CardTitle className="flex items-center text-lg">
+          <ShieldCheck className="h-7 w-7 text-green-500 mr-2" />
           <span className={`${styles.gradientText}`}>NODOAIx Token</span>
-          <div className="flex items-center text-xs text-white/60">
-            <ShieldCheck className="h-3 w-3 mr-1 text-green-500" />
-            <span>Verified</span>
-          </div>
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="space-y-4">
-        <div className="space-y-1">
+      <CardContent className="p-6 space-y-3">
+        {/* Balance and Principal info */}
+        <div className="space-y-1.5">
           <div className="flex justify-between items-center">
             <span className="text-white/60 text-sm">Balance</span>
             <span className="font-mono font-bold">
@@ -96,21 +94,35 @@ export function NODOAIxCard({
           </div>
         </div>
         
-        <div className="space-y-2 pt-2 border-t border-white/10">
-          <div className="flex justify-between text-sm">
-            <span>Unlock Progress</span>
-            <span>{unlockProgress}%</span>
+        {/* Holders count and unlock info */}
+        <div>
+          <div className="text-sm text-white/60 mb-3">
+            {holderCount.toLocaleString()} holders
           </div>
-          <Progress value={unlockProgress} className="h-1.5" />
-          <div className="flex justify-between text-xs text-white/60">
-            <span>Locked</span>
-            <span>Unlocks {formatDate(unlockTime)} ({daysUntilUnlock()} days)</span>
+          
+          <div className="text-sm mb-3">
+            Current value represents 1:1 ratio with governance token.
+          </div>
+          
+          <div className="relative ml-6 w-[90%] h-px bg-[#293040]" />
+          
+          <div className="mt-3 mb-4 text-sm text-white/60">
+            1:1 peg maintained by automated market operations
           </div>
         </div>
         
-        <div className="pt-2 space-y-2">
+        {/* Unlock badge */}
+        <div className="bg-white/10 rounded-full py-2 px-4 text-sm font-medium text-center" aria-live="polite">
+          Unlocks in {timeUntilUnlock}
+        </div>
+        
+        {/* Audit and contract info */}
+        <div className="mt-4 space-y-2">
           <div className="flex justify-between items-center text-xs">
-            <span className="text-white/60">Holders: {holderCount.toLocaleString()}</span>
+            <div className="flex items-center text-white/60">
+              <ShieldCheck className="h-4 w-4 mr-1.5" />
+              <span>Audited</span>
+            </div>
             <a 
               href={auditUrl} 
               target="_blank"
@@ -121,7 +133,11 @@ export function NODOAIxCard({
             </a>
           </div>
           
-          <Button variant="outline" size="sm" className="w-full text-xs border-white/20">
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="w-full text-xs border-white/20 h-12"
+          >
             <span className="font-mono mr-1">{contractAddress.substring(0, 10)}...</span>
             <ExternalLink className="h-3 w-3" />
           </Button>
