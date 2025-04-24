@@ -7,8 +7,10 @@ interface WalletState {
   isConnected: boolean
   isConnecting: boolean
   isModalOpen: boolean
-  balance: number
-  nodo: number
+  balance: {
+    usdc: number
+    nodoaix: number
+  }
   connect: () => Promise<void>
   disconnect: () => void
   openModal: () => void
@@ -20,8 +22,10 @@ const useWalletStore = create<WalletState>((set) => ({
   isConnected: false,
   isConnecting: false,
   isModalOpen: false,
-  balance: 0,
-  nodo: 0,
+  balance: {
+    usdc: 0,
+    nodoaix: 0
+  },
   connect: async () => {
     set({ isConnecting: true })
     // Simulate connecting
@@ -31,8 +35,10 @@ const useWalletStore = create<WalletState>((set) => ({
       isConnected: true,
       isConnecting: false,
       isModalOpen: false,
-      balance: 1250.45,
-      nodo: 522.75
+      balance: {
+        usdc: 1250.45,
+        nodoaix: 522.75
+      }
     })
   },
   disconnect: () => {
@@ -40,8 +46,10 @@ const useWalletStore = create<WalletState>((set) => ({
       address: null, 
       isConnected: false,
       isModalOpen: false,
-      balance: 0,
-      nodo: 0
+      balance: {
+        usdc: 0,
+        nodoaix: 0
+      }
     })
   },
   openModal: () => set({ isModalOpen: true }),
@@ -55,7 +63,6 @@ export const useWallet = () => {
     isConnecting,
     isModalOpen,
     balance,
-    nodo,
     connect, 
     disconnect,
     openModal,
@@ -95,7 +102,6 @@ export const useWallet = () => {
     isConnecting,
     isModalOpen,
     balance,
-    nodo,
     connect, 
     disconnect,
     openModal,

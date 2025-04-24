@@ -17,7 +17,7 @@ import { useWallet } from "@/hooks/useWallet";
 
 export function ConnectWalletButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isConnected, address, balance, disconnectWallet } = useWallet();
+  const { isConnected, address, balance, disconnect } = useWallet();
   const { toast } = useToast();
 
   const formatAddress = (address: string) => {
@@ -71,7 +71,7 @@ export function ConnectWalletButton() {
               <div className="relative">
                 <button 
                   onClick={handleCopyAddress}
-                  className="w-full text-left bg-black/40 rounded-xl px-3 py-2 hover:bg-[#1A1B1E] transition-colors group"
+                  className="w-full text-left bg-black/40 rounded-xl px-3 py-2 hover:bg-[#1A1B1E] transition-colors group wallet-address"
                 >
                   <span className="font-mono text-xs text-gray-200 block truncate pr-8">
                     {address}
@@ -104,7 +104,7 @@ export function ConnectWalletButton() {
 
               {/* Disconnect Button */}
               <button
-                onClick={disconnectWallet}
+                onClick={disconnect}
                 className="w-full h-11 rounded-xl border border-[#EF4444] text-[#EF4444] flex items-center justify-center gap-2 hover:bg-[rgba(239,68,68,0.12)] hover:text-white transition-colors"
               >
                 <LogOut className="w-4 h-4" />

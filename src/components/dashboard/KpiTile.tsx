@@ -103,7 +103,7 @@ export function KpiTile({
                 dot={false}
                 isAnimationActive={!window.matchMedia('(prefers-reduced-motion: reduce)').matches}
                 animationDuration={700}
-                animationEasing="ease-out-expo"
+                animationEasing="ease-out"
               />
             </LineChart>
           </ResponsiveContainer>

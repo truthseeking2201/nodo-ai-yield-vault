@@ -10,11 +10,11 @@ interface WalletModalProps {
 }
 
 export function WalletModal({ open, onClose }: WalletModalProps) {
-  const { connectWallet, isConnecting } = useWallet();
+  const { connect, isConnecting } = useWallet();
 
   const handleConnect = async () => {
     try {
-      await connectWallet();
+      await connect();
       onClose();
     } catch (error) {
       console.error("Failed to connect wallet:", error);
