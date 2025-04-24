@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -17,7 +16,6 @@ export default function Dashboard() {
   const [selectedInvestment, setSelectedInvestment] = useState<UserInvestment | null>(null);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
-  // Fetch user investments
   const { 
     data: investments,
     isLoading: isLoadingInvestments,
@@ -27,7 +25,6 @@ export default function Dashboard() {
     enabled: isConnected,
   });
 
-  // Fetch transaction history
   const { 
     data: transactions,
     isLoading: isLoadingTransactions,
@@ -37,12 +34,10 @@ export default function Dashboard() {
     enabled: isConnected,
   });
 
-  // Calculate total investment value
   const totalInvestmentValue = investments?.reduce((sum, inv) => sum + inv.currentValue, 0) || 0;
   const totalPrincipal = investments?.reduce((sum, inv) => sum + inv.principal, 0) || 0;
   const totalProfit = investments?.reduce((sum, inv) => sum + inv.profit, 0) || 0;
 
-  // Helper functions
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', { 
       style: 'currency', 
@@ -57,7 +52,6 @@ export default function Dashboard() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Get color based on vault type
   const getVaultStyles = (vaultId?: string) => {
     if (!vaultId) return {
       gradientText: '',
@@ -93,7 +87,15 @@ export default function Dashboard() {
     }
   };
 
-  // Handle withdraw click
+  const formatVaultName = (vaultId: string) => {
+    const nameMap = {
+      'deep-sui': 'Deep-SUI',
+      'cetus-sui': 'Cetus-SUI',
+      'sui-usdc': 'SUI-USDC'
+    };
+    return nameMap[vaultId] || vaultId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('-');
+  };
+
   const handleWithdrawClick = (investment: UserInvestment) => {
     setSelectedInvestment(investment);
     setIsWithdrawModalOpen(true);
@@ -133,7 +135,6 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Portfolio Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
         <Card className="glass-card">
           <CardHeader className="pb-2">
@@ -181,7 +182,6 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {/* Performance Chart */}
       <Card className="glass-card mb-8">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
@@ -201,7 +201,6 @@ export default function Dashboard() {
             ) : (
               <VaultPerformanceChart 
                 data={[
-                  // Generate sample performance data based on investment data
                   ...Array.from({ length: 30 }, (_, i) => ({
                     date: new Date(Date.now() - (29-i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                     value: totalPrincipal * (1 + (Math.sin(i/4) * 0.02) + (i/300))
@@ -214,7 +213,6 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Tabs for Investments and Transactions */}
       <Tabs defaultValue="investments" className="w-full">
         <TabsList className="glass-card mb-6">
           <TabsTrigger value="investments">Active Investments</TabsTrigger>
@@ -253,7 +251,7 @@ export default function Dashboard() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
                         <div>
                           <h3 className={`text-xl font-bold ${styles.gradientText}`}>
-                            {investment.vaultId.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} Vault
+                            {formatVaultName(investment.vaultId)} Vault
                           </h3>
                           <p className="text-white/60 text-sm">
                             Deposited on {formatDate(investment.depositDate)}
@@ -361,7 +359,7 @@ export default function Dashboard() {
                       </div>
                       <div>
                         <p className="font-medium">
-                          {tx.type === 'deposit' ? 'Deposit to' : 'Withdrawal from'} {tx.vaultName}
+                          {tx.type === 'deposit' ? 'Deposit to' : 'Withdrawal from'} {formatVaultName(tx.vaultId)}
                         </p>
                         <p className="text-sm text-white/60">{formatDate(tx.timestamp)}</p>
                       </div>
@@ -394,7 +392,6 @@ export default function Dashboard() {
         </TabsContent>
       </Tabs>
 
-      {/* Withdraw Modal */}
       {selectedInvestment && (
         <WithdrawModal 
           open={isWithdrawModalOpen}
