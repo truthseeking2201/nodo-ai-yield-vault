@@ -164,8 +164,8 @@ export default function VaultDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 space-y-6">
-          <VaultPerformanceSection
-            vault={vault}
+          <VaultPerformanceChart
+            data={vault.performance[timeRange]}
             timeRange={timeRange}
             onTimeRangeChange={setTimeRange}
             styles={styles}
@@ -215,7 +215,15 @@ export default function VaultDetail() {
             </CardContent>
           </Card>
 
-          <VaultActivitySection />
+          <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+            <CardHeader className="px-6 pt-6 pb-4">
+              <CardTitle className="text-lg font-medium text-[#E5E7EB]">Vault Activity</CardTitle>
+              <CardDescription className="text-sm text-[#9CA3AF]">Recent deposits and withdrawals</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 pt-0">
+              <VaultActivityTicker />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="lg:col-span-4 space-y-6">

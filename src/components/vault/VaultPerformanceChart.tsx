@@ -7,14 +7,18 @@ import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 interface VaultPerformanceChartProps {
   data: { date: string; value: number }[];
-  timeRange: "daily" | "weekly" | "monthly";
-  onTimeRangeChange: (value: "daily" | "weekly" | "monthly") => void;
-  styles: {
-    gradientText: string;
-    gradientBg: string;
-    shadow: string;
+  timeRange?: "daily" | "weekly" | "monthly";
+  onTimeRangeChange?: (value: "daily" | "weekly" | "monthly") => void;
+  styles?: {
+    gradientText?: string;
+    gradientBg?: string;
+    shadow?: string;
     bgOpacity?: string;
   };
+  // New props
+  vaultType?: "emerald" | "orion" | "nova";
+  showAxisLabels?: boolean;
+  highlightLastDataPoint?: boolean;
 }
 
 const formatDate = (date: string, range: string) => {
@@ -38,17 +42,34 @@ const getAnimationDuration = () => {
     : 1500;
 };
 
+// Helper to determine chart color based on vault type or styles
+const getChartColor = (vaultType?: string, styles?: { gradientBg?: string }) => {
+  // First check styles.gradientBg if available
+  if (styles?.gradientBg) {
+    if (styles.gradientBg.includes('emerald')) return '#10B981';
+    if (styles.gradientBg.includes('orion')) return '#F59E0B';
+    if (styles.gradientBg.includes('nova')) return '#F97316';
+  }
+  
+  // Fall back to vaultType
+  switch (vaultType) {
+    case 'emerald': return '#10B981';
+    case 'orion': return '#F59E0B'; 
+    case 'nova': return '#F97316';
+    default: return '#6F3BFF'; // Default to brand purple
+  }
+};
+
 export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
   data,
-  timeRange,
+  timeRange = "daily",
   onTimeRangeChange,
-  styles
+  styles = {},
+  vaultType,
+  showAxisLabels = true,
+  highlightLastDataPoint = true
 }) => {
-  const chartColor = styles.gradientBg.includes('emerald') 
-    ? '#10B981' 
-    : styles.gradientBg.includes('orion')
-      ? '#F59E0B'
-      : '#F97316';
+  const chartColor = getChartColor(vaultType, styles);
   
   // Add percentage calculations
   const initialValue = data[0]?.value || 0;
@@ -60,7 +81,7 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
     const { cx, cy, index } = props;
     const isLast = index === data.length - 1;
 
-    if (!isLast) return null;
+    if (!highlightLastDataPoint || !isLast) return null;
 
     return (
       <circle 
@@ -81,6 +102,88 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
   }, [data, timeRange]);
 
   const animationDuration = getAnimationDuration();
+
+  // If no time range tabs are needed (when onTimeRangeChange is not provided)
+  if (!onTimeRangeChange) {
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          data={chartData}
+          margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+        >
+          <defs>
+            <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={chartColor} stopOpacity={0.3}/>
+              <stop offset="95%" stopColor={chartColor} stopOpacity={0}/>
+            </linearGradient>
+          </defs>
+          
+          <CartesianGrid 
+            strokeDasharray="3 3" 
+            vertical={false} 
+            stroke="rgba(255,255,255,0.06)" 
+          />
+          
+          {showAxisLabels && (
+            <>
+              <XAxis 
+                dataKey="dateFormatted" 
+                tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
+                axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                tickLine={false}
+              />
+              
+              <YAxis 
+                tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
+                axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                tickFormatter={formatValue}
+                tickLine={false}
+                domain={['auto', 'auto']}
+              />
+            </>
+          )}
+          
+          <Tooltip 
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                return (
+                  <div className="bg-[rgba(255,255,255,0.04)] border border-white/10 backdrop-blur-md rounded-xl p-3 shadow-lg text-xs">
+                    <div className="font-mono font-medium text-white">{payload[0].payload.dateFormatted}</div>
+                    <div className="font-mono font-medium text-[#10B981]">{formatValue(payload[0].value as number)}</div>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
+          
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke={chartColor}
+            strokeWidth={2}
+            fillOpacity={1}
+            fill="url(#colorGradient)"
+            animationDuration={animationDuration} 
+            animationEasing="ease"
+          />
+          
+          <Line
+            type="monotone"
+            dataKey="value"
+            stroke={chartColor}
+            strokeWidth={2}
+            dot={false}
+            activeDot={{ r: 6, fill: chartColor }}
+            animationDuration={animationDuration}
+            animationEasing="ease"
+            isAnimationActive={animationDuration > 0}
+            animationBegin={0}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
   
   return (
     <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
