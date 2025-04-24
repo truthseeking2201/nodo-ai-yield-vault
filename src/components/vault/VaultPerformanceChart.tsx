@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -45,7 +46,7 @@ const getChartColor = (vaultType?: string, styles?: { gradientBg?: string }) => 
     if (styles.gradientBg.includes('emerald')) return '#10B981';
     if (styles.gradientBg.includes('orion')) return '#F59E0B';
     if (styles.gradientBg.includes('nova')) return '#F97316';
-    if (styles.gradientBg.includes('#6F3BFF')) return '#F59E0B';
+    if (styles.gradientBg.includes('#F59E0B')) return '#F59E0B';
   }
   
   switch (vaultType) {
@@ -98,87 +99,92 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
 
   const animationDuration = getAnimationDuration();
 
+  // Simple chart version (for when no time range change is available)
   if (!onTimeRangeChange) {
     return (
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={chartData}
-          margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
-        >
-          <defs>
-            <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={chartColor} stopOpacity={0.3}/>
-              <stop offset="95%" stopColor={chartColor} stopOpacity={0}/>
-            </linearGradient>
-          </defs>
-          
-          <CartesianGrid 
-            strokeDasharray="3 3" 
-            vertical={false} 
-            stroke="rgba(255,255,255,0.06)" 
-          />
-          
-          {showAxisLabels && (
-            <>
-              <XAxis 
-                dataKey="dateFormatted" 
-                tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
-                axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
-                tickLine={false}
-              />
-              
-              <YAxis 
-                tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
-                axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
-                tickFormatter={formatValue}
-                tickLine={false}
-                domain={['auto', 'auto']}
-              />
-            </>
-          )}
-          
-          <Tooltip 
-            content={({ active, payload }) => {
-              if (active && payload && payload.length) {
-                return (
-                  <div className="bg-[rgba(255,255,255,0.04)] border border-white/10 backdrop-blur-md rounded-xl p-3 shadow-lg text-xs">
-                    <div className="font-mono font-medium text-white">{payload[0].payload.dateFormatted}</div>
-                    <div className="font-mono font-medium text-[#10B981]">{formatValue(payload[0].value as number)}</div>
-                  </div>
-                );
-              }
-              return null;
-            }}
-          />
-          
-          <Area
-            type="monotone"
-            dataKey="value"
-            stroke={chartColor}
-            strokeWidth={2}
-            fillOpacity={1}
-            fill="url(#colorGradient)"
-            animationDuration={animationDuration} 
-            animationEasing="ease"
-          />
-          
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke={chartColor}
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 6, fill: chartColor }}
-            animationDuration={animationDuration}
-            animationEasing="ease"
-            isAnimationActive={animationDuration > 0}
-            animationBegin={0}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="rounded-[20px] overflow-hidden">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartData}
+            margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+          >
+            <defs>
+              <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={chartColor} stopOpacity={0.3}/>
+                <stop offset="95%" stopColor={chartColor} stopOpacity={0}/>
+              </linearGradient>
+            </defs>
+            
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              vertical={false} 
+              stroke="rgba(255,255,255,0.06)" 
+            />
+            
+            {showAxisLabels && (
+              <>
+                <XAxis 
+                  dataKey="dateFormatted" 
+                  tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
+                  axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                  tickLine={false}
+                />
+                
+                <YAxis 
+                  tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
+                  axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                  tickFormatter={formatValue}
+                  tickLine={false}
+                  domain={['auto', 'auto']}
+                />
+              </>
+            )}
+            
+            <Tooltip 
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="bg-[rgba(255,255,255,0.04)] border border-white/10 backdrop-blur-md rounded-xl p-3 shadow-lg text-xs">
+                      <div className="font-mono font-medium text-white">{payload[0].payload.dateFormatted}</div>
+                      <div className="font-mono font-medium text-[#10B981]">{formatValue(payload[0].value as number)}</div>
+                    </div>
+                  );
+                }
+                return null;
+              }}
+              cursor={{ stroke: 'rgba(255,255,255,0.1)' }}
+            />
+            
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke={chartColor}
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorGradient)"
+              animationDuration={animationDuration} 
+              animationEasing="ease"
+            />
+            
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke={chartColor}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 6, fill: chartColor }}
+              animationDuration={animationDuration}
+              animationEasing="ease"
+              isAnimationActive={animationDuration > 0}
+              animationBegin={0}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     );
   }
   
+  // Full chart version with tabs
   return (
     <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
       <CardHeader className="px-6 pt-6 pb-0 flex flex-row items-center justify-between">
@@ -219,11 +225,11 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
       </CardHeader>
       
       <CardContent className="p-6 pt-4 h-[260px] md:h-[260px]">
-        <div className="h-full w-full">
+        <div className="h-full w-full overflow-hidden">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
-              margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+              margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
             >
               <defs>
                 <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
@@ -265,6 +271,7 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
                   }
                   return null;
                 }}
+                cursor={{ stroke: 'rgba(255,255,255,0.1)' }}
               />
               
               <Area

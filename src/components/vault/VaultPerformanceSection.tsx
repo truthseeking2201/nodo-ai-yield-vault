@@ -22,7 +22,7 @@ export function VaultPerformanceSection({
   styles
 }: VaultPerformanceSectionProps) {
   return (
-    <Card className="glass-card">
+    <Card className="glass-card rounded-[20px] overflow-hidden">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle className="flex items-center gap-2">
@@ -59,7 +59,7 @@ export function VaultPerformanceSection({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[300px] overflow-hidden">
           <VaultPerformanceChart 
             data={vault.performance[timeRange]}
             vaultType={vault.type}
