@@ -1,72 +1,105 @@
 
-import { create } from 'zustand';
-import { toast } from '@/components/ui/use-toast';
+import { create } from 'zustand'
+import { useCallback, useEffect } from 'react'
 
 interface WalletState {
-  isConnected: boolean;
-  isConnecting: boolean;
-  address: string;
-  balance: {
-    usdc: number;
-    nodoaix: number;
-  };
-  connectWallet: () => Promise<void>;
-  disconnectWallet: () => void;
+  address: string | null
+  isConnected: boolean
+  isConnecting: boolean
+  isModalOpen: boolean
+  balance: number
+  nodo: number
+  connect: () => Promise<void>
+  disconnect: () => void
+  openModal: () => void
+  closeModal: () => void
 }
 
-// Mock wallet data for the prototype
-const MOCK_ADDRESS = '0x7d783c53c48ebaec29bdafc7a950138c6a173ac75da6';
-const MOCK_BALANCE = {
-  usdc: 1250.45,
-  nodoaix: 522.75,
-};
-
-export const useWallet = create<WalletState>((set) => ({
+const useWalletStore = create<WalletState>((set) => ({
+  address: null,
   isConnected: false,
   isConnecting: false,
-  address: '',
-  balance: {
-    usdc: 0,
-    nodoaix: 0,
-  },
-  connectWallet: async () => {
-    try {
-      set({ isConnecting: true });
-      
-      // Simulate wallet connection delay
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      
-      set({ 
-        isConnected: true, 
-        isConnecting: false,
-        address: MOCK_ADDRESS,
-        balance: MOCK_BALANCE
-      });
-      
-      toast({
-        title: "Wallet Connected",
-        description: "Your Sui wallet has been connected successfully.",
-      });
-    } catch (error) {
-      set({ isConnecting: false });
-      toast({
-        title: "Connection Failed",
-        description: "Failed to connect wallet. Please try again.",
-        variant: "destructive",
-      });
-      throw error;
-    }
-  },
-  disconnectWallet: () => {
+  isModalOpen: false,
+  balance: 0,
+  nodo: 0,
+  connect: async () => {
+    set({ isConnecting: true })
+    // Simulate connecting
+    await new Promise(resolve => setTimeout(resolve, 1000))
     set({ 
-      isConnected: false,
-      address: '',
-      balance: { usdc: 0, nodoaix: 0 }
-    });
-    
-    toast({
-      title: "Wallet Disconnected",
-      description: "Your wallet has been disconnected.",
-    });
+      address: '0x7d783c975da6e3b5ff8259436d4f7da675da6',
+      isConnected: true,
+      isConnecting: false,
+      isModalOpen: false,
+      balance: 1250.45,
+      nodo: 522.75
+    })
   },
-}));
+  disconnect: () => {
+    set({ 
+      address: null, 
+      isConnected: false,
+      isModalOpen: false,
+      balance: 0,
+      nodo: 0
+    })
+  },
+  openModal: () => set({ isModalOpen: true }),
+  closeModal: () => set({ isModalOpen: false })
+}))
+
+export const useWallet = () => {
+  const { 
+    address, 
+    isConnected, 
+    isConnecting,
+    isModalOpen,
+    balance,
+    nodo,
+    connect, 
+    disconnect,
+    openModal,
+    closeModal
+  } = useWalletStore()
+
+  // Automatically reconnect if previously connected
+  useEffect(() => {
+    const hasConnectedBefore = localStorage.getItem('wallet-connected') === 'true'
+    if (hasConnectedBefore && !isConnected && !isConnecting) {
+      connect()
+    }
+  }, [connect, isConnected, isConnecting])
+
+  // Save connection state to localStorage
+  useEffect(() => {
+    if (isConnected) {
+      localStorage.setItem('wallet-connected', 'true')
+    } else {
+      localStorage.removeItem('wallet-connected')
+    }
+  }, [isConnected])
+
+  // Function to open wallet modal specifically for connection
+  const openWalletModal = useCallback(() => {
+    openModal();
+    
+    // Add a data attribute to the document body to trigger the modal
+    document.querySelector('[data-wallet-connect]')?.dispatchEvent(
+      new MouseEvent('click', { bubbles: true })
+    );
+  }, [openModal]);
+
+  return { 
+    address, 
+    isConnected, 
+    isConnecting,
+    isModalOpen,
+    balance,
+    nodo,
+    connect, 
+    disconnect,
+    openModal,
+    closeModal,
+    openWalletModal
+  }
+}
