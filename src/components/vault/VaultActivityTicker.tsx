@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { TokenIcon, PairIcon } from "@/components/shared/TokenIcons";
 
 interface ActivityItem {
   id: string;
@@ -19,7 +19,6 @@ interface VaultActivityTickerProps {
 export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultActivityTickerProps) {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
 
-  // Mock activity data - in a real app, this would come from an API or websocket
   useEffect(() => {
     const mockActivities: ActivityItem[] = [
       {
@@ -66,7 +65,6 @@ export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultAct
     
     setActivities(mockActivities.slice(0, maxRows));
     
-    // Simulate new activities coming in
     const interval = setInterval(() => {
       const newActivity: ActivityItem = {
         id: Math.random().toString(36).substring(2, 9),
@@ -78,7 +76,7 @@ export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultAct
       };
       
       setActivities(prev => [newActivity, ...prev.slice(0, maxRows - 1)]);
-    }, 30000); // New activity every 30 seconds
+    }, 30000);
     
     return () => clearInterval(interval);
   }, [maxRows]);
@@ -107,6 +105,13 @@ export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultAct
     return `${address.substring(0, 6)}...`;
   };
 
+  const getTokenPair = (vaultName: string): [string, string] => {
+    if (vaultName === 'SUI-USDC') return ['SUI', 'USDC'];
+    if (vaultName === 'Deep-SUI') return ['DEEP', 'SUI'];
+    if (vaultName === 'Cetus-SUI') return ['CETUS', 'SUI'];
+    return ['SUI', 'USDC']; // default
+  };
+
   return (
     <div className="space-y-1">
       {activities.map(activity => (
@@ -125,8 +130,11 @@ export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultAct
               {formatCurrency(activity.amount)}
             </span>
             <span className="text-white/40">in</span>
-            <span className={`font-medium ${activity.vault === 'SUI-USDC' ? 'text-emerald-500' : activity.vault === 'Deep-SUI' ? 'text-nova' : 'text-orion'}`}>
-              {activity.vault}
+            <span className="flex items-center gap-1">
+              <PairIcon tokens={getTokenPair(activity.vault) as [any, any]} size={16} />
+              <span className={`font-medium ${activity.vault === 'SUI-USDC' ? 'text-emerald-500' : activity.vault === 'Deep-SUI' ? 'text-nova' : 'text-orion'}`}>
+                {activity.vault}
+              </span>
             </span>
           </div>
           <span className="text-white/40">

@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -6,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Info, TrendingUp, Clock } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { VaultData } from "@/types/vault";
+import { TokenIcon, PairIcon } from "@/components/shared/TokenIcons";
 import { 
   Tooltip,
   TooltipContent,
@@ -128,6 +128,16 @@ export function VaultCard({
 
   const buttonProps = getButtonProps();
 
+  // Get token pair based on vault type
+  const getTokenPair = (vaultId: string): [string, string] => {
+    if (vaultId.includes('sui-usdc')) return ['SUI', 'USDC'];
+    if (vaultId.includes('deep-sui')) return ['DEEP', 'SUI'];
+    if (vaultId.includes('cetus-sui')) return ['CETUS', 'SUI'];
+    return ['SUI', 'USDC']; // default
+  };
+
+  const tokenPair = getTokenPair(vault.id);
+
   return (
     <TooltipProvider>
       <Card 
@@ -141,9 +151,12 @@ export function VaultCard({
       >
         <CardHeader className="p-4 pb-2">
           <div className="flex justify-between items-start">
-            <CardTitle className="text-xl">
-              {vault.name}
-            </CardTitle>
+            <div className="flex items-center gap-2">
+              <PairIcon tokens={tokenPair as [any, any]} size={24} />
+              <CardTitle className="text-xl">
+                {vault.name}
+              </CardTitle>
+            </div>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-1">

@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, ExternalLink } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
+import { TokenIcon } from "@/components/shared/TokenIcons";
 
 export interface NODOAIxCardProps {
   balance: number;
@@ -18,6 +19,7 @@ export interface NODOAIxCardProps {
     gradientText: string;
     gradientBg: string;
     shadow: string;
+    bgOpacity?: string;
   };
 }
 
@@ -57,7 +59,7 @@ export function NODOAIxCard({
       <div className={`h-1 ${styles.gradientBg}`} />
       <CardHeader className="pb-2 px-6 pt-6">
         <CardTitle className="flex items-center text-lg">
-          <ShieldCheck className="h-7 w-7 text-green-500 mr-2" />
+          <TokenIcon token="NODOAIx" size={28} className="mr-2" />
           <span className={`${styles.gradientText}`}>NODOAIx Token</span>
         </CardTitle>
       </CardHeader>
