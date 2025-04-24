@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { vaultService } from "@/services/vaultService";
+import { TrendingUp, Users, DollarSign } from "lucide-react";
 
 export function KpiRibbon() {
   const { data: vaults, isLoading } = useQuery({
@@ -37,21 +38,24 @@ export function KpiRibbon() {
   }, [vaults, isLoading]);
   
   return (
-    <div className="flex items-center justify-center space-x-4 my-2">
-      <div className="bg-nodo-glass px-4 py-1 rounded-full">
-        <p className="text-[14px] font-mono font-medium text-text-secondary tabular-nums">
+    <div className="flex flex-wrap items-center justify-center gap-4 my-4 md:my-6">
+      <div className="bg-nodo-glass backdrop-blur-md px-4 py-2 rounded-full border border-stroke-soft flex items-center gap-2">
+        <DollarSign className="h-4 w-4 text-brand-orange-500" />
+        <p className="text-base font-mono font-medium text-text-secondary tabular-nums">
           Total TVL <span className="text-text-primary">{kpiData.tvl}</span>
         </p>
       </div>
-      <div className="h-4 w-px bg-stroke-soft"></div>
-      <div className="bg-nodo-glass px-4 py-1 rounded-full">
-        <p className="text-[14px] font-mono font-medium text-text-secondary tabular-nums">
+      
+      <div className="bg-nodo-glass backdrop-blur-md px-4 py-2 rounded-full border border-stroke-soft flex items-center gap-2">
+        <TrendingUp className="h-4 w-4 text-brand-orange-500" />
+        <p className="text-base font-mono font-medium text-text-secondary tabular-nums">
           Avg APR <span className="text-text-primary">{kpiData.apr}</span>
         </p>
       </div>
-      <div className="h-4 w-px bg-stroke-soft"></div>
-      <div className="bg-nodo-glass px-4 py-1 rounded-full">
-        <p className="text-[14px] font-mono font-medium text-text-secondary tabular-nums">
+      
+      <div className="bg-nodo-glass backdrop-blur-md px-4 py-2 rounded-full border border-stroke-soft flex items-center gap-2">
+        <Users className="h-4 w-4 text-brand-orange-500" />
+        <p className="text-base font-mono font-medium text-text-secondary tabular-nums">
           Active LPs <span className="text-text-primary">{kpiData.activeLPs}</span>
         </p>
       </div>

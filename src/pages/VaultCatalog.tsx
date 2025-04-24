@@ -11,11 +11,11 @@ import { VaultActivitySection } from "@/components/vault/VaultActivitySection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { RiskLegend } from "@/components/vault/RiskLegend";
 import { LiveTicker } from "@/components/vault/LiveTicker";
 import { TestimonialCarousel } from "@/components/vault/TestimonialCarousel";
 import { HowNodoWorks } from "@/components/vault/HowNodoWorks";
 import { KpiRibbon } from "@/components/vault/KpiRibbon";
+import { BoostBanner } from "@/components/vault/BoostBanner";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
@@ -27,6 +27,7 @@ export default function VaultCatalog() {
   const [showStickyButton, setShowStickyButton] = useState(false);
   const [activeVaultId, setActiveVaultId] = useState<string | null>(null);
   const [carouselApi, setCarouselApi] = useState<any>(null);
+  const [showBoostBanner, setShowBoostBanner] = useState(true);
 
   // Define testimonial items
   const testimonialItems = [
@@ -62,31 +63,17 @@ export default function VaultCatalog() {
           display: none !important;
         }
       `}</style>
-      <div className="flex flex-col space-y-12 relative z-0 max-w-[1280px] mx-auto">
+      <div className="flex flex-col space-y-8 relative z-0 max-w-[1280px] mx-auto">
         <div className="space-y-6">
           <HeroSection />
           <KpiRibbon />
           
-          <VaultActivitySection />
+          {showBoostBanner && (
+            <BoostBanner onDismiss={() => setShowBoostBanner(false)} />
+          )}
         </div>
 
         <div className="relative">
-          {/* Small risk legend instead of big legend */}
-          <div className="flex items-center justify-end mb-4 gap-4">
-            <div className="flex items-center gap-1 text-xs">
-              <span className="text-state-success">🟢</span>
-              <span className="text-text-secondary">Low risk</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs">
-              <span className="text-state-warning">🟠</span>
-              <span className="text-text-secondary">Medium risk</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs">
-              <span className="text-state-error">🔴</span>
-              <span className="text-text-secondary">High risk</span>
-            </div>
-          </div>
-
           {isLoading ? (
             <div className="space-y-6">
               {Array.from({ length: 3 }).map((_, index) => (
@@ -122,6 +109,8 @@ export default function VaultCatalog() {
             </div>
           )}
         </div>
+        
+        <VaultActivitySection />
         
         {/* How NODO Works - Horizontal Carousel */}
         <div className="overflow-hidden py-6">

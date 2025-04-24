@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useWallet } from "@/hooks/useWallet";
 import { useDepositDrawer } from "@/hooks/useDepositDrawer";
+import { getVaultTypeColor } from "@/lib/utils";
 
 interface VaultCardProps {
   vault: VaultData;
@@ -38,14 +39,14 @@ export function VaultCard({
   const hasBoost = vault.apr > 18.0;
   const boostEndsIn = "02:00"; // This would be dynamic in production
   
-  const getRiskIcon = (type: 'nova' | 'orion' | 'emerald') => {
+  const getRiskBadge = (type: 'nova' | 'orion' | 'emerald') => {
     switch (type) {
       case 'nova':
-        return <span className="text-state-error text-[14px]">🔴</span>;
+        return <span className="text-xs font-medium text-state-error">High risk</span>;
       case 'orion':
-        return <span className="text-state-warning text-[14px]">🟠</span>;
+        return <span className="text-xs font-medium text-state-warning">Moderate risk</span>;
       case 'emerald': 
-        return <span className="text-state-success text-[14px]">🟢</span>;
+        return <span className="text-xs font-medium text-state-success">Low risk</span>;
       default:
         return null;
     }
@@ -95,14 +96,13 @@ export function VaultCard({
               )}
               <PairIcon tokens={getTokenPair(vault.id)} size={24} />
               <div>
-                <CardTitle className="text-base sm:text-[18px] leading-[26px] font-semibold">
-                  {vault.name}
-                </CardTitle>
-                <div className="flex items-center mt-1 gap-1.5">
-                  {getRiskIcon(vault.type)}
-                  <span className="text-text-secondary text-xs font-normal">
-                    {vault.type === 'emerald' ? 'Low risk' : vault.type === 'orion' ? 'Moderate risk' : 'High risk'}
-                  </span>
+                <div className="flex items-center gap-2">
+                  <CardTitle className="text-base sm:text-[18px] leading-[26px] font-semibold">
+                    {vault.name}
+                  </CardTitle>
+                  <div className="px-2 py-0.5 rounded-full bg-white/5 border border-stroke-soft">
+                    {getRiskBadge(vault.type)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -124,31 +124,32 @@ export function VaultCard({
                     <Info className="h-3 w-3 text-text-tertiary cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent className="text-xs max-w-[200px]">
-                    APR has risen 0.5% in last 24h · Gas ≈ 0.006 SUI
+                    APR has risen 0.5% in last 24h
                   </TooltipContent>
                 </Tooltip>
               </p>
-              <p className={`text-num-s font-mono font-semibold tabular-nums ${aprGlowClass}`}>
+              <p className={`text-num-l font-mono font-semibold tabular-nums ${aprGlowClass}`}>
                 {formatPercentage(vault.apr)}
               </p>
             </div>
             <div>
               <p className="text-[12px] text-text-secondary h-5 font-medium">APY</p>
-              <p className="text-num-s font-mono font-semibold tabular-nums">
+              <p className="text-num-l font-mono font-semibold tabular-nums">
                 {formatPercentage(vault.apy)}
               </p>
             </div>
             <div>
               <p className="text-[12px] text-text-secondary h-5 font-medium">TVL</p>
-              <p className="text-num-s font-mono font-semibold tabular-nums">
+              <p className="text-num-l font-mono font-semibold tabular-nums">
                 {formatCurrency(vault.tvl)}
               </p>
             </div>
           </div>
           
-          {hasBoost && (
-            <div className="flex items-center gap-1 text-brand-orange-500">
-              <span className="text-[13px] font-mono">⚡ +0.5% boost · ends in {boostEndsIn}</span>
+          {vault.apr > vault.apy - 0.5 && (
+            <div className="flex items-center gap-1 text-emerald">
+              <TrendingUp className="h-3.5 w-3.5" />
+              <span className="text-[13px] font-mono">▲ 0.5% today</span>
             </div>
           )}
 
@@ -161,10 +162,6 @@ export function VaultCard({
                 Deposit Now <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            
-            <p className="text-xs text-center text-text-secondary mt-2">
-              Gas ≈ 0.006 SUI · Unlocks in 30 days
-            </p>
           </div>
         </CardContent>
         
