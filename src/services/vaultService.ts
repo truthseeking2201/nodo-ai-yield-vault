@@ -1,23 +1,22 @@
-
 import { VaultData, UserInvestment, TransactionHistory } from "@/types/vault";
 
 // Mock data for the vaults
 const mockVaults: VaultData[] = [
   {
-    id: "nova-yield",
-    name: "Nova Yield",
-    type: "nova",
-    tvl: 2750000,
+    id: "sui-usdc",
+    name: "SUI-USDC",
+    type: "emerald",
+    tvl: 3000000,
     apr: 12.5,
-    apy: 13.2,
-    description: "A high performance yield vault leveraging AI for market prediction and optimized yield farming across DeFi protocols.",
+    apy: 13.8,
+    description: "A low-risk vault utilizing the SUI ↔ USDC trading pair with relatively low price volatility and impermanent loss risk.",
     lockupPeriods: [
       { days: 30, aprBoost: 0 },
-      { days: 60, aprBoost: 1.5 },
-      { days: 90, aprBoost: 3.25 }
+      { days: 60, aprBoost: 1.2 },
+      { days: 90, aprBoost: 2.5 }
     ],
-    riskLevel: "medium",
-    strategy: "AI-powered multi-strategy yield farming across top DeFi protocols with active rebalancing.",
+    riskLevel: "low",
+    strategy: "Optimized position management in the SUI-USDC concentrated liquidity pool, aiming to outperform static LP by ≥3%.",
     performance: {
       daily: Array.from({ length: 30 }, (_, i) => ({
         date: new Date(Date.now() - (29-i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -34,20 +33,20 @@ const mockVaults: VaultData[] = [
     }
   },
   {
-    id: "orion-stable",
-    name: "Orion Stable",
+    id: "cetus-sui",
+    name: "CETUS-SUI",
     type: "orion",
-    tvl: 4320000,
-    apr: 8.7,
-    apy: 9.1,
-    description: "A moderate-risk vault focusing on stablecoin yields with enhanced returns through strategic allocations.",
+    tvl: 2100000,
+    apr: 18.7,
+    apy: 20.4,
+    description: "A moderate-risk vault focusing on the CETUS ↔ SUI trading pair, balancing yield potential with managed volatility.",
     lockupPeriods: [
       { days: 30, aprBoost: 0 },
-      { days: 60, aprBoost: 1.2 },
-      { days: 90, aprBoost: 2.8 }
+      { days: 60, aprBoost: 1.7 },
+      { days: 90, aprBoost: 3.5 }
     ],
-    riskLevel: "low",
-    strategy: "Diversified stablecoin farming across multiple chains with automated compounding.",
+    riskLevel: "medium",
+    strategy: "Active position management in the CETUS-SUI concentrated liquidity pool, optimizing for fee capture while mitigating impermanent loss.",
     performance: {
       daily: Array.from({ length: 30 }, (_, i) => ({
         date: new Date(Date.now() - (29-i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -64,20 +63,20 @@ const mockVaults: VaultData[] = [
     }
   },
   {
-    id: "emerald-growth",
-    name: "Emerald Growth",
-    type: "emerald",
-    tvl: 1850000,
-    apr: 15.8,
-    apy: 17.2,
-    description: "A higher-risk, higher-reward vault designed for strategic growth through carefully selected DeFi opportunities.",
+    id: "deep-sui",
+    name: "DEEP-SUI",
+    type: "nova",
+    tvl: 1250000,
+    apr: 24.8,
+    apy: 27.9,
+    description: "A high-risk, high-reward vault leveraging the DEEP ↔ SUI trading pair in high-spread, low-liquidity conditions.",
     lockupPeriods: [
       { days: 30, aprBoost: 0 },
-      { days: 60, aprBoost: 2.0 },
-      { days: 90, aprBoost: 4.5 }
+      { days: 60, aprBoost: 2.5 },
+      { days: 90, aprBoost: 5.0 }
     ],
     riskLevel: "high",
-    strategy: "Aggressive yield farming with selective token exposure and automated profit taking.",
+    strategy: "Aggressive position management in the DEEP-SUI concentrated liquidity pool, maximizing yield capture in volatile market conditions.",
     performance: {
       daily: Array.from({ length: 30 }, (_, i) => ({
         date: new Date(Date.now() - (29-i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
