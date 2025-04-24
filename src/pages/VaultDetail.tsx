@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -31,8 +30,6 @@ export default function VaultDetail() {
     getVaultStyles
   } = useVaultDetail(vaultId || '');
 
-  // Effect to auto-open deposit drawer when wallet connects
-  // if user has already interacted with the page
   const [hasInteracted, setHasInteracted] = useState(false);
   
   useEffect(() => {
@@ -41,16 +38,12 @@ export default function VaultDetail() {
     }
   }, [isConnected, hasInteracted, isDepositDrawerOpen]);
   
-  // Check localStorage for security accordion state
   useEffect(() => {
     const securityCollapsed = localStorage.getItem("securityCollapsed");
-    // Implementation would depend on how the accordion is implemented
   }, []);
   
-  // Listen for deposit success event
   useEffect(() => {
     const handleDepositSuccess = (e: CustomEvent) => {
-      // Apply glow animation to NODOAIx card
       if (nodoaixCardRef.current) {
         nodoaixCardRef.current.classList.add('glow-animation');
         setTimeout(() => {
@@ -72,7 +65,6 @@ export default function VaultDetail() {
     if (isConnected) {
       setIsDepositDrawerOpen(true);
     } else {
-      // Find wallet connect button and click it
       const walletBtn = document.querySelector('[data-wallet-connect="true"]');
       if (walletBtn) {
         (walletBtn as HTMLElement).click();
@@ -167,7 +159,7 @@ export default function VaultDetail() {
         `}
       </style>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 space-y-6 lg:space-y-0">
         <div className="lg:col-span-2 max-w-[640px] space-y-6">
           <VaultPerformanceSection
             vault={vault}
