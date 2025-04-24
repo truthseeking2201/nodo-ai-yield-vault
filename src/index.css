@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
@@ -333,5 +332,10 @@
   
   .glass-card-premium:hover::after {
     opacity: 1;
+  }
+
+  /* Chart styling */
+  .vault-chart {
+    padding-bottom: 16px;
   }
 }

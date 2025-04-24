@@ -102,11 +102,11 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
   // Simple chart version (for when no time range change is available)
   if (!onTimeRangeChange) {
     return (
-      <div className="rounded-[20px] overflow-hidden">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="rounded-[20px] overflow-visible vault-chart pb-6">
+        <ResponsiveContainer width="100%" height={276}>
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+            margin={{ top: 20, right: 10, left: 10, bottom: 24 }}
           >
             <defs>
               <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
@@ -128,6 +128,7 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
                   tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
                   axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
                   tickLine={false}
+                  dy={8} // Increase spacing between labels and axis line
                 />
                 
                 <YAxis 
@@ -186,7 +187,7 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
   
   // Full chart version with tabs
   return (
-    <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+    <Card className="glass-card rounded-[20px] overflow-visible border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
       <CardHeader className="px-6 pt-6 pb-0 flex flex-row items-center justify-between">
         <div className="space-y-1">
           <CardTitle className="text-lg font-medium text-[#E5E7EB]">Performance</CardTitle>
@@ -224,12 +225,12 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
         </Tabs>
       </CardHeader>
       
-      <CardContent className="p-6 pt-4 h-[260px] md:h-[260px]">
-        <div className="h-full w-full overflow-hidden">
-          <ResponsiveContainer width="100%" height="100%">
+      <CardContent className="p-6 pb-8 h-[300px] md:h-[300px] vault-chart">
+        <div className="h-full w-full overflow-visible">
+          <ResponsiveContainer width="100%" height={276}>
             <LineChart
               data={chartData}
-              margin={{ top: 20, right: 0, left: 0, bottom: 0 }}
+              margin={{ top: 20, right: 0, left: 0, bottom: 24 }}
             >
               <defs>
                 <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
@@ -249,6 +250,7 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
                 tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
                 axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
                 tickLine={false}
+                dy={8} // Increase spacing between labels and axis line
               />
               
               <YAxis 
