@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Info, ArrowRight, Wallet } from "lucide-react";
@@ -71,39 +71,57 @@ export function VaultMetricsCard({
     return (principal * vault.apr / 100) / 12;
   };
 
+  // Get the appropriate button props based on user state
+  const getButtonProps = () => {
+    if (!isConnected) {
+      return {
+        text: "Connect Wallet",
+        icon: <Wallet className="ml-2 h-4 w-4" />,
+        className: "w-full h-12 border-[#6F3BFF] hover:border-[#8F63FF] hover:bg-[#6F3BFF]/10 text-[#8F63FF] text-sm font-medium transition-all hover:scale-[0.98]",
+        variant: "outline" as const
+      };
+    } else {
+      return {
+        text: "Deposit Now",
+        icon: <ArrowRight className="ml-2 h-4 w-4" />,
+        className: `w-full h-12 ${styles.gradientBg} text-white transition-all hover:scale-[0.98] active:scale-95 shadow-[0_4px_8px_-2px_rgba(111,59,255,0.35)]`,
+        variant: "default" as const
+      };
+    }
+  };
+
+  const buttonProps = getButtonProps();
+
   return (
-    <Card className="glass-card">
-      <CardHeader>
-        <CardTitle>Vault Metrics</CardTitle>
-        <CardDescription>Current performance metrics</CardDescription>
+    <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] transition-shadow hover:shadow-[0_0_20px_-4px_rgba(111,59,255,0.15)]">
+      <div className={`h-1 ${styles.gradientBg}`} />
+      <CardHeader className="px-6 pt-6 pb-2">
+        <CardTitle className="text-lg font-medium text-[#E5E7EB]">Vault Metrics</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex justify-between items-center border-b border-white/10 pb-3">
-          <div className="flex items-center gap-2">
-            <span className="text-white/60">APR</span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="h-4 w-4 text-white/40" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs text-sm">
-                    Calculated from last 7 days fees collected in pool block #123,456 – 123,999
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-          <span className={`font-mono text-lg font-bold ${styles.gradientText}`}>
+      <CardContent className="p-6 space-y-6">
+        {/* Metrics grid */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+          <div className="text-sm text-[#9CA3AF]">APR</div>
+          <div className="text-right font-mono font-medium text-lg text-[#8F63FF]">
             {formatPercentage(vault.apr)}
-          </span>
+          </div>
+          
+          <div className="text-sm text-[#9CA3AF]">APY</div>
+          <div className="text-right font-mono font-medium text-lg text-[#10B981]">
+            {formatPercentage(vault.apy)}
+          </div>
+          
+          <div className="text-sm text-[#9CA3AF]">TVL</div>
+          <div className="text-right font-mono font-medium text-lg text-[#C9CDD3]">
+            {formatCurrency(vault.tvl)}
+          </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="relative pt-6 pb-2">
+        {/* ROI Slider */}
+        <div className="pt-4">
+          <div className="relative pt-8 pb-4">
             <div 
-              className="absolute -top-1 left-1/2 transform -translate-x-1/2 bg-background/90 text-white px-3 py-1 rounded-full text-sm shadow-md z-10 backdrop-blur-sm"
-              style={{ boxShadow: '0 2px 4px -1px rgba(0,0,0,.4)' }}
+              className="absolute -top-1 left-1/2 transform -translate-x-1/2 bg-[#131417] text-white px-3 py-1 rounded-full text-sm shadow-md z-10 font-mono"
             >
               {sliderLabel}
             </div>
@@ -112,38 +130,33 @@ export function VaultMetricsCard({
               value={sliderValue}
               min={100}
               max={10000}
-              step={50}
-              className="[&_.relative]:h-[4px] [&_.absolute]:bg-[#6F3BFF] [&_button]:h-5 [&_button]:w-5"
+              step={100}
+              className="[&_.relative]:h-[2px] [&_.absolute]:bg-gradient-to-r [&_.absolute]:from-[#6F3BFF] [&_.absolute]:to-[#8F63FF] [&_button]:h-4 [&_button]:w-4 [&_button]:border [&_button]:border-white/40"
               onValueChange={(value) => setSliderValue(value)}
             />
             
-            {projectedAmount && (
-              <div className="text-sm text-[#9CA3AF] mt-4">
-                Est. earnings in 30 days ≈ ${calculateProjectedEarnings(projectedAmount).toFixed(2)} USDC
+            <div className="flex justify-between items-center mt-4">
+              <div className="text-xs text-[#9CA3AF]">Projected deposit</div>
+              <div className="text-right text-sm font-mono text-[#E5E7EB]">
+                ${calculateProjectedEarnings(projectedAmount).toFixed(2)}/month
               </div>
-            )}
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between items-center border-b border-white/10 pb-3">
-          <span className="text-white/60">APY</span>
-          <span className={`font-mono text-lg font-bold ${styles.gradientText}`}>
-            {formatPercentage(vault.apy)}
-          </span>
-        </div>
-        <div className="flex justify-between items-center border-b border-white/10 pb-3">
-          <span className="text-white/60">TVL</span>
-          <span className="font-mono text-lg font-bold">
-            {formatCurrency(vault.tvl)}
-          </span>
-        </div>
-        <div>
-          <h3 className="text-sm text-white/60 mb-2">Lockup Periods</h3>
-          <div className="space-y-2">
-            {vault.lockupPeriods.map((period) => (
-              <div key={period.days} className="flex justify-between items-center">
-                <span>{period.days} days</span>
-                <span className={`font-mono ${period.aprBoost > 0 ? styles.gradientText : ''}`}>
+        {/* Lockup Periods Table */}
+        <div className="space-y-4">
+          <h3 className="text-sm text-[#9CA3AF] mb-2">Lockup Periods</h3>
+          <div className="space-y-3">
+            {vault.lockupPeriods.map((period, index) => (
+              <div 
+                key={period.days} 
+                className={`flex justify-between items-center py-2 ${
+                  index < vault.lockupPeriods.length - 1 ? "border-b border-[#262B30]" : ""
+                }`}
+              >
+                <span className="text-[#C9CDD3] text-sm">{period.days} days</span>
+                <span className={`font-mono ${period.aprBoost > 0 ? "text-[#10B981]" : "text-[#9CA3AF]"}`}>
                   {period.aprBoost > 0 ? `+${period.aprBoost}%` : 'No boost'}
                 </span>
               </div>
@@ -151,16 +164,19 @@ export function VaultMetricsCard({
           </div>
         </div>
 
+        {/* Action Button */}
         <Button 
-          className={`w-full mt-6 h-12 ${styles.gradientBg} ${styles.shadow} animate-fade-in transition-transform duration-80 hover:scale-[1.02] active:scale-95`}
+          variant={buttonProps.variant}
+          className={buttonProps.className}
           onClick={onActionClick}
         >
-          {isConnected ? (
-            <>Deposit USDC <ArrowRight className="ml-2 h-4 w-4" /></>
-          ) : (
-            <>Connect Wallet <Wallet className="ml-2 h-4 w-4" /></>
-          )}
+          {buttonProps.text} {buttonProps.icon}
         </Button>
+
+        {/* Gas & Unlock Info */}
+        <div className="text-center text-xs font-mono text-[#9CA3AF]">
+          Gas ≈ 0.006 SUI · Unlocks in 30 days
+        </div>
       </CardContent>
     </Card>
   );

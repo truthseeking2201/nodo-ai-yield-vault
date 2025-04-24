@@ -17,8 +17,8 @@ interface VaultPerformanceChartProps {
 export function VaultPerformanceChart({ 
   data, 
   vaultType,
-  showAxisLabels = false,
-  highlightLastDataPoint = false
+  showAxisLabels = true,
+  highlightLastDataPoint = true
 }: VaultPerformanceChartProps) {
   // Get color based on vault type
   const getColor = (type: 'nova' | 'orion' | 'emerald') => {
@@ -26,6 +26,7 @@ export function VaultPerformanceChart({
       case 'nova': return "#F97316";
       case 'orion': return "#F59E0B";
       case 'emerald': return "#10B981";
+      default: return "#8F63FF"; // Default to brand light
     }
   };
 
@@ -43,10 +44,10 @@ export function VaultPerformanceChart({
     const max = Math.max(...values);
     const range = max - min;
     
-    // Create ticks at 25% intervals
+    // Create ticks at 5% intervals
     const ticks = [];
-    const step = range / 4;
-    for (let i = 0; i <= 4; i++) {
+    const step = range / 5;
+    for (let i = 0; i <= 5; i++) {
       ticks.push(min + (step * i));
     }
     
@@ -57,9 +58,9 @@ export function VaultPerformanceChart({
   const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
       return (
-        <div className="glass-card p-3 border border-white/20">
-          <p className="text-sm font-medium mb-1">{label}</p>
-          <p className="text-sm font-mono" style={{ color }}>
+        <div className="bg-[rgba(255,255,255,0.04)] p-3 rounded-xl border border-white/10 shadow-[0_8px_16px_-8px_rgba(0,0,0,0.6)]">
+          <p className="text-sm font-medium mb-1 font-sans">{label}</p>
+          <p className="text-xs font-mono tabular-nums" style={{ color }}>
             {`Value: ${payload[0].value?.toFixed(2)}`}
           </p>
         </div>
@@ -80,7 +81,7 @@ export function VaultPerformanceChart({
           cx={cx} 
           cy={cy} 
           r={6} 
-          fill={color} 
+          fill="#10B981" 
           stroke="#fff" 
           strokeWidth={2} 
         />
@@ -91,71 +92,82 @@ export function VaultPerformanceChart({
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart
-        data={data}
-        margin={{
-          top: 5,
-          right: 20,
-          left: showAxisLabels ? 20 : 10,
-          bottom: 5,
-        }}
-      >
-        <defs>
-          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={color} stopOpacity={0.8}/>
-            <stop offset="95%" stopColor={color} stopOpacity={0}/>
-          </linearGradient>
-        </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-        <XAxis 
-          dataKey="date" 
-          stroke="rgba(255,255,255,0.6)" 
-          fontSize={12}
-          tickMargin={10}
-          tickFormatter={(value) => {
-            // Handle different date formats
-            if (value.includes('Week') || value.includes('Month')) {
-              return value;
-            }
-            // Format date to display day only or month/day
-            const date = new Date(value);
-            return date.getDate().toString();
+    <div className="h-[260px] md:h-[260px]">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          data={data}
+          margin={{
+            top: 10,
+            right: 20,
+            left: showAxisLabels ? 20 : 10,
+            bottom: 10,
           }}
-        />
-        <YAxis 
-          stroke="rgba(255,255,255,0.6)" 
-          fontSize={12}
-          tickMargin={10}
-          ticks={showAxisLabels ? yAxisTicks : undefined}
-          domain={['dataMin - 1', 'dataMax + 1']}
-          tickFormatter={(value) => value.toFixed(1)}
-          width={showAxisLabels ? 40 : 30}
-        />
-        <Tooltip content={<CustomTooltip />} />
-        <Line
-          type="monotone"
-          dataKey="value"
-          stroke={color}
-          strokeWidth={2.5}
-          dot={false}
-          activeDot={{ r: 6 }}
-          fill={`url(#${gradientId})`}
-          fillOpacity={0.2}
-          animationDuration={1000}
-          animationEasing="ease-out"
-        />
-        {highlightLastDataPoint && (
+        >
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#8F63FF" stopOpacity={0.8}/>
+              <stop offset="95%" stopColor="#8F63FF" stopOpacity={0}/>
+            </linearGradient>
+          </defs>
+          <CartesianGrid 
+            strokeDasharray="3 3" 
+            stroke="rgba(255,255,255,0.06)" 
+            vertical={false}
+          />
+          <XAxis 
+            dataKey="date" 
+            stroke="#9CA3AF" 
+            fontSize={12}
+            fontFamily="'IBM Plex Mono', monospace"
+            tickMargin={10}
+            tickFormatter={(value) => {
+              // Handle different date formats
+              if (value.includes('Week') || value.includes('Month')) {
+                return value;
+              }
+              // Format date to display day only or month/day
+              const date = new Date(value);
+              return date.getDate().toString();
+            }}
+          />
+          <YAxis 
+            stroke="#9CA3AF" 
+            fontSize={12}
+            fontFamily="'IBM Plex Mono', monospace"
+            tickMargin={10}
+            ticks={showAxisLabels ? yAxisTicks : undefined}
+            domain={['dataMin - 1', 'dataMax + 1']}
+            tickFormatter={(value) => value.toFixed(1)}
+            width={showAxisLabels ? 40 : 30}
+          />
+          <Tooltip 
+            content={<CustomTooltip />} 
+            cursor={{stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1, strokeDasharray: '3 3'}}
+          />
           <Line
             type="monotone"
             dataKey="value"
-            stroke="transparent"
-            dot={renderDot}
-            activeDot={false}
-            isAnimationActive={false}
+            stroke="#8F63FF"
+            strokeWidth={2.5}
+            dot={false}
+            activeDot={{ r: 6 }}
+            fill={`url(#${gradientId})`}
+            fillOpacity={0.2}
+            animationDuration={1000}
+            animationEasing="cubic-bezier(.22,1,.36,1)"
           />
-        )}
-      </LineChart>
-    </ResponsiveContainer>
+          {highlightLastDataPoint && (
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="transparent"
+              dot={renderDot}
+              activeDot={false}
+              isAnimationActive={false}
+            />
+          )}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
