@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -23,8 +24,24 @@ export default {
         mono: ['IBM Plex Mono', 'monospace'],
       },
       colors: {
-        "nodo-dark": "#1A1718",
+        "nodo-dark": "#0D0E11", // bg-base
         "nodo-darker": "#12100F",
+        "nodo-card": "#131417", // bg-card
+        "nodo-glass": "rgba(255,255,255,0.04)", // bg-glass
+        "text-primary": "#F3F4F6",
+        "text-secondary": "#9CA3AF",
+        "text-tertiary": "#6B7280",
+        "text-inverse": "#0E0F11",
+        "brand-orange-100": "#FFB347",
+        "brand-orange-500": "#FF8A00",
+        "brand-orange-700": "#FF5E00",
+        "brand-violet-600": "#B847FF",
+        "brand-violet-700": "#714BFF",
+        "state-success": "#10B981",
+        "state-warning": "#F59E0B",
+        "state-error": "#EF4444",
+        "stroke-soft": "rgba(255,255,255,0.06)",
+        "stroke-hard": "rgba(255,255,255,0.10)",
         nova: {
           DEFAULT: "#F97316",
           light: "#FDBA74",
@@ -85,16 +102,30 @@ export default {
         "neon-orion": "0 0 20px rgba(245, 158, 11, 0.5)",
         "neon-emerald": "0 0 20px rgba(16, 185, 129, 0.5)",
         "brand": "0 4px 8px -2px rgba(245, 158, 11, .35)",
-        "brand-hover": "0 8px 16px -8px rgba(245, 158, 11, .25)"
+        "brand-hover": "0 8px 16px -8px rgba(245, 158, 11, .25)",
+        "neon-glow": "0 0 18px 6px rgba(255,138,0,.45)",
+        "e-1": "0 1px 2px -1px rgba(0,0,0,.55)",
+        "e-2": "0 4px 12px -6px rgba(0,0,0,.60)",
+        "e-3": "0 12px 32px -8px rgba(0,0,0,.65)",
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-brand': 'linear-gradient(90deg, #F59E0B 0%, #F5B041 100%)'
+        'gradient-brand': 'linear-gradient(90deg, #F59E0B 0%, #F5B041 100%)',
+        'gradient-neural-orange': 'linear-gradient(90deg, #FF8A00 0%, #FF5E00 100%)'
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)'
+        sm: 'calc(var(--radius) - 4px)',
+        card: '20px',
+      },
+      spacing: {
+        's-1': '4px', 
+        's-2': '8px',
+        's-3': '16px',
+        's-4': '24px',
+        's-5': '32px',
+        's-6': '48px',
       },
       keyframes: {
         'accordion-down': {

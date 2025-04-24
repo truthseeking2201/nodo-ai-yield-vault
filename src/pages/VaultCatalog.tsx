@@ -13,9 +13,9 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { RiskLegend } from "@/components/vault/RiskLegend";
 import { LiveTicker } from "@/components/vault/LiveTicker";
-import { PromoRibbon } from "@/components/vault/PromoRibbon";
 import { TestimonialCarousel } from "@/components/vault/TestimonialCarousel";
 import { HowNodoWorks } from "@/components/vault/HowNodoWorks";
+import { KpiRibbon } from "@/components/vault/KpiRibbon";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
@@ -27,7 +27,6 @@ export default function VaultCatalog() {
   const [showStickyButton, setShowStickyButton] = useState(false);
   const [activeVaultId, setActiveVaultId] = useState<string | null>(null);
   const [carouselApi, setCarouselApi] = useState<any>(null);
-  const [showPromo, setShowPromo] = useState(true);
 
   // Define testimonial items
   const testimonialItems = [
@@ -50,29 +49,43 @@ export default function VaultCatalog() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Feature flag for catalog v2 (always true for this implementation)
-  const catalogV2Enabled = true;
-
   const activeVault = vaults?.find(vault => vault.id === activeVaultId);
 
   return (
     <PageContainer>
       <style>{`
         body {
-          background-color: #0F1012;
+          background-color: var(--bg-base, #0D0E11);
         }
         body::before, body::after {
           content: none !important;
           display: none !important;
         }
       `}</style>
-      <div className="flex flex-col space-y-8 relative z-0">
-        <HeroSection />
+      <div className="flex flex-col space-y-12 relative z-0 max-w-[1280px] mx-auto">
+        <div className="space-y-6">
+          <HeroSection />
+          <KpiRibbon />
+          
+          <VaultActivitySection />
+        </div>
 
-        {catalogV2Enabled && showPromo && <PromoRibbon />}
-
-        <div className="relative pt-4">
-          {catalogV2Enabled && <RiskLegend />}
+        <div className="relative">
+          {/* Small risk legend instead of big legend */}
+          <div className="flex items-center justify-end mb-4 gap-4">
+            <div className="flex items-center gap-1 text-xs">
+              <span className="text-state-success">🟢</span>
+              <span className="text-text-secondary">Low risk</span>
+            </div>
+            <div className="flex items-center gap-1 text-xs">
+              <span className="text-state-warning">🟠</span>
+              <span className="text-text-secondary">Medium risk</span>
+            </div>
+            <div className="flex items-center gap-1 text-xs">
+              <span className="text-state-error">🔴</span>
+              <span className="text-text-secondary">High risk</span>
+            </div>
+          </div>
 
           {isLoading ? (
             <div className="space-y-6">
@@ -110,19 +123,22 @@ export default function VaultCatalog() {
           )}
         </div>
         
-        <VaultActivitySection />
-
-        {catalogV2Enabled && (
-          <>
-            <TestimonialCarousel items={testimonialItems} />
-            <HowNodoWorks />
-          </>
-        )}
+        {/* How NODO Works - Horizontal Carousel */}
+        <div className="overflow-hidden py-6">
+          <h2 className="text-h2 mb-6">How NODO AI Maximizes Yield</h2>
+          <div className="overflow-x-auto pb-4 -mx-6 px-6 hide-scrollbar">
+            <div className="flex gap-6 w-max">
+              <HowNodoWorks />
+            </div>
+          </div>
+        </div>
+        
+        <TestimonialCarousel items={testimonialItems} />
 
         {showStickyButton && isConnected && balance.usdc > 0 && activeVault && (
           <div className="fixed bottom-4 left-0 right-0 z-50 md:hidden px-4">
             <Button 
-              className="w-full gradient-bg-nova py-6 rounded-xl shadow-lg text-[#0E0F11]"
+              className="w-full bg-gradient-neural-orange py-6 rounded-[14px] shadow-e-3 text-text-inverse font-semibold"
               asChild
             >
               <Link to={`/vaults/${activeVault.id}`}>
@@ -131,8 +147,6 @@ export default function VaultCatalog() {
             </Button>
           </div>
         )}
-
-        {catalogV2Enabled && <LiveTicker />}
       </div>
     </PageContainer>
   );

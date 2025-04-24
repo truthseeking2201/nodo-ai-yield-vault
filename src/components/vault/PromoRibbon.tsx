@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 interface PromoRibbonProps {
@@ -10,7 +9,6 @@ export function PromoRibbon({ active = true, endTime }: PromoRibbonProps) {
   const [timeLeft, setTimeLeft] = useState("");
   const [isVisible, setIsVisible] = useState(active);
   
-  // Default end time is 2 hours from now if not provided
   const defaultEndTime = new Date(Date.now() + 2 * 60 * 60 * 1000);
   const targetEndTime = endTime || defaultEndTime;
   
@@ -29,7 +27,6 @@ export function PromoRibbon({ active = true, endTime }: PromoRibbonProps) {
         return;
       }
       
-      // Calculate hours, minutes, seconds
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
@@ -43,10 +40,8 @@ export function PromoRibbon({ active = true, endTime }: PromoRibbonProps) {
       setTimeLeft(formattedTime);
     };
     
-    // Update immediately
     updateTimer();
     
-    // Update every second
     const interval = setInterval(updateTimer, 1000);
     
     return () => clearInterval(interval);
@@ -56,7 +51,7 @@ export function PromoRibbon({ active = true, endTime }: PromoRibbonProps) {
   
   return (
     <div 
-      className="w-full bg-gradient-to-r from-orange-400/30 to-orange-500/30 py-2 text-center text-sm animate-fade-in mb-6 rounded-lg border border-orange-500/20"
+      className="w-full bg-gradient-to-r from-brand-orange-500/30 to-brand-orange-700/30 py-2 text-center text-sm animate-fade-in mb-6 rounded-lg border border-brand-orange-500/20 hidden"
       aria-live="polite"
     >
       ⚡ +0.5% APR boost ends in <span className="font-mono tabular-nums font-medium">{timeLeft}</span>
