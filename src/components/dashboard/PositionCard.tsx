@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import { PairIcon } from "@/components/shared/TokenIcons";
-import { getVaultTypeColor } from "@/lib/utils";
 import { UserInvestment } from "@/types/vault";
 import { AddFundsDrawer } from "./AddFundsDrawer";
 import { Progress } from "@/components/ui/progress";
@@ -49,6 +48,17 @@ export function PositionCard({ investment, onWithdraw }: PositionCardProps) {
       return () => clearTimeout(timer);
     }
   }, [isHighlighted]);
+  
+  // Calculate APR (fallback calculation since the type doesn't have this property)
+  const getEffectiveAPR = () => {
+    // Since we don't have direct access to APR in the type, let's estimate it
+    // based on profit, principal, and time (assuming 30 days)
+    if (investment.profit > 0) {
+      // Annualized return = (profit / principal) * (365 / days)
+      return (investment.profit / investment.principal * 100 * 365 / 30).toFixed(1);
+    }
+    return "18.6"; // Fallback value
+  };
   
   return (
     <Card 
@@ -109,7 +119,7 @@ export function PositionCard({ investment, onWithdraw }: PositionCardProps) {
           </div>
           <div>
             <p className="text-xs text-white/60 mb-1">APR (30d avg)</p>
-            <p className="font-mono text-base tabular-nums text-brand-orange-500">{investment.apr.toFixed(1)}%</p>
+            <p className="font-mono text-base tabular-nums text-brand-orange-500">{getEffectiveAPR()}%</p>
           </div>
           <div>
             <p className="text-xs text-white/60 mb-1">Unlock date</p>

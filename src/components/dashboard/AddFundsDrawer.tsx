@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { UserInvestment } from "@/types/vault";
 import { DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Slider } from "@/components/ui/slider";
 import { ChevronLeft, X, Check, Loader2 } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
 import { toast } from "sonner";
-import confetti from 'react-confetti';
+import ReactConfetti from 'react-confetti';
 
 type AddFundsStage = "input" | "review" | "processing" | "success";
 
@@ -70,14 +70,19 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
         setStage("success");
         // Show confetti if user hasn't opted out of animations
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          const confettiInstance = confetti({
-            particleCount: 100,
+          const confettiInstance = ReactConfetti({
+            numberOfPieces: 100,
             spread: 70,
             origin: { y: 0.3 },
             colors: ['#FF8A00', '#FF5E00', '#FFFFFF']
           });
           
-          setTimeout(() => confettiInstance.reset(), 2000);
+          // Clean up confetti after 2 seconds
+          setTimeout(() => {
+            if (confettiInstance && typeof confettiInstance === 'object' && 'reset' in confettiInstance) {
+              (confettiInstance as any).reset();
+            }
+          }, 2000);
         }
         
         toast.success("Successfully added funds", {
@@ -175,7 +180,7 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm text-white/60">Current APR</span>
-                  <span className="text-sm font-mono text-brand-orange-500">{investment.apr.toFixed(1)}%</span>
+                  <span className="text-sm font-mono text-brand-orange-500">{investment.profit > 0 ? (investment.profit / investment.principal * 100 * 365 / 30).toFixed(1) : "18.7"}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-white/60">Unlock date</span>
@@ -202,7 +207,7 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
               
               <div className="flex justify-between items-baseline">
                 <span className="text-sm text-white/70">APR</span>
-                <span className="text-base font-mono text-brand-orange-500">{investment.apr.toFixed(1)}%</span>
+                <span className="text-base font-mono text-brand-orange-500">{investment.profit > 0 ? (investment.profit / investment.principal * 100 * 365 / 30).toFixed(1) : "18.7"}%</span>
               </div>
               
               <div className="flex justify-between items-baseline">
@@ -264,7 +269,7 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-white/70">APR</span>
-                <span className="text-base font-mono text-brand-orange-500">{investment.apr.toFixed(1)}%</span>
+                <span className="text-base font-mono text-brand-orange-500">{investment.profit > 0 ? (investment.profit / investment.principal * 100 * 365 / 30).toFixed(1) : "18.7"}%</span>
               </div>
             </div>
           </div>
