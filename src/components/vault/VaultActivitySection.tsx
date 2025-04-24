@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { VaultActivityTicker } from "./VaultActivityTicker";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
