@@ -42,9 +42,9 @@ export default {
           dark: "#047857",
         },
         brand: {
-          50: "rgba(255,136,0,.25)",
-          400: "#FFA822",
-          500: "#FF8800",
+          50: "rgba(245, 158, 11, .25)",
+          400: "#F5B041",
+          500: "#F59E0B",
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -94,12 +94,12 @@ export default {
         "neon-nova": "0 0 20px rgba(249, 115, 22, 0.5)",
         "neon-orion": "0 0 20px rgba(245, 158, 11, 0.5)",
         "neon-emerald": "0 0 20px rgba(16, 185, 129, 0.5)",
-        "brand": "0 4px 8px -2px rgba(255,136,0,.35)",
-        "brand-hover": "0 8px 16px -8px rgba(255,136,0,.25)"
+        "brand": "0 4px 8px -2px rgba(245, 158, 11, .35)",
+        "brand-hover": "0 8px 16px -8px rgba(245, 158, 11, .25)"
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-brand': 'linear-gradient(90deg, #FF8800 0%, #FFA822 100%)'
+        'gradient-brand': 'linear-gradient(90deg, #F59E0B 0%, #F5B041 100%)'
       },
       borderRadius: {
         lg: 'var(--radius)',

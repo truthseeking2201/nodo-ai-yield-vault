@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +14,6 @@ interface VaultPerformanceChartProps {
     shadow?: string;
     bgOpacity?: string;
   };
-  // New props
   vaultType?: "emerald" | "orion" | "nova";
   showAxisLabels?: boolean;
   highlightLastDataPoint?: boolean;
@@ -42,21 +40,19 @@ const getAnimationDuration = () => {
     : 1500;
 };
 
-// Helper to determine chart color based on vault type or styles
 const getChartColor = (vaultType?: string, styles?: { gradientBg?: string }) => {
-  // First check styles.gradientBg if available
   if (styles?.gradientBg) {
     if (styles.gradientBg.includes('emerald')) return '#10B981';
     if (styles.gradientBg.includes('orion')) return '#F59E0B';
     if (styles.gradientBg.includes('nova')) return '#F97316';
+    if (styles.gradientBg.includes('#6F3BFF')) return '#F59E0B';
   }
   
-  // Fall back to vaultType
   switch (vaultType) {
     case 'emerald': return '#10B981';
     case 'orion': return '#F59E0B'; 
     case 'nova': return '#F97316';
-    default: return '#6F3BFF'; // Default to brand purple
+    default: return '#F59E0B'; // Default to the new orange color
   }
 };
 
@@ -71,7 +67,6 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
 }) => {
   const chartColor = getChartColor(vaultType, styles);
   
-  // Add percentage calculations
   const initialValue = data[0]?.value || 0;
   const lastValue = data[data.length - 1]?.value || 0;
   const percentageChange = ((lastValue - initialValue) / initialValue) * 100;
@@ -103,7 +98,6 @@ export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
 
   const animationDuration = getAnimationDuration();
 
-  // If no time range tabs are needed (when onTimeRangeChange is not provided)
   if (!onTimeRangeChange) {
     return (
       <ResponsiveContainer width="100%" height="100%">
