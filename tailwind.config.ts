@@ -119,12 +119,42 @@ export default {
 					'0%': { backgroundPosition: '-500px 0' },
 					'100%': { backgroundPosition: '500px 0' },
 				},
+				'fade-in': {
+					'0%': { 
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': { 
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'scale-in': {
+					'0%': {
+						transform: 'scale(0.95)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					}
+				},
+				'hover-scale': {
+					'0%': { transform: 'scale(1)' },
+					'100%': { transform: 'scale(0.98)' }
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				shimmer: 'shimmer 2s linear infinite',
-			}
+				'fade-in': 'fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+				'scale-in': 'scale-in 0.2s ease-out',
+				'hover-scale': 'hover-scale 0.2s ease-out'
+			},
+			backgroundImage: {
+				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

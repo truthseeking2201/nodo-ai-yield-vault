@@ -1,9 +1,9 @@
-import { useState, useRef } from "react";
+
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, Info, TrendingUp, Clock } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
+import { ArrowRight, Shield, Info, TrendingUp, Clock, ExternalLink } from "lucide-react";
 import { VaultData } from "@/types/vault";
 import { TokenIcon, PairIcon } from "@/components/shared/TokenIcons";
 import { 
@@ -12,11 +12,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  HoverCard,
-  HoverCardTrigger,
-  HoverCardContent,
-} from "@/components/ui/hover-card";
 
 interface VaultCardProps {
   vault: VaultData;
@@ -33,11 +28,6 @@ export function VaultCard({
   isActive,
   onHover 
 }: VaultCardProps) {
-  const [showCalculator, setShowCalculator] = useState(false);
-  const [amount, setAmount] = useState(1000);
-  const [sliderValue, setSliderValue] = useState<number[]>([1000]);
-  const cardRef = useRef<HTMLDivElement>(null);
-  
   // Get the gradient classes based on vault type
   const getVaultStyles = (type: 'nova' | 'orion' | 'emerald') => {
     switch (type) {
@@ -48,6 +38,8 @@ export function VaultCard({
           shadow: 'hover:shadow-neon-nova',
           accent: 'text-nova',
           border: 'border-nova/30',
+          riskColor: 'bg-emerald-500',
+          riskText: 'Low Risk'
         };
       case 'orion':
         return {
@@ -56,6 +48,8 @@ export function VaultCard({
           shadow: 'hover:shadow-neon-orion',
           accent: 'text-orion',
           border: 'border-orion/30',
+          riskColor: 'bg-orion-500',
+          riskText: 'Moderate Risk'
         };
       case 'emerald':
         return {
@@ -64,6 +58,8 @@ export function VaultCard({
           shadow: 'hover:shadow-neon-emerald',
           accent: 'text-emerald',
           border: 'border-emerald/30',
+          riskColor: 'bg-emerald-500',
+          riskText: 'Low Risk'
         };
     }
   };
@@ -84,45 +80,38 @@ export function VaultCard({
     return `${value.toFixed(1)}%`;
   };
 
-  // Calculate ROI
-  const calculateMonthlyReturn = (): string => {
-    const principal = amount || 0;
-    const monthlyReturn = (principal * (vault.apr / 100)) / 12;
-    return monthlyReturn.toFixed(2);
-  };
-
-  const calculateAnnualReturn = (): string => {
-    const principal = amount || 0;
-    const annualReturn = principal * (vault.apr / 100);
-    return annualReturn.toFixed(2);
-  };
-
   // Get unlock date
   const getUnlockDate = () => {
     const date = new Date();
     date.setDate(date.getDate() + 30);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  };
-
-  // Handle amount change
-  const handleSliderChange = (values: number[]) => {
-    setSliderValue(values);
-    setAmount(values[0]);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
   // Get appropriate button text based on user state
   const getButtonProps = () => {
-    if (isConnected && hasBalance) {
+    if (!isConnected) {
+      return {
+        text: "Connect & View",
+        variant: "outline" as const,
+        className: "w-full h-12 border-[#6F3BFF]/30 hover:border-[#6F3BFF]/60 text-[#6F3BFF] text-sm font-medium"
+      };
+    } else if (isConnected && !hasBalance) {
+      return {
+        text: "View Details",
+        variant: "outline" as const,
+        className: "w-full h-12 border-white/20 hover:border-white/40 text-sm font-medium"
+      };
+    } else if (isConnected && hasBalance) {
       return {
         text: "Deposit Now",
-        variant: "default",
-        className: `w-full h-12 ${styles.gradientBg}`
+        variant: "default" as const,
+        className: "w-full h-12 bg-gradient-to-r from-[#6F3BFF] to-[#8F63FF] hover:opacity-90 text-white text-sm font-medium transition-all hover:scale-[0.98] shadow-lg"
       };
     }
     return {
-      text: "View Vault Details",
+      text: "View Details",
       variant: "outline" as const,
-      className: "w-full h-12 border-white/20"
+      className: "w-full h-12 border-white/20 text-sm font-medium"
     };
   };
 
@@ -141,41 +130,27 @@ export function VaultCard({
   return (
     <TooltipProvider>
       <Card 
-        className={`glass-card transition-all duration-300 ${isActive ? styles.shadow : ''}`}
-        onMouseEnter={() => {
-          setShowCalculator(true);
-          onHover();
-        }}
-        onMouseLeave={() => setShowCalculator(false)}
-        ref={cardRef}
+        className={`glass-card transition-all duration-300 overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] ${isActive ? styles.shadow : ''}`}
+        onMouseEnter={onHover}
       >
-        <CardHeader className="p-4 pb-2">
+        <div className={`h-1 ${styles.gradientBg}`} />
+        <CardHeader className="p-5 pb-2">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-2">
               <PairIcon tokens={tokenPair as [any, any]} size={24} />
-              <CardTitle className="text-xl">
+              <CardTitle className="text-base sm:text-lg font-medium">
                 {vault.name}
               </CardTitle>
             </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-1">
-                  <Shield className={`h-4 w-4 ${styles.accent}`} />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs">
-                <div className="space-y-1">
-                  <p className="font-semibold text-xs">Audit ✓ WatchPUG, Feb 2025</p>
-                  <p className="text-xs">Smart contract verified and audited for security</p>
-                </div>
-              </TooltipContent>
-            </Tooltip>
+            <div className={`text-[11px] font-medium py-0.5 px-2.5 rounded-full ${styles.riskColor}`}>
+              {styles.riskText}
+            </div>
           </div>
-          <CardDescription className="text-white/60 text-xs truncate">
+          <CardDescription className="text-white/60 text-xs truncate mt-1">
             {vault.description}
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-4 pt-3 space-y-4">
+        <CardContent className="p-5 pt-3 space-y-3">
           {/* Metrics row with consistent grid */}
           <div className="grid grid-cols-3 gap-2">
             <div>
@@ -190,105 +165,67 @@ export function VaultCard({
                   </TooltipContent>
                 </Tooltip>
               </p>
-              <p className="text-sm font-mono font-bold text-[#9b87f5]">
+              <p className="text-sm font-mono font-medium tabular-nums text-[#9b87f5]">
                 {formatPercentage(vault.apr)}
               </p>
             </div>
             <div>
               <p className="text-[11px] text-[#9CA3AF] h-5">APY</p>
-              <p className="text-sm font-mono font-bold text-teal-400">
+              <p className="text-sm font-mono font-medium tabular-nums text-teal-400">
                 {formatPercentage(vault.apy)}
               </p>
             </div>
             <div>
               <p className="text-[11px] text-[#9CA3AF] h-5">TVL</p>
-              <p className="text-sm font-mono font-bold text-[#8E9196]">
+              <p className="text-sm font-mono font-medium tabular-nums text-[#8E9196]">
                 {formatCurrency(vault.tvl)}
               </p>
             </div>
           </div>
           
-          {/* Change indicator - Always visible but minimalist */}
-          <div className="flex justify-between items-center">
-            <span className="text-[11px] text-white/60">
-              +0.5% today
+          {/* Change indicator */}
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-mono text-green-400">
+              ▲ 0.5% today
             </span>
-            <div className="h-3 w-16 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-2 w-16 bg-white/10 rounded-full overflow-hidden ml-auto">
               <div className="h-full w-3/4 bg-gradient-to-r from-green-400/80 to-green-600/80"></div>
             </div>
           </div>
 
-          {/* Collapsible ROI calculator - only shown on hover */}
-          {showCalculator && (
-            <div className="space-y-2 animate-fade-in">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] text-[#9CA3AF]">ROI Calculator</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-[#9CA3AF]">USDC</span>
-                  <input
-                    type="text"
-                    value={amount}
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value.replace(/[^0-9]/g, '') || '0');
-                      setAmount(val);
-                      setSliderValue([val]);
-                    }}
-                    className="w-16 h-6 text-xs bg-white/10 border-white/20 rounded px-1 text-right"
-                  />
-                </div>
-              </div>
-              <Slider
-                value={sliderValue}
-                min={100}
-                max={10000}
-                step={100}
-                className="[&_.relative]:h-[2px] [&_.absolute]:bg-[#6F3BFF] [&_button]:h-3 [&_button]:w-3"
-                onValueChange={handleSliderChange}
-              />
-              <div className="grid grid-cols-2 text-center text-xs">
-                <div>
-                  <p className="text-[11px] text-[#9CA3AF]">Monthly</p>
-                  <p className="text-teal-400">${calculateMonthlyReturn()}</p>
-                </div>
-                <div>
-                  <p className="text-[11px] text-[#9CA3AF]">Annual</p>
-                  <p className="text-teal-400">${calculateAnnualReturn()}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Button with hover card for unlock details */}
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <Button 
-                variant={buttonProps.variant as "default" | "outline"} 
-                className={buttonProps.className}
-                asChild
-              >
-                <Link to={`/vaults/${vault.id}`}>
-                  {buttonProps.text} <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-80 p-4">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-white/60" />
-                  <span className="text-sm">Unlocks in 30 days ({getUnlockDate()})</span>
-                </div>
-                <div className="text-xs text-white/60">
-                  Gas fee: approximately 0.006 SUI
-                </div>
-                {isConnected && (
-                  <div className="text-xs text-yellow-400 flex items-center gap-1 mt-2">
-                    <TrendingUp className="h-3 w-3" />
-                    <span>First Deposit Bonus +100 pts</span>
+          <div className="h-px w-full bg-white/[0.06] my-2"></div>
+          
+          {/* Button with tooltip for details */}
+          <div className="space-y-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant={buttonProps.variant as "default" | "outline"} 
+                  className={buttonProps.className}
+                  asChild
+                >
+                  <Link to={`/vaults/${vault.id}`}>
+                    {buttonProps.text} <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs p-2">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="h-3.5 w-3.5 text-white/60" />
+                    <span className="text-xs">Unlocks in 30 days ({getUnlockDate()})</span>
                   </div>
-                )}
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+                  <div className="text-[11px] text-white/60">
+                    Gas fee: approximately 0.006 SUI
+                  </div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+            
+            <p className="text-xs text-center text-[#9CA3AF]">
+              Gas ≈ 0.006 SUI · Unlocks in 30 days
+            </p>
+          </div>
         </CardContent>
       </Card>
     </TooltipProvider>
