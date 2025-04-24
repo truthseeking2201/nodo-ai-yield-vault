@@ -8,6 +8,7 @@ import { DepositDrawer } from "@/components/vault/DepositDrawer";
 import { VaultPerformanceChart } from "@/components/vault/VaultPerformanceChart";
 import { VaultActivityTicker } from "@/components/vault/VaultActivityTicker";
 import { VaultSecurityInfo } from "@/components/vault/VaultSecurityInfo";
+import { NODOAIxCard } from "@/components/vault/NODOAIxCard";
 import { useWallet } from "@/hooks/useWallet";
 import { useVaultDetail } from "@/hooks/useVaultDetail";
 import { Progress } from "@/components/ui/progress";
@@ -261,6 +262,17 @@ export default function VaultDetail() {
               </div>
             </CardContent>
           </Card>
+
+          <NODOAIxCard
+            balance={1000}
+            principal={1000}
+            fees={12.3}
+            unlockTime={new Date(Date.now() + 24 * 60 * 60 * 1000)}
+            holderCount={1203}
+            contractAddress="0xAB1234567890ABCDEF1234567890ABCDEF123456"
+            auditUrl="/audit.pdf"
+            styles={styles}
+          />
 
           <Card className="glass-card">
             <CardHeader>
