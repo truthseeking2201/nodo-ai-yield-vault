@@ -103,16 +103,38 @@ export function NODOAIxCard({
               <Check className="w-5 h-5 text-white" />
             </div>
             NODOAIx Certificate
-            <PopoverTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                aria-label="Learn more about NODOAIx"
-              >
-                <HelpCircle className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  aria-label="Learn more about NODOAIx"
+                >
+                  <HelpCircle className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[280px]">
+                <div className="space-y-4">
+                  <h4 className="font-medium text-lg">What is NODOAIx?</h4>
+                  <ul className="space-y-2 text-sm text-white/80">
+                    <li>• 1 NODOAIx = your deposited USDC + fees earned by the AI Market-Making Agent.</li>
+                    <li>• It's minted when you deposit and burned when you redeem.</li>
+                    <li>
+                      • Smart-contract address: {" "}
+                      <a
+                        href={`https://explorer.sui.io/address/${contractAddress}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald hover:underline"
+                      >
+                        {contractAddress.slice(0, 6)}...{contractAddress.slice(-4)}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </PopoverContent>
+            </Popover>
           </CardTitle>
           <p className="text-sm text-white/60">{holderCount.toLocaleString()} holders</p>
         </div>
@@ -182,29 +204,6 @@ export function NODOAIxCard({
           </Tooltip>
         </TooltipProvider>
       </CardContent>
-
-      <Popover>
-        <PopoverContent className="w-[280px]">
-          <div className="space-y-4">
-            <h4 className="font-medium text-lg">What is NODOAIx?</h4>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li>• 1 NODOAIx = your deposited USDC + fees earned by the AI Market-Making Agent.</li>
-              <li>• It's minted when you deposit and burned when you redeem.</li>
-              <li>
-                • Smart-contract address: {" "}
-                <a
-                  href={`https://explorer.sui.io/address/${contractAddress}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-emerald hover:underline"
-                >
-                  {contractAddress.slice(0, 6)}...{contractAddress.slice(-4)}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </PopoverContent>
-      </Popover>
     </Card>
   );
 }
