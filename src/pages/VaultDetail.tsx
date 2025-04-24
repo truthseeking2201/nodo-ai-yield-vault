@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -8,8 +7,8 @@ import { VaultActivityTicker } from "@/components/vault/VaultActivityTicker";
 import { VaultSecurityInfo } from "@/components/vault/VaultSecurityInfo";
 import { NODOAIxCard } from "@/components/vault/NODOAIxCard";
 import { VaultMetricsCard } from "@/components/vault/VaultMetricsCard";
-import { VaultActionCard } from "@/components/vault/VaultActionCard";
 import { VaultPerformanceSection } from "@/components/vault/VaultPerformanceSection";
+import { VaultStickyBar } from "@/components/vault/VaultStickyBar";
 import { DepositDrawer } from "@/components/vault/DepositDrawer";
 import { useWallet } from "@/hooks/useWallet";
 import { useVaultDetail } from "@/hooks/useVaultDetail";
@@ -144,6 +143,8 @@ export default function VaultDetail() {
             styles={styles}
             projectedAmount={projectedAmount}
             onProjectedAmountChange={setProjectedAmount}
+            isConnected={isConnected}
+            onActionClick={handleActionClick}
           />
 
           <NODOAIxCard
@@ -156,15 +157,14 @@ export default function VaultDetail() {
             auditUrl="/audit.pdf"
             styles={styles}
           />
-
-          <VaultActionCard
-            unlockProgress={unlockProgress}
-            isConnected={isConnected}
-            styles={styles}
-            onActionClick={handleActionClick}
-          />
         </div>
       </div>
+
+      <VaultStickyBar 
+        isConnected={isConnected}
+        styles={styles}
+        onActionClick={handleActionClick}
+      />
 
       <DepositDrawer 
         open={isDepositDrawerOpen}

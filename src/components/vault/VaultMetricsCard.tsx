@@ -1,8 +1,8 @@
-
 import React from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Info, ArrowRight, Wallet } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -15,16 +15,22 @@ interface VaultMetricsCardProps {
   vault: VaultData;
   styles: {
     gradientText: string;
+    gradientBg: string;
+    shadow: string;
   };
   projectedAmount: string;
   onProjectedAmountChange: (value: string) => void;
+  isConnected: boolean;
+  onActionClick: () => void;
 }
 
 export function VaultMetricsCard({ 
   vault, 
   styles, 
   projectedAmount, 
-  onProjectedAmountChange 
+  onProjectedAmountChange,
+  isConnected,
+  onActionClick
 }: VaultMetricsCardProps) {
   const formatPercentage = (value?: number) => {
     return value !== undefined ? `${value.toFixed(1)}%` : '-';
@@ -113,6 +119,17 @@ export function VaultMetricsCard({
             ))}
           </div>
         </div>
+
+        <Button 
+          className={`w-full mt-6 ${styles.gradientBg} ${styles.shadow} animate-fade-in`}
+          onClick={onActionClick}
+        >
+          {isConnected ? (
+            <>Deposit Now <ArrowRight className="ml-2 h-4 w-4" /></>
+          ) : (
+            <>Connect Wallet <Wallet className="ml-2 h-4 w-4" /></>
+          )}
+        </Button>
       </CardContent>
     </Card>
   );
