@@ -20,6 +20,10 @@ interface TxTableProps {
 
 export function TxTable({ transactions, isLoading = false, onSelect }: TxTableProps) {
   const [filter, setFilter] = useState<'all' | 'deposit' | 'withdraw'>('all');
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({
+    from: null,
+    to: null
+  });
   
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', { 
@@ -57,34 +61,43 @@ export function TxTable({ transactions, isLoading = false, onSelect }: TxTablePr
   const filteredTransactions = filter === 'all' ? 
     transactions : 
     transactions.filter(tx => tx.type === filter);
-    
+  
+  const handleCopyHash = (hash: string) => {
+    navigator.clipboard.writeText(hash).then(() => {
+      // In a real app, you'd show a toast notification
+      console.log('Hash copied to clipboard');
+    });
+  };
+  
   return (
-    <div>
-      <div className="flex space-x-2 mb-4">
-        <Button 
-          variant={filter === 'all' ? "default" : "outline"} 
-          size="sm"
-          onClick={() => setFilter('all')}
-          className={filter === 'all' ? "bg-nova text-white" : ""}
-        >
-          All
-        </Button>
-        <Button 
-          variant={filter === 'deposit' ? "default" : "outline"}
-          size="sm"
-          onClick={() => setFilter('deposit')}
-          className={filter === 'deposit' ? "bg-nova text-white" : ""}
-        >
-          Deposits
-        </Button>
-        <Button 
-          variant={filter === 'withdraw' ? "default" : "outline"}
-          size="sm"
-          onClick={() => setFilter('withdraw')}
-          className={filter === 'withdraw' ? "bg-nova text-white" : ""}
-        >
-          Withdrawals
-        </Button>
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2 md:justify-between">
+        <div className="flex space-x-2">
+          <Button 
+            variant={filter === 'all' ? "default" : "outline"} 
+            size="sm"
+            onClick={() => setFilter('all')}
+            className={filter === 'all' ? "bg-nova text-[#0E0F11]" : ""}
+          >
+            All
+          </Button>
+          <Button 
+            variant={filter === 'deposit' ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter('deposit')}
+            className={filter === 'deposit' ? "bg-nova text-[#0E0F11]" : ""}
+          >
+            Deposits
+          </Button>
+          <Button 
+            variant={filter === 'withdraw' ? "default" : "outline"}
+            size="sm"
+            onClick={() => setFilter('withdraw')}
+            className={filter === 'withdraw' ? "bg-nova text-[#0E0F11]" : ""}
+          >
+            Withdrawals
+          </Button>
+        </div>
       </div>
       
       <div className="glass-card overflow-hidden">
@@ -96,7 +109,9 @@ export function TxTable({ transactions, isLoading = false, onSelect }: TxTablePr
                 <TableHead className="text-xs uppercase tracking-wide text-white/60">Type</TableHead>
                 <TableHead className="text-xs uppercase tracking-wide text-white/60">Vault</TableHead>
                 <TableHead className="text-xs uppercase tracking-wide text-white/60 text-right">Amount</TableHead>
-                <TableHead className="text-xs uppercase tracking-wide text-white/60">Tx Hash</TableHead>
+                <TableHead className="text-xs uppercase tracking-wide text-white/60">
+                  Hash ↗
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -114,7 +129,7 @@ export function TxTable({ transactions, isLoading = false, onSelect }: TxTablePr
                 filteredTransactions.map((tx) => (
                   <TableRow 
                     key={tx.id} 
-                    className="border-b border-white/5 hover:bg-white/5 cursor-pointer" 
+                    className="border-b border-white/5 hover:bg-white/5 cursor-pointer even:bg-white/[0.02]" 
                     onClick={() => onSelect(tx)}
                   >
                     <TableCell className="font-mono text-xs">{formatDate(tx.timestamp)}</TableCell>
@@ -129,7 +144,28 @@ export function TxTable({ transactions, isLoading = false, onSelect }: TxTablePr
                     <TableCell className="text-right font-mono font-medium">
                       {formatCurrency(tx.amount)}
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-white/70">{shortenHash(tx.id)}</TableCell>
+                    <TableCell 
+                      className="font-mono text-xs text-white/70 flex items-center space-x-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopyHash(tx.id);
+                      }}
+                    >
+                      <span className="hover:text-white transition-colors">{shortenHash(tx.id)}</span>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 w-6 p-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(`https://explorer.sui.io/txblock/${tx.id}`, '_blank');
+                        }}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10 4H6C4.89543 4 4 4.89543 4 6V18C4 19.1046 4.89543 20 6 20H18C19.1046 20 20 19.1046 20 18V14M14 4H20M20 4V10M20 4L10 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (

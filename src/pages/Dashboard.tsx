@@ -7,16 +7,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWallet } from "@/hooks/useWallet";
 import { vaultService } from "@/services/vaultService";
 import { UserInvestment, TransactionHistory } from "@/types/vault";
-import { WalletIcon } from "lucide-react";
+import { WalletIcon, Download, Bell } from "lucide-react";
 
 // Dashboard components
-import { KpiTile } from "@/components/dashboard/KpiTile";
+import { KpiBar } from "@/components/dashboard/KpiBar";
 import { VaultRowAccordion } from "@/components/dashboard/VaultRowAccordion";
 import { TxTable } from "@/components/dashboard/TxTable";
 import { TxDrawer } from "@/components/dashboard/TxDrawer";
 import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { WithdrawModal } from "@/components/vault/WithdrawModal";
+import { AssetSplitDonut } from "@/components/dashboard/AssetSplitDonut";
+import { NotificationsDrawer } from "@/components/dashboard/NotificationsDrawer";
 
 export default function Dashboard() {
   const { isConnected, address, openWalletModal } = useWallet();
@@ -24,6 +26,9 @@ export default function Dashboard() {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [selectedTx, setSelectedTx] = useState<TransactionHistory | null>(null);
   const [isTxDrawerOpen, setIsTxDrawerOpen] = useState(false);
+  const [isNotificationsDrawerOpen, setIsNotificationsDrawerOpen] = useState(false);
+  const [isAutoClaimEnabled, setIsAutoClaimEnabled] = useState(false);
+  const [exportingCSV, setExportingCSV] = useState(false);
 
   const { 
     data: investments,
@@ -70,9 +75,9 @@ export default function Dashboard() {
       const baseValue = totalPrincipal * growthFactor;
       
       // Find deposit events on this day
-      const depositsOnThisDay = transactions.filter(tx => 
+      const depositsOnThisDay = transactions?.filter(tx => 
         tx.type === 'deposit' && tx.timestamp.split('T')[0] === dateStr
-      );
+      ) || [];
       
       const depositAmount = depositsOnThisDay.reduce((sum, tx) => sum + tx.amount, 0);
       
@@ -87,6 +92,23 @@ export default function Dashboard() {
     return data;
   }, [transactions, totalPrincipal]);
 
+  // Calculate average APR across all investments
+  const averageAPR = useMemo(() => {
+    if (!investments || investments.length === 0) return 0;
+    
+    const totalValueWithAPR = investments.reduce((sum, inv) => {
+      // Extract APR from vaultId (simplification for demo)
+      let aprEstimate = 0;
+      if (inv.vaultId.includes('deep')) aprEstimate = 21.5;
+      else if (inv.vaultId.includes('cetus')) aprEstimate = 18.9;
+      else aprEstimate = 15.2;
+      
+      return sum + (inv.currentValue * aprEstimate);
+    }, 0);
+    
+    return totalInvestmentValue > 0 ? totalValueWithAPR / totalInvestmentValue : 0;
+  }, [investments, totalInvestmentValue]);
+
   const handleWithdrawClick = (investment: UserInvestment) => {
     setSelectedInvestment(investment);
     setIsWithdrawModalOpen(true);
@@ -95,6 +117,16 @@ export default function Dashboard() {
   const handleTxSelect = (tx: TransactionHistory) => {
     setSelectedTx(tx);
     setIsTxDrawerOpen(true);
+  };
+
+  const handleExportCSV = () => {
+    setExportingCSV(true);
+    // Simulate CSV export
+    setTimeout(() => {
+      setExportingCSV(false);
+      // In a real implementation, this would download a CSV file
+      alert("Transactions exported to CSV");
+    }, 1500);
   };
 
   if (!isConnected) {
@@ -121,79 +153,104 @@ export default function Dashboard() {
 
   return (
     <PageContainer>
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold mb-1">
-          Your <span className="gradient-text-nova">Portfolio</span>
-        </h1>
-        <p className="text-white/60 text-sm">
-          Live snapshot of your vault positions
-        </p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold mb-1">
+            Your <span className="gradient-text-nova">Portfolio</span>
+          </h1>
+          <p className="text-white/60 text-sm">
+            Live snapshot of your vault positions
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setIsNotificationsDrawerOpen(true)}
+            className="relative"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-1 right-1 h-2 w-2 bg-orange-500 rounded-full"></span>
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <KpiTile 
-          title="Total Value" 
-          value={totalInvestmentValue} 
-          delta={5.75} // Example 24h change
-          series={performanceData.map(d => ({ value: d.value }))}
-          isLoading={isLoadingInvestments}
-        />
-        <KpiTile 
-          title="Principal Invested" 
-          value={totalPrincipal} 
-          series={performanceData.map(d => ({ value: totalPrincipal }))}
-          valueColor="text-[#33C3F0]"
-          isLoading={isLoadingInvestments}
-        />
-        <KpiTile 
-          title="Total Profit" 
-          value={totalProfit} 
-          delta={2.34} // Example 24h change
-          series={performanceData.map(d => ({ value: d.profit || 0 }))}
-          valueColor={totalProfit >= 0 ? "text-emerald" : "text-red-500"}
-          isLoading={isLoadingInvestments}
-        />
-      </div>
-
-      <PerformanceChart 
-        data={performanceData}
-        isLoading={isLoadingInvestments || isLoadingTransactions}
+      {/* KPI Bar */}
+      <KpiBar 
+        portfolioValue={totalInvestmentValue}
+        profit={totalProfit}
+        averageAPR={averageAPR}
+        isLoading={isLoadingInvestments}
       />
 
-      <Tabs defaultValue="investments" className="w-full">
-        <TabsList className="w-full rounded-xl bg-white/5 p-1">
-          <TabsTrigger value="investments" className="rounded-lg flex-1">Active Investments</TabsTrigger>
-          <TabsTrigger value="transactions" className="rounded-lg flex-1">Transaction History</TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Performance Chart (takes 2/3 of width on large screens) */}
+        <div className="lg:col-span-2">
+          <PerformanceChart 
+            data={performanceData}
+            transactions={transactions}
+            isLoading={isLoadingInvestments || isLoadingTransactions}
+            onTxClick={handleTxSelect}
+          />
+        </div>
         
-        <TabsContent value="investments" className="mt-6">
-          {isLoadingInvestments ? (
-            <div className="space-y-4">
-              {[1, 2].map(i => (
-                <div key={i} className="glass-card h-24 animate-shimmer"></div>
-              ))}
-            </div>
-          ) : investments && investments.length > 0 ? (
-            <div>
-              {investments.map((investment) => (
-                <VaultRowAccordion 
-                  key={investment.vaultId} 
-                  investment={investment}
-                  onWithdraw={handleWithdrawClick}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyState 
-              title="No Active Investments"
-              description="You don't have any active investments. Start by exploring our vaults and making your first deposit."
-              actionLabel="Explore Vaults"
-              actionLink="/"
+        {/* Asset Split Donut (takes 1/3 of width on large screens) */}
+        <div>
+          <AssetSplitDonut 
+            investments={investments}
+            isLoading={isLoadingInvestments}
+          />
+        </div>
+      </div>
+
+      <h2 className="text-xl font-bold mb-4">Active Positions</h2>
+      
+      {isLoadingInvestments ? (
+        <div className="space-y-4 mb-8">
+          {[1, 2].map(i => (
+            <div key={i} className="glass-card h-24 animate-shimmer"></div>
+          ))}
+        </div>
+      ) : investments && investments.length > 0 ? (
+        <div className="mb-8">
+          {investments.map((investment) => (
+            <VaultRowAccordion 
+              key={investment.vaultId} 
+              investment={investment}
+              onWithdraw={handleWithdrawClick}
             />
-          )}
-        </TabsContent>
+          ))}
+        </div>
+      ) : (
+        <div className="mb-8">
+          <EmptyState 
+            title="No Active Investments"
+            description="You don't have any active investments. Start by exploring our vaults and making your first deposit."
+            actionLabel="Explore Vaults"
+            actionLink="/"
+          />
+        </div>
+      )}
+
+      <Tabs defaultValue="transactions" className="w-full">
+        <div className="flex justify-between items-center mb-4">
+          <TabsList className="rounded-xl bg-white/5 p-1">
+            <TabsTrigger value="transactions" className="rounded-lg">Transactions</TabsTrigger>
+            <TabsTrigger value="rewards" className="rounded-lg">Rewards</TabsTrigger>
+          </TabsList>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleExportCSV}
+            disabled={exportingCSV || !transactions || transactions.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" /> 
+            {exportingCSV ? "Exporting..." : "Export CSV"}
+          </Button>
+        </div>
         
-        <TabsContent value="transactions" className="mt-6">
+        <TabsContent value="transactions">
           {isLoadingTransactions ? (
             <div className="glass-card h-64 animate-shimmer"></div>
           ) : transactions && transactions.length > 0 ? (
@@ -209,6 +266,15 @@ export default function Dashboard() {
               actionLink="/"
             />
           )}
+        </TabsContent>
+        
+        <TabsContent value="rewards">
+          <div className="glass-card p-8 text-center">
+            <h3 className="text-lg font-medium mb-2">Rewards Coming Soon</h3>
+            <p className="text-white/60">
+              Track your earned fees, referrals, and other rewards in this section.
+            </p>
+          </div>
         </TabsContent>
       </Tabs>
 
@@ -227,6 +293,12 @@ export default function Dashboard() {
           investment={selectedInvestment}
         />
       )}
+      
+      {/* Notifications Drawer */}
+      <NotificationsDrawer
+        open={isNotificationsDrawerOpen}
+        onClose={() => setIsNotificationsDrawerOpen(false)}
+      />
     </PageContainer>
   );
 }

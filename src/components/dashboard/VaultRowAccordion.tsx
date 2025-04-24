@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { LockupProgress } from "./LockupProgress";
+import { useDepositDrawer } from "@/hooks/useDepositDrawer";
 
 interface VaultRowAccordionProps {
   investment: UserInvestment;
@@ -18,6 +19,7 @@ interface VaultRowAccordionProps {
 
 export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { actions } = useDepositDrawer();
   
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', { 
@@ -80,9 +82,11 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
   
   const styles = getVaultStyles(investment.vaultId);
   const daysLeft = calculateDaysLeft();
-  const displayDays = investment.isWithdrawable 
+  const showExtendLock = daysLeft <= 7 && daysLeft > 0;
+  
+  const displayDaysText = investment.isWithdrawable 
     ? `Unlocked`
-    : `${daysLeft} / ${investment.lockupPeriod} d · Locked`;
+    : `Unlocks in ${daysLeft} days`;
   
   // Estimate fees earned (simple calculation for demo purposes)
   const feesEarned = investment.profit * 0.75; // 75% of profit is from fees
@@ -90,6 +94,29 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
   // APR estimate based on the profit compared to principal
   const aprEstimate = (investment.profit / investment.principal) * (365 / (investment.lockupPeriod - daysLeft)) * 100;
   
+  const handleAddFunds = () => {
+    // Using the openDepositDrawer function from the hook
+    if (investment.vaultId) {
+      // Create minimal vault object for the deposit drawer
+      const vaultData = {
+        id: investment.vaultId,
+        name: formatVaultName(investment.vaultId),
+        apr: aprEstimate,
+        lockupPeriods: [{
+          days: investment.lockupPeriod,
+          boost: 0
+        }]
+      };
+      
+      actions.openDepositDrawer(vaultData as any);
+    }
+  };
+  
+  const handleExtendLock = () => {
+    // In a real implementation, this would extend the lock period
+    alert("Extend lock period would be implemented here");
+  };
+
   return (
     <Accordion type="single" collapsible className="glass-card mb-4 overflow-hidden transition-all duration-150 ease-out border-white/10 hover:border-white/20 rounded-xl">
       <AccordionItem 
@@ -102,7 +129,7 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
           transition: 'transform 0.15s cubic-bezier(.22,1,.36,1)'
         }}
       >
-        <AccordionTrigger className="py-4 px-5 hover:no-underline">
+        <AccordionTrigger className="py-5 px-5 hover:no-underline">
           <div className="flex flex-1 items-center justify-between">
             <div className="flex items-center">
               <div 
@@ -125,11 +152,11 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
               </div>
               <div className="ml-3">
                 <p className="font-medium text-[14px]">{formatVaultName(investment.vaultId)} Vault</p>
-                <p className="text-white/60 text-xs">{displayDays}</p>
+                <p className="text-white/60 text-xs">{displayDaysText}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="font-mono font-medium text-[14px]">
+              <p className="font-mono font-medium text-[15px]">
                 {formatCurrency(investment.currentValue)}
               </p>
               <p className={`text-xs font-mono ${investment.profit > 0 ? 'text-emerald' : 'text-red-500'}`}>
@@ -148,7 +175,7 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
           
           <div className="grid grid-cols-2 gap-6 mt-4">
             <div>
-              <p className="text-xs uppercase tracking-wide text-white/60 mb-1">Principal</p>
+              <p className="text-xs uppercase tracking-wide text-white/60 mb-1">Capital Invested</p>
               <p className="font-mono text-[14px]">{formatCurrency(investment.principal)}</p>
             </div>
             <div>
@@ -169,20 +196,32 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
             <Button 
               variant="outline" 
               className="flex-1"
-              disabled={true} // For demo purposes, add funds not implemented
+              onClick={handleAddFunds}
             >
               Add Funds
             </Button>
-            <Button 
-              onClick={() => onWithdraw(investment)}
-              disabled={!investment.isWithdrawable}
-              className={`gradient-bg-${investment.vaultId.includes('deep') || investment.vaultId.includes('nova') ? 'nova' : 
-                         investment.vaultId.includes('cetus') || investment.vaultId.includes('orion') ? 'orion' : 
-                         'emerald'} flex-1`}
-            >
-              {!investment.isWithdrawable && <Lock className="mr-1.5 h-4 w-4" />}
-              Withdraw
-            </Button>
+            
+            {showExtendLock ? (
+              <Button 
+                onClick={handleExtendLock}
+                className={`gradient-bg-${investment.vaultId.includes('deep') || investment.vaultId.includes('nova') ? 'nova' : 
+                          investment.vaultId.includes('cetus') || investment.vaultId.includes('orion') ? 'orion' : 
+                          'emerald'} flex-1 text-[#0E0F11]`}
+              >
+                Extend +30d
+              </Button>
+            ) : (
+              <Button 
+                onClick={() => onWithdraw(investment)}
+                disabled={!investment.isWithdrawable}
+                className={`gradient-bg-${investment.vaultId.includes('deep') || investment.vaultId.includes('nova') ? 'nova' : 
+                          investment.vaultId.includes('cetus') || investment.vaultId.includes('orion') ? 'orion' : 
+                          'emerald'} flex-1 text-[#0E0F11]`}
+              >
+                {!investment.isWithdrawable && <Lock className="mr-1.5 h-4 w-4" />}
+                Withdraw
+              </Button>
+            )}
           </div>
         </AccordionContent>
       </AccordionItem>
