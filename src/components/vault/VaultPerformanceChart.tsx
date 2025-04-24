@@ -143,7 +143,7 @@ export function VaultPerformanceChart({
           fill={`url(#${gradientId})`}
           fillOpacity={0.2}
           animationDuration={1000}
-          animationEasing="cubic-bezier(.22,1,.36,1)"
+          animationEasing="ease-out"
         />
         {highlightLastDataPoint && (
           <Line
