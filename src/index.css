@@ -95,7 +95,6 @@
     @apply bg-gradient-to-br from-emerald/90 to-emerald-dark/80;
   }
   
-  /* New animations */
   @keyframes fade-in {
     from {
       opacity: 0;

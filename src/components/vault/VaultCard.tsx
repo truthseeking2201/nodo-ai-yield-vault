@@ -27,7 +27,6 @@ export function VaultCard({
   isActive,
   onHover 
 }: VaultCardProps) {
-  // Get the gradient classes based on vault type
   const getVaultStyles = (type: 'nova' | 'orion' | 'emerald') => {
     switch (type) {
       case 'nova':
@@ -65,7 +64,6 @@ export function VaultCard({
 
   const styles = getVaultStyles(vault.type);
 
-  // Format currency
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', { 
       style: 'currency', 
@@ -74,25 +72,22 @@ export function VaultCard({
     }).format(value);
   };
 
-  // Format percentage
   const formatPercentage = (value: number) => {
     return `${value.toFixed(1)}%`;
   };
 
-  // Get unlock date
   const getUnlockDate = () => {
     const date = new Date();
     date.setDate(date.getDate() + 30);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  // Get appropriate button text based on user state
   const getButtonProps = () => {
     if (!isConnected) {
       return {
         text: "Connect & View",
         variant: "outline" as const,
-        className: "w-full h-12 border-[#6F3BFF]/30 hover:border-[#6F3BFF]/60 text-[#6F3BFF] text-sm font-medium"
+        className: "w-full h-12 border-[#F59E0B]/30 hover:border-[#F59E0B]/60 text-[#F59E0B] text-sm font-medium"
       };
     } else if (isConnected && !hasBalance) {
       return {
@@ -104,7 +99,7 @@ export function VaultCard({
       return {
         text: "Deposit Now",
         variant: "default" as const,
-        className: "w-full h-12 bg-gradient-to-r from-[#6F3BFF] to-[#8F63FF] hover:opacity-90 text-white text-sm font-medium transition-all hover:scale-[0.98] shadow-lg"
+        className: "w-full h-12 bg-gradient-to-r from-[#F59E0B] to-[#F5B041] hover:opacity-90 text-white text-sm font-medium transition-all hover:scale-[0.98] shadow-lg"
       };
     }
     return {
@@ -116,7 +111,6 @@ export function VaultCard({
 
   const buttonProps = getButtonProps();
 
-  // Get token pair based on vault type
   const getTokenPair = (vaultId: string): [string, string] => {
     if (vaultId.includes('sui-usdc')) return ['SUI', 'USDC'];
     if (vaultId.includes('deep-sui')) return ['DEEP', 'SUI'];
@@ -150,7 +144,6 @@ export function VaultCard({
           </CardDescription>
         </CardHeader>
         <CardContent className="p-5 pt-3 space-y-3">
-          {/* Metrics row with consistent grid */}
           <div className="grid grid-cols-3 gap-2">
             <div>
               <p className="text-[11px] text-[#9CA3AF] flex items-center gap-1 h-5">
@@ -182,7 +175,6 @@ export function VaultCard({
             </div>
           </div>
           
-          {/* Change indicator */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-mono text-green-400">
               ▲ 0.5% today
@@ -194,7 +186,6 @@ export function VaultCard({
 
           <div className="h-px w-full bg-white/[0.06] my-2"></div>
           
-          {/* Button with tooltip for details */}
           <div className="space-y-2">
             <Tooltip>
               <TooltipTrigger asChild>

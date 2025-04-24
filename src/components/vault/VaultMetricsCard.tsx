@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -37,7 +36,6 @@ export function VaultMetricsCard({
   const [sliderValue, setSliderValue] = useState<number[]>([projectedAmount ? parseInt(projectedAmount) : 1000]);
   const [sliderLabel, setSliderLabel] = useState<string>('');
   
-  // Update projected amount when slider changes
   useEffect(() => {
     if (sliderValue[0]) {
       onProjectedAmountChange(sliderValue[0].toString());
@@ -45,7 +43,6 @@ export function VaultMetricsCard({
     }
   }, [sliderValue, onProjectedAmountChange]);
   
-  // Update slider when projected amount changes externally
   useEffect(() => {
     const value = projectedAmount ? parseInt(projectedAmount) : 1000;
     setSliderValue([value]);
@@ -71,20 +68,19 @@ export function VaultMetricsCard({
     return (principal * vault.apr / 100) / 12;
   };
 
-  // Get the appropriate button props based on user state
   const getButtonProps = () => {
     if (!isConnected) {
       return {
         text: "Connect Wallet",
         icon: <Wallet className="ml-2 h-4 w-4" />,
-        className: "w-full h-12 border-[#6F3BFF] hover:border-[#8F63FF] hover:bg-[#6F3BFF]/10 text-[#8F63FF] text-sm font-medium transition-all hover:scale-[0.98]",
+        className: "w-full h-12 border-[#F59E0B] hover:border-[#F5B041] hover:bg-[#F59E0B]/10 text-[#F5B041] text-sm font-medium transition-all hover:scale-[0.98]",
         variant: "outline" as const
       };
     } else {
       return {
         text: "Deposit Now",
         icon: <ArrowRight className="ml-2 h-4 w-4" />,
-        className: `w-full h-12 ${styles.gradientBg} text-white transition-all hover:scale-[0.98] active:scale-95 shadow-[0_4px_8px_-2px_rgba(111,59,255,0.35)]`,
+        className: `w-full h-12 ${styles.gradientBg} text-white transition-all hover:scale-[0.98] active:scale-95 shadow-[0_4px_8px_-2px_rgba(245,158,11,0.35)]`,
         variant: "default" as const
       };
     }
@@ -99,7 +95,6 @@ export function VaultMetricsCard({
         <CardTitle className="text-lg font-medium text-[#E5E7EB]">Vault Metrics</CardTitle>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
-        {/* Metrics grid */}
         <div className="grid grid-cols-2 gap-x-4 gap-y-3">
           <div className="text-sm text-[#9CA3AF]">APR</div>
           <div className="text-right font-mono font-medium text-lg text-[#8F63FF]">
@@ -117,7 +112,6 @@ export function VaultMetricsCard({
           </div>
         </div>
 
-        {/* ROI Slider */}
         <div className="pt-4">
           <div className="relative pt-8 pb-4">
             <div 
@@ -144,7 +138,6 @@ export function VaultMetricsCard({
           </div>
         </div>
 
-        {/* Lockup Periods Table */}
         <div className="space-y-4">
           <h3 className="text-sm text-[#9CA3AF] mb-2">Lockup Periods</h3>
           <div className="space-y-3">
@@ -164,7 +157,6 @@ export function VaultMetricsCard({
           </div>
         </div>
 
-        {/* Action Button */}
         <Button 
           variant={buttonProps.variant}
           className={buttonProps.className}
@@ -173,7 +165,6 @@ export function VaultMetricsCard({
           {buttonProps.text} {buttonProps.icon}
         </Button>
 
-        {/* Gas & Unlock Info */}
         <div className="text-center text-xs font-mono text-[#9CA3AF]">
           Gas ≈ 0.006 SUI · Unlocks in 30 days
         </div>
