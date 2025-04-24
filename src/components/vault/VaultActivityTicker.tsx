@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { TokenIcon, PairIcon } from "@/components/shared/TokenIcons";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ActivityItem {
   id: string;
@@ -16,9 +18,11 @@ interface VaultActivityTickerProps {
   rowHeight?: string;
 }
 
-export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultActivityTickerProps) {
+export function VaultActivityTicker({ maxRows = 5, rowHeight = "h-8" }: VaultActivityTickerProps) {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-
+  const [hasNewActivity, setHasNewActivity] = useState(false);
+  const tickerRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
     const mockActivities: ActivityItem[] = [
       {
@@ -65,6 +69,7 @@ export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultAct
     
     setActivities(mockActivities.slice(0, maxRows));
     
+    // Add new activity every 10 seconds
     const interval = setInterval(() => {
       const newActivity: ActivityItem = {
         id: Math.random().toString(36).substring(2, 9),
@@ -76,7 +81,9 @@ export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultAct
       };
       
       setActivities(prev => [newActivity, ...prev.slice(0, maxRows - 1)]);
-    }, 30000);
+      setHasNewActivity(true);
+      setTimeout(() => setHasNewActivity(false), 2000);
+    }, 10000);
     
     return () => clearInterval(interval);
   }, [maxRows]);
@@ -105,7 +112,7 @@ export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultAct
     return `${address.substring(0, 6)}...`;
   };
 
-  const getTokenPair = (vaultName: string): [string, string] => {
+  const getTokenPair = (vaultName: string): ["SUI" | "USDC" | "DEEP" | "CETUS" | "NODOAIx", "SUI" | "USDC" | "DEEP" | "CETUS" | "NODOAIx"] => {
     if (vaultName === 'SUI-USDC') return ['SUI', 'USDC'];
     if (vaultName === 'Deep-SUI') return ['DEEP', 'SUI'];
     if (vaultName === 'Cetus-SUI') return ['CETUS', 'SUI'];
@@ -113,35 +120,52 @@ export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultAct
   };
 
   return (
-    <div className="space-y-1">
-      {activities.map(activity => (
-        <div key={activity.id} className={`flex items-center justify-between text-xs ${rowHeight}`}>
-          <div className="flex items-center gap-1">
-            <span className={`rounded-full p-0.5 ${activity.action === 'deposit' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
-              {activity.action === 'deposit' ? <ArrowDown className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />}
-            </span>
-            <span className="font-mono">
-              {truncateAddress(activity.address)}
-            </span>
-            <span className="text-white/40">
-              {activity.action === 'deposit' ? 'added' : 'removed'}
-            </span>
-            <span className="font-mono">
-              {formatCurrency(activity.amount)}
-            </span>
-            <span className="text-white/40">in</span>
-            <span className="flex items-center gap-1">
-              <PairIcon tokens={getTokenPair(activity.vault) as [any, any]} size={16} />
-              <span className={`font-medium ${activity.vault === 'SUI-USDC' ? 'text-emerald-500' : activity.vault === 'Deep-SUI' ? 'text-nova' : 'text-orion'}`}>
-                {activity.vault}
+    <div 
+      ref={tickerRef} 
+      className={`space-y-2 ${hasNewActivity ? 'glow-animation' : ''}`}
+      aria-live="polite"
+    >
+      <AnimatePresence initial={false}>
+        {activities.map((activity, index) => (
+          <motion.div 
+            key={activity.id}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ 
+              duration: 0.3, 
+              ease: [0.22, 1, 0.36, 1],
+              delay: index * 0.05
+            }}
+            className={`flex items-center justify-between text-xs ${rowHeight} rounded-lg p-2 ${index === 0 && hasNewActivity ? 'bg-white/5' : ''}`}
+          >
+            <div className="flex items-center gap-2">
+              <span className={`rounded-full p-1 ${activity.action === 'deposit' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+                {activity.action === 'deposit' ? <ArrowDown className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />}
               </span>
+              <span className="font-mono">
+                {truncateAddress(activity.address)}
+              </span>
+              <span className="text-white/40">
+                {activity.action === 'deposit' ? 'added' : 'removed'}
+              </span>
+              <span className={`font-mono font-medium ${activity.action === 'deposit' ? 'text-green-500' : 'text-red-500'}`}>
+                {formatCurrency(activity.amount)}
+              </span>
+              <span className="text-white/40">in</span>
+              <span className="flex items-center gap-1">
+                <PairIcon tokens={getTokenPair(activity.vault)} size={16} />
+                <span className={`font-medium ${activity.vault === 'SUI-USDC' ? 'text-emerald' : activity.vault === 'Deep-SUI' ? 'text-nova' : 'text-orion'}`}>
+                  {activity.vault}
+                </span>
+              </span>
+            </div>
+            <span className="text-white/40">
+              {getTimeAgo(activity.timestamp)}
             </span>
-          </div>
-          <span className="text-white/40">
-            {getTimeAgo(activity.timestamp)}
-          </span>
-        </div>
-      ))}
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

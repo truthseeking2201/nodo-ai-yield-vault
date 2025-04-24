@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -73,20 +74,23 @@ export function VaultMetricsCard({
       return {
         text: "Connect Wallet",
         icon: <Wallet className="ml-2 h-4 w-4" />,
-        className: "w-full h-12 border-[#F59E0B] hover:border-[#F5B041] hover:bg-[#F59E0B]/10 text-[#F5B041] text-sm font-medium transition-all hover:scale-[0.98]",
+        className: "w-full h-12 border-[#F59E0B] hover:border-[#F5B041] hover:bg-[#F59E0B]/10 text-[#F5B041] text-base font-medium transition-all hover:scale-[0.98]",
         variant: "outline" as const
       };
     } else {
       return {
         text: "Deposit Now",
         icon: <ArrowRight className="ml-2 h-4 w-4" />,
-        className: `w-full h-12 ${styles.gradientBg} text-white transition-all hover:scale-[0.98] active:scale-95 shadow-[0_4px_8px_-2px_rgba(245,158,11,0.35)]`,
+        className: `w-full h-12 ${styles.gradientBg} text-[#0E0F11] transition-all hover:scale-[0.98] active:scale-95 shadow-[0_4px_8px_-2px_rgba(245,158,11,0.35)] text-base font-semibold`,
         variant: "default" as const
       };
     }
   };
 
   const buttonProps = getButtonProps();
+  
+  const hasHighAPR = vault.apr > 20.0;
+  const aprGlowClass = hasHighAPR ? 'text-shadow-neon' : '';
 
   return (
     <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] transition-shadow hover:shadow-[0_0_20px_-4px_rgba(111,59,255,0.15)]">
@@ -95,27 +99,40 @@ export function VaultMetricsCard({
         <CardTitle className="text-lg font-medium text-[#E5E7EB]">Vault Metrics</CardTitle>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-          <div className="text-sm text-[#9CA3AF]">APR</div>
-          <div className="text-right font-mono font-medium text-lg text-[#8F63FF]">
-            {formatPercentage(vault.apr)}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+          <div>
+            <div className="text-[13px] text-[#9CA3AF] font-medium mb-1.5">APR</div>
+            <div className={`font-mono font-semibold text-[32px] text-white tabular-nums ${aprGlowClass}`}>
+              {formatPercentage(vault.apr)}
+            </div>
           </div>
           
-          <div className="text-sm text-[#9CA3AF]">APY</div>
-          <div className="text-right font-mono font-medium text-lg text-[#10B981]">
-            {formatPercentage(vault.apy)}
+          <div>
+            <div className="text-[13px] text-[#9CA3AF] font-medium mb-1.5">APY</div>
+            <div className="font-mono font-semibold text-[32px] text-white tabular-nums">
+              {formatPercentage(vault.apy)}
+            </div>
           </div>
           
-          <div className="text-sm text-[#9CA3AF]">TVL</div>
-          <div className="text-right font-mono font-medium text-lg text-[#C9CDD3]">
-            {formatCurrency(vault.tvl)}
+          <div>
+            <div className="text-[13px] text-[#9CA3AF] font-medium mb-1.5">TVL</div>
+            <div className="font-mono font-semibold text-[32px] text-white tabular-nums">
+              {formatCurrency(vault.tvl)}
+            </div>
+          </div>
+          
+          <div>
+            <div className="text-[13px] text-[#9CA3AF] font-medium mb-1.5">Active LPs</div>
+            <div className="font-mono font-semibold text-[32px] text-white tabular-nums">
+              {(Math.floor(vault.tvl / 2450)).toLocaleString()}
+            </div>
           </div>
         </div>
 
         <div className="pt-4">
-          <div className="relative pt-8 pb-4">
+          <div className="relative pt-10 pb-6">
             <div 
-              className="absolute -top-1 left-1/2 transform -translate-x-1/2 bg-[#131417] text-white px-3 py-1 rounded-full text-sm shadow-md z-10 font-mono"
+              className="absolute -top-1 left-1/2 transform -translate-x-1/2 bg-[#131417] text-white px-4 py-1.5 rounded-full text-sm shadow-md z-10 font-mono border border-white/10"
             >
               {sliderLabel}
             </div>
@@ -125,34 +142,40 @@ export function VaultMetricsCard({
               min={100}
               max={10000}
               step={100}
-              className="[&_.relative]:h-[2px] [&_.absolute]:bg-gradient-to-r [&_.absolute]:from-[#6F3BFF] [&_.absolute]:to-[#8F63FF] [&_button]:h-4 [&_button]:w-4 [&_button]:border [&_button]:border-white/40"
+              className="[&_.relative]:h-[3px] [&_.absolute]:bg-gradient-to-r [&_.absolute]:from-[#FF8A00] [&_.absolute]:to-[#AE34FF] [&_button]:h-5 [&_button]:w-5 [&_button]:border [&_button]:border-white/40"
               onValueChange={(value) => setSliderValue(value)}
             />
             
-            <div className="flex justify-between items-center mt-4">
-              <div className="text-xs text-[#9CA3AF]">Projected deposit</div>
-              <div className="text-right text-sm font-mono text-[#E5E7EB]">
-                ${calculateProjectedEarnings(projectedAmount).toFixed(2)}/month
+            <div className="flex justify-between items-center mt-4 text-center bg-white/5 rounded-xl p-3 border border-white/10">
+              <div className="text-[13px] text-[#9CA3AF] font-medium">Monthly Earnings</div>
+              <div className="text-right text-lg font-mono font-semibold text-white/95">
+                ${calculateProjectedEarnings(projectedAmount).toFixed(2)}
               </div>
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h3 className="text-sm text-[#9CA3AF] mb-2">Lockup Periods</h3>
-          <div className="space-y-3">
-            {vault.lockupPeriods.map((period, index) => (
-              <div 
+          <h3 className="text-[13px] text-[#9CA3AF] font-medium mb-2">Lockup Periods</h3>
+          <div className="grid grid-cols-3 gap-3">
+            {vault.lockupPeriods.map((period) => (
+              <button 
                 key={period.days} 
-                className={`flex justify-between items-center py-2 ${
-                  index < vault.lockupPeriods.length - 1 ? "border-b border-[#262B30]" : ""
-                }`}
+                className={`
+                  flex flex-col items-center justify-center py-3 px-2 rounded-xl 
+                  border border-white/10 transition-all hover:border-white/20
+                  ${period.aprBoost > 0 ? 'bg-white/5' : 'bg-white/2'}
+                `}
               >
-                <span className="text-[#C9CDD3] text-sm">{period.days} days</span>
-                <span className={`font-mono ${period.aprBoost > 0 ? "text-[#10B981]" : "text-[#9CA3AF]"}`}>
+                <span className={`text-base font-medium ${
+                  period.aprBoost > 0 ? 'text-white' : 'text-[#C9CDD3]'
+                }`}>
+                  {period.days} days
+                </span>
+                <span className={`text-xs font-mono mt-1 ${period.aprBoost > 0 ? 'text-[#10B981]' : 'text-[#9CA3AF]'}`}>
                   {period.aprBoost > 0 ? `+${period.aprBoost}%` : 'No boost'}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         </div>

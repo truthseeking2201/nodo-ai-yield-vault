@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
@@ -286,5 +287,51 @@
 
   .text-shadow-neon {
     text-shadow: 0 0 6px rgba(255,138,0,0.25);
+  }
+  
+  /* Neural-Orange edition styles */
+  .neural-orange-gradient {
+    background: linear-gradient(
+      100deg,
+      #FF8A00 0%,
+      #FF6B00 20%,
+      #FF3C5E 55%,
+      #AE34FF 85%,
+      #714BFF 100%
+    );
+  }
+  
+  .glass-card-premium {
+    @apply bg-white/[0.04] backdrop-blur-lg border border-white/[0.06] rounded-[20px];
+    position: relative;
+  }
+  
+  .glass-card-premium::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  
+  .glass-card-premium::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid transparent;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    background: linear-gradient(to right, #FF8A00, #FF3C5E, #AE34FF) border-box;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  
+  .glass-card-premium:hover::after {
+    opacity: 1;
   }
 }

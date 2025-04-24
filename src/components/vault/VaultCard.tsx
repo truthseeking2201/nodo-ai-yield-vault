@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -111,7 +112,7 @@ export function VaultCard({
 
   const buttonProps = getButtonProps();
 
-  const getTokenPair = (vaultId: string): [string, string] => {
+  const getTokenPair = (vaultId: string): ["SUI" | "USDC" | "DEEP" | "CETUS" | "NODOAIx", "SUI" | "USDC" | "DEEP" | "CETUS" | "NODOAIx"] => {
     if (vaultId.includes('sui-usdc')) return ['SUI', 'USDC'];
     if (vaultId.includes('deep-sui')) return ['DEEP', 'SUI'];
     if (vaultId.includes('cetus-sui')) return ['CETUS', 'SUI'];

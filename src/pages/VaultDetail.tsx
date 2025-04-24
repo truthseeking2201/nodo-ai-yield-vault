@@ -8,7 +8,6 @@ import { VaultDetailError } from "@/components/vault/VaultDetailError";
 import { VaultDetailHeader } from "@/components/vault/VaultDetailHeader";
 import { VaultDetailLayout } from "@/components/vault/VaultDetailLayout";
 import { VaultPerformanceSection } from "@/components/vault/VaultPerformanceSection";
-import { VaultSecurityInfo } from "@/components/vault/VaultSecurityInfo";
 import { VaultMetricsCard } from "@/components/vault/VaultMetricsCard";
 import { NODOAIxCard } from "@/components/vault/NODOAIxCard";
 import { VaultActivityTicker } from "@/components/vault/VaultActivityTicker";
@@ -16,6 +15,8 @@ import { DepositDrawer } from "@/components/vault/DepositDrawer";
 import { VaultStickyBar } from "@/components/vault/VaultStickyBar";
 import { useVaultDetail } from "@/hooks/useVaultDetail";
 import { useWallet } from "@/hooks/useWallet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { VaultSecurityInfo } from "@/components/vault/VaultSecurityInfo";
 
 export default function VaultDetail() {
   const { vaultId } = useParams<{ vaultId: string }>();
@@ -26,6 +27,7 @@ export default function VaultDetail() {
   const [unlockProgress, setUnlockProgress] = useState<number>(0);
   const nodoaixCardRef = useRef<HTMLDivElement>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [activeTab, setActiveTab] = useState("strategy");
 
   const { 
     vault, 
@@ -78,61 +80,46 @@ export default function VaultDetail() {
 
   const styles = getVaultStyles(vault.type);
 
-  const renderStrategySection = () => (
-    <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
-      <CardHeader className="px-6 pt-6 pb-4">
-        <CardTitle className="text-lg font-medium text-[#E5E7EB]">Strategy & Risk Profile</CardTitle>
-        <CardDescription className="text-sm text-[#9CA3AF]">Understanding this vault's investment approach</CardDescription>
-      </CardHeader>
-      <CardContent className="p-6 pt-0 space-y-5">
-        <VaultSecurityInfo 
-          contractAddress="0x1234567890abcdef1234567890abcdef12345678"
-          isAudited={true}
-          explorerUrl="https://explorer.sui.io/address/0x1234567890abcdef1234567890abcdef12345678"
-          defaultOpen={localStorage.getItem("securityCollapsed") !== "true"}
-        />
-        <div className="space-y-3">
-          <h3 className="text-base font-medium text-[#E5E7EB]">Investment Strategy</h3>
-          <p className="text-[#C9CDD3] text-sm leading-relaxed">
-            {vault.strategy}
-          </p>
-        </div>
-        <div className="space-y-3">
-          <h3 className="text-base font-medium text-[#E5E7EB]">Risk Level</h3>
-          <div className="flex items-center gap-4">
-            <span className={`
-              inline-block px-4 py-1 rounded-full text-sm font-medium
-              ${vault.riskLevel === 'low' ? 'bg-emerald/30 text-emerald' : 
-                vault.riskLevel === 'medium' ? 'bg-orion/30 text-orion' :
-                'bg-nova/30 text-nova'}
-            `}>
-              {vault.riskLevel.charAt(0).toUpperCase() + vault.riskLevel.slice(1)}
-            </span>
-            <div className="flex-1 h-2 bg-[#293040] rounded-full overflow-hidden">
-              <div 
-                className={`h-full ${
-                  vault.riskLevel === 'low' ? 'bg-emerald w-1/4' : 
-                  vault.riskLevel === 'medium' ? 'bg-orion w-1/2' : 
-                  'bg-red-500 w-3/4'
-                }`}
-              ></div>
-            </div>
+  const renderStrategyTab = () => (
+    <div className="space-y-5">
+      <div className="space-y-3">
+        <h3 className="text-base font-medium text-[#E5E7EB]">Investment Strategy</h3>
+        <p className="text-[#C9CDD3] text-sm leading-relaxed">
+          {vault.strategy}
+        </p>
+      </div>
+      <div className="space-y-3">
+        <h3 className="text-base font-medium text-[#E5E7EB]">Risk Level</h3>
+        <div className="flex items-center gap-4">
+          <span className={`
+            inline-block px-4 py-1 rounded-full text-sm font-medium
+            ${vault.riskLevel === 'low' ? 'bg-emerald/30 text-emerald' : 
+              vault.riskLevel === 'medium' ? 'bg-orion/30 text-orion' :
+              'bg-nova/30 text-nova'}
+          `}>
+            {vault.riskLevel.charAt(0).toUpperCase() + vault.riskLevel.slice(1)}
+          </span>
+          <div className="flex-1 h-2 bg-[#293040] rounded-full overflow-hidden">
+            <div 
+              className={`h-full ${
+                vault.riskLevel === 'low' ? 'bg-emerald w-1/4' : 
+                vault.riskLevel === 'medium' ? 'bg-orion w-1/2' : 
+                'bg-red-500 w-3/4'
+              }`}
+            ></div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 
-  const renderActivitySection = () => (
-    <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
-      <CardHeader className="px-6 pt-6 pb-4">
-        <CardTitle className="text-lg font-medium text-[#E5E7EB]">Vault Activity</CardTitle>
-        <CardDescription className="text-sm text-[#9CA3AF]">Recent deposits and withdrawals</CardDescription>
-      </CardHeader>
-      <CardContent className="p-6 pt-0">
-        <VaultActivityTicker />
-      </CardContent>
-    </Card>
+  const renderSecurityTab = () => (
+    <VaultSecurityInfo 
+      contractAddress="0x1234567890abcdef1234567890abcdef12345678"
+      isAudited={true}
+      explorerUrl="https://explorer.sui.io/address/0x1234567890abcdef1234567890abcdef12345678"
+      defaultOpen={true}
+    />
   );
 
   return (
@@ -167,8 +154,39 @@ export default function VaultDetail() {
               onTimeRangeChange={setTimeRange}
               styles={styles}
             />
-            {renderStrategySection()}
-            {renderActivitySection()}
+            <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+              <CardHeader className="px-6 pt-6 pb-2">
+                <CardTitle className="text-lg font-medium text-[#E5E7EB]">Strategy & Security</CardTitle>
+                <CardDescription className="text-sm text-[#9CA3AF]">Understanding this vault's approach and protections</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 pt-2">
+                <Tabs defaultValue="strategy" className="w-full" onValueChange={setActiveTab}>
+                  <TabsList className="grid grid-cols-2 mb-6 bg-white/5 rounded-lg p-1">
+                    <TabsTrigger value="strategy" className="data-[state=active]:bg-[#FF8A00]/20 data-[state=active]:text-[#FF8A00]">
+                      Strategy
+                    </TabsTrigger>
+                    <TabsTrigger value="security" className="data-[state=active]:bg-[#FF8A00]/20 data-[state=active]:text-[#FF8A00]">
+                      Security
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="strategy" className="mt-0">
+                    {renderStrategyTab()}
+                  </TabsContent>
+                  <TabsContent value="security" className="mt-0">
+                    {renderSecurityTab()}
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+            <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+              <CardHeader className="px-6 pt-6 pb-4">
+                <CardTitle className="text-lg font-medium text-[#E5E7EB]">Vault Activity</CardTitle>
+                <CardDescription className="text-sm text-[#9CA3AF]">Recent deposits and withdrawals</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 pt-0">
+                <VaultActivityTicker maxRows={5} />
+              </CardContent>
+            </Card>
           </>
         }
         rightColumn={
