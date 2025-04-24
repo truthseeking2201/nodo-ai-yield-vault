@@ -123,7 +123,50 @@
     @apply bg-gradient-to-br from-emerald/90 to-emerald-dark/80;
   }
 
-  /* Deposit drawer specific styles */
+  .nav-link {
+    @apply relative px-2.5 text-[#E5E7EB] opacity-90 transition-all duration-160;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute left-0 -bottom-1 h-0.5 w-0 bg-[#FF8800] rounded-sm transition-all origin-left;
+    transition: width 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav-link:hover {
+    @apply text-white -translate-y-[1px];
+    text-shadow: 0 0 6px rgba(255, 136, 0, 0.35);
+  }
+
+  .nav-link:focus-visible {
+    @apply outline-none;
+    outline: 2px solid #FF8800;
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  .nav-link:active {
+    @apply scale-95;
+    text-shadow: 0 0 8px rgba(255, 136, 0, 0.5);
+  }
+
+  .nav-link.active {
+    @apply text-[#FF8800];
+  }
+
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-link:hover {
+      transform: none;
+    }
+    .nav-link:active {
+      transform: none;
+    }
+  }
+
   .deposit-gradient-btn {
     @apply bg-gradient-to-r from-[#FF8800] to-[#FFA822] text-white;
   }
@@ -153,7 +196,6 @@
     @apply bg-orion-500;
   }
 
-  /* Number animation for financial UIs */
   @keyframes count-up {
     from { opacity: 0.4; transform: translateY(4px); }
     to { opacity: 1; transform: translateY(0); }
@@ -163,7 +205,6 @@
     animation: count-up 0.4s ease-out forwards;
   }
   
-  /* AI Canvas Background - Particles */
   @keyframes float {
     from { transform: translateY(0); opacity: 0.4; }
     to { transform: translateY(-40px); opacity: 0.1; }
@@ -208,7 +249,6 @@
     @apply bg-red-500;
   }
 
-  /* Reduced motion preferences */
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in,
     .animate-count-up {

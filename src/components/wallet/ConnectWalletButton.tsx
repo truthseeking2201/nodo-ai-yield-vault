@@ -68,13 +68,17 @@ export function ConnectWalletButton() {
               </div>
 
               {/* Address */}
-              <button 
-                onClick={handleCopyAddress}
-                className="flex items-center gap-2 bg-black/40 rounded-xl px-3 py-2 hover:bg-[#1A1B1E] transition-colors group w-full"
-              >
-                <Copy className="w-4 h-4 text-gray-400 group-hover:text-gray-300" />
-                <span className="font-mono text-xs text-gray-200">{address}</span>
-              </button>
+              <div className="relative">
+                <button 
+                  onClick={handleCopyAddress}
+                  className="w-full text-left bg-black/40 rounded-xl px-3 py-2 hover:bg-[#1A1B1E] transition-colors group"
+                >
+                  <span className="font-mono text-xs text-gray-200 block truncate pr-8">
+                    {address}
+                  </span>
+                  <Copy className="w-4 h-4 text-gray-400 group-hover:text-gray-300 absolute right-3 top-1/2 -translate-y-1/2" />
+                </button>
+              </div>
 
               <DropdownMenuSeparator className="bg-[#262B30] my-0" />
 
