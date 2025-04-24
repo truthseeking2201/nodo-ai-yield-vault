@@ -79,7 +79,7 @@ export function TxDrawer({ tx, open, onClose }: TxDrawerProps) {
   };
   
   return (
-    <Drawer open={open} onClose={onClose}>
+    <Drawer open={open} onOpenChange={onClose}>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle className="text-xl">
@@ -179,7 +179,7 @@ export function TxDrawer({ tx, open, onClose }: TxDrawerProps) {
         
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-full" onClick={onClose}>
               Close
             </Button>
           </DrawerClose>

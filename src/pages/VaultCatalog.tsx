@@ -40,6 +40,15 @@ export default function VaultCatalog() {
 
   return (
     <PageContainer>
+      <style>{`
+        body {
+          background-color: #0F1012;
+        }
+        body::before, body::after {
+          content: none !important;
+          display: none !important;
+        }
+      `}</style>
       <div className="flex flex-col space-y-8 relative z-0">
         <HeroSection />
 
