@@ -1,136 +1,137 @@
 
-import { useEffect, useState } from 'react';
-import { Activity, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 interface ActivityItem {
   id: string;
-  type: 'deposit' | 'harvest' | 'withdraw';
-  amount: number;
-  timestamp: Date;
+  action: "deposit" | "withdraw";
   address: string;
-  vault?: string;
+  amount: number;
+  vault: string;
+  timestamp: Date;
 }
 
-const mockActivities: ActivityItem[] = [
-  {
-    id: '1',
-    type: 'deposit',
-    amount: 5000,
-    timestamp: new Date(),
-    address: '0x1234...5678',
-    vault: 'SUI-USDC'
-  },
-  {
-    id: '2',
-    type: 'harvest',
-    amount: 250,
-    timestamp: new Date(Date.now() - 5 * 60 * 1000),
-    address: '0x8765...4321',
-    vault: 'Nova'
-  },
-  {
-    id: '3',
-    type: 'withdraw',
-    amount: 3000,
-    timestamp: new Date(Date.now() - 15 * 60 * 1000),
-    address: '0x9876...1234',
-    vault: 'Orion'
-  },
-  {
-    id: '4',
-    type: 'deposit',
-    amount: 1200,
-    timestamp: new Date(Date.now() - 25 * 60 * 1000),
-    address: '0x3456...7890',
-    vault: 'SUI-USDC'
-  },
-  {
-    id: '5',
-    type: 'deposit',
-    amount: 750,
-    timestamp: new Date(Date.now() - 35 * 60 * 1000),
-    address: '0x6543...2109',
-    vault: 'Nova'
-  }
-];
+interface VaultActivityTickerProps {
+  maxRows?: number;
+  rowHeight?: string;
+}
 
-export function VaultActivityTicker() {
-  const [activities, setActivities] = useState<ActivityItem[]>(mockActivities);
+export function VaultActivityTicker({ maxRows = 3, rowHeight = "h-6" }: VaultActivityTickerProps) {
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
 
+  // Mock activity data - in a real app, this would come from an API or websocket
   useEffect(() => {
+    const mockActivities: ActivityItem[] = [
+      {
+        id: "1",
+        action: "deposit",
+        address: "0x7d783c53c48ebaec29bdafc",
+        amount: 500,
+        vault: "SUI-USDC",
+        timestamp: new Date(Date.now() - 1000 * 60 * 2) // 2 minutes ago
+      },
+      {
+        id: "2",
+        action: "deposit",
+        address: "0x42fb17e6b46de3a4c387",
+        amount: 2500,
+        vault: "Deep-SUI",
+        timestamp: new Date(Date.now() - 1000 * 60 * 5) // 5 minutes ago
+      },
+      {
+        id: "3",
+        action: "withdraw",
+        address: "0x9a5c371e8b498f15f627",
+        amount: 1200,
+        vault: "Cetus-SUI",
+        timestamp: new Date(Date.now() - 1000 * 60 * 7) // 7 minutes ago
+      },
+      {
+        id: "4",
+        action: "deposit",
+        address: "0x3f8a2b5c41e09d76f1e2",
+        amount: 750,
+        vault: "SUI-USDC",
+        timestamp: new Date(Date.now() - 1000 * 60 * 10) // 10 minutes ago
+      },
+      {
+        id: "5",
+        action: "withdraw",
+        address: "0x6e5d2c8b17a4f39e0a1",
+        amount: 3000,
+        vault: "Deep-SUI",
+        timestamp: new Date(Date.now() - 1000 * 60 * 15) // 15 minutes ago
+      }
+    ];
+    
+    setActivities(mockActivities.slice(0, maxRows));
+    
+    // Simulate new activities coming in
     const interval = setInterval(() => {
-      // Simulate new activity by rotating the array and updating timestamps
-      setActivities(prev => {
-        const newActivities = [...prev];
-        const first = newActivities.shift();
-        if (first) {
-          first.timestamp = new Date();
-          newActivities.push(first);
-        }
-        return newActivities;
-      });
-    }, 10000);
-
+      const newActivity: ActivityItem = {
+        id: Math.random().toString(36).substring(2, 9),
+        action: Math.random() > 0.3 ? "deposit" : "withdraw",
+        address: `0x${Math.random().toString(36).substring(2, 18)}`,
+        amount: Math.floor(Math.random() * 5000) + 100,
+        vault: Math.random() > 0.5 ? "SUI-USDC" : Math.random() > 0.5 ? "Deep-SUI" : "Cetus-SUI",
+        timestamp: new Date()
+      };
+      
+      setActivities(prev => [newActivity, ...prev.slice(0, maxRows - 1)]);
+    }, 30000); // New activity every 30 seconds
+    
     return () => clearInterval(interval);
-  }, []);
+  }, [maxRows]);
 
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'deposit': return <ArrowUpRight className="h-4 w-4 text-[#10B981]" />;
-      case 'harvest': return <Activity className="h-4 w-4 text-[#06B6D4]" />;
-      case 'withdraw': return <ArrowDownRight className="h-4 w-4 text-[#EF4444]" />;
-      default: return <Activity className="h-4 w-4" />;
-    }
-  };
-
-  const getActivityColor = (type: string) => {
-    switch (type) {
-      case 'deposit': return 'text-[#10B981]';
-      case 'harvest': return 'text-[#06B6D4]';
-      case 'withdraw': return 'text-[#EF4444]';
-      default: return '';
-    }
-  };
-
-  const formatTimeAgo = (date: Date) => {
-    const minutes = Math.floor((Date.now() - date.getTime()) / 60000);
-    if (minutes < 1) return 'just now';
-    if (minutes === 1) return '1 min ago';
-    if (minutes < 60) return `${minutes} mins ago`;
+  const getTimeAgo = (timestamp: Date): string => {
+    const seconds = Math.floor((new Date().getTime() - timestamp.getTime()) / 1000);
     
+    if (seconds < 60) return `${seconds}s ago`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
     const hours = Math.floor(minutes / 60);
-    if (hours === 1) return '1 hr ago';
-    if (hours < 24) return `${hours} hrs ago`;
-    
-    return date.toLocaleDateString();
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours / 24)}d ago`;
+  };
+
+  const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  const truncateAddress = (address: string): string => {
+    if (address.length <= 10) return address;
+    return `${address.substring(0, 6)}...`;
   };
 
   return (
-    <div className="space-y-3 overflow-hidden">
-      {activities.map((activity) => (
-        <div
-          key={activity.id}
-          className="flex items-center justify-between p-2 rounded-lg bg-white/5 animate-[fade-in_250ms_cubic-bezier(.22,1,.36,1)]"
-        >
-          <div className="flex items-center gap-2">
-            <div className="rounded-full p-1 bg-white/10">
-              {getActivityIcon(activity.type)}
-            </div>
-            <div>
-              <div className="flex items-center gap-1">
-                <span className={`text-sm font-medium ${getActivityColor(activity.type)}`}>
-                  {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
-                </span>
-                <span className="text-sm text-white/60">{activity.address}</span>
-              </div>
-              <div className="text-xs text-white/40">
-                {activity.vault && `to ${activity.vault} vault • `}{formatTimeAgo(activity.timestamp)}
-              </div>
-            </div>
+    <div className="space-y-1">
+      {activities.map(activity => (
+        <div key={activity.id} className={`flex items-center justify-between text-xs ${rowHeight}`}>
+          <div className="flex items-center gap-1">
+            <span className={`rounded-full p-0.5 ${activity.action === 'deposit' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
+              {activity.action === 'deposit' ? <ArrowDown className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />}
+            </span>
+            <span className="font-mono">
+              {truncateAddress(activity.address)}
+            </span>
+            <span className="text-white/40">
+              {activity.action === 'deposit' ? 'added' : 'removed'}
+            </span>
+            <span className="font-mono">
+              {formatCurrency(activity.amount)}
+            </span>
+            <span className="text-white/40">in</span>
+            <span className={`font-medium ${activity.vault === 'SUI-USDC' ? 'text-emerald-500' : activity.vault === 'Deep-SUI' ? 'text-nova' : 'text-orion'}`}>
+              {activity.vault}
+            </span>
           </div>
-          <div className="text-sm font-mono">
-            {activity.type === 'deposit' ? '+' : '-'}${activity.amount.toLocaleString()}
-          </div>
+          <span className="text-white/40">
+            {getTimeAgo(activity.timestamp)}
+          </span>
         </div>
       ))}
     </div>

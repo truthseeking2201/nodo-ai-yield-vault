@@ -53,7 +53,7 @@ export function NODOAIxCard({
   const isProfitable = profit >= 0;
 
   return (
-    <Card className="glass-card mt-4 overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+    <Card className="glass-card overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
       <div className={`h-1 ${styles.gradientBg}`} />
       <CardHeader className="pb-2 px-6 pt-6">
         <CardTitle className="flex items-center text-lg">
