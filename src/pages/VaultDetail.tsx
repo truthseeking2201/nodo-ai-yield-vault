@@ -17,7 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ArrowRight, Wallet, Info } from "lucide-react";
+import { ArrowRight, Wallet, Info, BarChart } from "lucide-react";
 
 export default function VaultDetail() {
   const { vaultId } = useParams<{ vaultId: string }>();
@@ -111,7 +111,7 @@ export default function VaultDetail() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <ChartBar className="h-5 w-5" />
+                  <BarChart className="h-5 w-5" />
                   Performance
                 </CardTitle>
                 <CardDescription>Historical vault performance</CardDescription>
