@@ -1,7 +1,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Wallet } from "lucide-react";
+import { Copy, LogOut, Wallet } from "lucide-react";
+import { TokenIcon } from "@/components/shared/TokenIcons";
+import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,12 +18,20 @@ import { useWallet } from "@/hooks/useWallet";
 export function ConnectWalletButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isConnected, address, balance, disconnectWallet } = useWallet();
+  const { toast } = useToast();
 
   const formatAddress = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
-  // Add data attribute to help identify wallet connect buttons
+  const handleCopyAddress = async () => {
+    await navigator.clipboard.writeText(address);
+    toast({
+      title: "Address copied",
+      duration: 2000,
+    });
+  };
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -31,7 +41,7 @@ export function ConnectWalletButton() {
       {!isConnected ? (
         <Button 
           onClick={handleOpenModal} 
-          className="gradient-bg-nova text-white hover:shadow-neon-nova transition-all duration-300"
+          className="gradient-bg-nova text-[#0E0F11] hover:shadow-neon-nova transition-all duration-300"
           data-wallet-connect="true"
         >
           <Wallet className="mr-2 h-4 w-4" /> Connect Wallet
@@ -46,24 +56,57 @@ export function ConnectWalletButton() {
               </span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="glass-card">
-            <DropdownMenuLabel>Wallet</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-white/10" />
-            <DropdownMenuItem className="font-mono">
-              {address}
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <span className="mr-2">USDC:</span>
-              <span className="font-mono text-emerald">{balance.usdc}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <span className="mr-2">NODOAIx:</span>
-              <span className="font-mono text-nova">{balance.nodoaix}</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-white/10" />
-            <DropdownMenuItem onClick={disconnectWallet} className="text-red-500 focus:bg-red-500/10">
-              Disconnect
-            </DropdownMenuItem>
+          <DropdownMenuContent 
+            align="end" 
+            className="w-[320px] p-6 rounded-[20px] border border-white/[0.06] bg-white/[0.04] shadow-lg backdrop-blur-xl"
+          >
+            <div className="flex flex-col space-y-6">
+              {/* Header */}
+              <div className="flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-[#FF8800]" />
+                <span className="text-white font-bold">Wallet</span>
+              </div>
+
+              {/* Address */}
+              <button 
+                onClick={handleCopyAddress}
+                className="flex items-center gap-2 bg-black/40 rounded-xl px-3 py-2 hover:bg-[#1A1B1E] transition-colors group w-full"
+              >
+                <Copy className="w-4 h-4 text-gray-400 group-hover:text-gray-300" />
+                <span className="font-mono text-xs text-gray-200">{address}</span>
+              </button>
+
+              <DropdownMenuSeparator className="bg-[#262B30] my-0" />
+
+              {/* Balances */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TokenIcon token="USDC" size={16} />
+                    <span className="text-gray-400 text-sm">USDC</span>
+                  </div>
+                  <span className="font-mono text-sm text-emerald">{balance.usdc}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TokenIcon token="NODOAIx" size={16} />
+                    <span className="text-gray-400 text-sm">NODOAIx</span>
+                  </div>
+                  <span className="font-mono text-sm text-[#FF8800]">{balance.nodoaix}</span>
+                </div>
+              </div>
+
+              <DropdownMenuSeparator className="bg-[#262B30] my-0" />
+
+              {/* Disconnect Button */}
+              <button
+                onClick={disconnectWallet}
+                className="w-full h-11 rounded-xl border border-[#EF4444] text-[#EF4444] flex items-center justify-center gap-2 hover:bg-[rgba(239,68,68,0.12)] hover:text-white transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm font-medium">Disconnect</span>
+              </button>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
