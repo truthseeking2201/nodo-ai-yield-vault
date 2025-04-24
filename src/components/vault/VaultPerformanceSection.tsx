@@ -23,19 +23,25 @@ export function VaultPerformanceSection({
 }: VaultPerformanceSectionProps) {
   return (
     <Card className="glass-card rounded-[20px] overflow-hidden">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between p-6">
         <div>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg font-medium text-[#E5E7EB]">
             <BarChart className="h-5 w-5" />
             Performance
           </CardTitle>
-          <CardDescription>Historical vault performance</CardDescription>
+          <CardDescription className="text-sm text-[#9CA3AF] tracking-[-0.15px]">
+            Historical vault performance
+          </CardDescription>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex gap-2">
           <Button 
             variant={timeRange === "daily" ? "default" : "outline"} 
             size="sm"
-            className={timeRange === "daily" ? styles.gradientBg : "bg-white/5 border-white/10"}
+            className={`py-1 px-3 text-[11px] font-medium ${
+              timeRange === "daily" 
+                ? styles.gradientBg 
+                : 'bg-[#202124] border-white/10 hover:bg-[#202124]/80'
+            }`}
             onClick={() => onTimeRangeChange("daily")}
           >
             Daily
@@ -43,7 +49,11 @@ export function VaultPerformanceSection({
           <Button 
             variant={timeRange === "weekly" ? "default" : "outline"} 
             size="sm"
-            className={timeRange === "weekly" ? styles.gradientBg : "bg-white/5 border-white/10"}
+            className={`py-1 px-3 text-[11px] font-medium ${
+              timeRange === "weekly" 
+                ? styles.gradientBg 
+                : 'bg-[#202124] border-white/10 hover:bg-[#202124]/80'
+            }`}
             onClick={() => onTimeRangeChange("weekly")}
           >
             Weekly
@@ -51,15 +61,19 @@ export function VaultPerformanceSection({
           <Button 
             variant={timeRange === "monthly" ? "default" : "outline"} 
             size="sm"
-            className={timeRange === "monthly" ? styles.gradientBg : "bg-white/5 border-white/10"}
+            className={`py-1 px-3 text-[11px] font-medium ${
+              timeRange === "monthly" 
+                ? styles.gradientBg 
+                : 'bg-[#202124] border-white/10 hover:bg-[#202124]/80'
+            }`}
             onClick={() => onTimeRangeChange("monthly")}
           >
             Monthly
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="h-[300px] overflow-hidden">
+      <CardContent className="p-6">
+        <div className="h-[300px] overflow-hidden rounded-lg">
           <VaultPerformanceChart 
             data={vault.performance[timeRange]}
             vaultType={vault.type}

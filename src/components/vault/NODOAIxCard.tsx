@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,94 +55,81 @@ export function NODOAIxCard({
   const isProfitable = profit >= 0;
 
   return (
-    <Card className="glass-card overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] transition-shadow hover:shadow-[0_0_20px_-4px_rgba(111,59,255,0.15)]">
+    <Card className="glass-card overflow-hidden rounded-[20px] border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_8px_16px_-8px_rgba(255,136,0,0.25)]">
       <div className={`h-1 ${styles.gradientBg}`} />
       <CardHeader className="pb-2 px-6 pt-6">
         <CardTitle className="flex items-center text-lg text-[#E5E7EB]">
           <TokenIcon token="NODOAIx" size={28} className="mr-2" />
-          <span className={`${styles.gradientText}`}>NODOAIx Token</span>
+          <span className={`${styles.gradientText}`}>NODOAIx Certificate</span>
         </CardTitle>
       </CardHeader>
       
       <CardContent className="p-6 space-y-4">
-        {/* Balance and Principal info */}
-        <div className="space-y-2">
+        {/* Balance info with 3-column grid */}
+        <div className="grid grid-cols-[auto_1fr_auto] gap-x-2 gap-y-2">
+          <span className="text-[#9CA3AF] text-xs tracking-[-0.15px]">Balance</span>
+          <span className="font-mono font-medium text-right text-[#E5E7EB] tabular-nums">
+            {balance.toLocaleString()}
+          </span>
+          <span className="font-mono text-[#9CA3AF]">NODOAIx</span>
+          
+          <span className="text-[#9CA3AF] text-xs tracking-[-0.15px]">Principal</span>
+          <span className="font-mono text-right text-[#C9CDD3] tabular-nums">
+            {principal.toLocaleString()}
+          </span>
+          <span className="font-mono text-[#9CA3AF]">NODOAIx</span>
+          
           <div className="flex justify-between items-center">
-            <span className="text-[#9CA3AF] text-sm">Balance</span>
-            <span className="font-mono font-medium text-[#E5E7EB]">
-              {balance.toLocaleString()} NODOAIx
+            <span className="text-[#9CA3AF] text-xs tracking-[-0.15px]">Profit/Loss</span>
+            <span className={`font-mono text-right tabular-nums ${isProfitable ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
+              {isProfitable ? '+' : ''}{profit.toLocaleString()}
             </span>
+            <span className="font-mono text-[#9CA3AF]">NODOAIx</span>
           </div>
           
           <div className="flex justify-between items-center">
-            <span className="text-[#9CA3AF] text-sm">Principal</span>
-            <span className="font-mono text-[#C9CDD3]">
-              {principal.toLocaleString()} NODOAIx
+            <span className="text-[#9CA3AF] text-xs tracking-[-0.15px]">Fees Collected</span>
+            <span className="font-mono text-right text-[#10B981] tabular-nums">
+              +{fees.toLocaleString()}
             </span>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <span className="text-[#9CA3AF] text-sm">Profit/Loss</span>
-            <span className={`font-mono ${isProfitable ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
-              {isProfitable ? '+' : ''}{profit.toLocaleString()} NODOAIx
-            </span>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <span className="text-[#9CA3AF] text-sm">Fees Collected</span>
-            <span className="font-mono text-[#10B981]">
-              +{fees.toLocaleString()} NODOAIx
-            </span>
+            <span className="font-mono text-[#9CA3AF]">NODOAIx</span>
           </div>
         </div>
         
-        {/* Holders count and unlock info */}
-        <div className="py-2">
-          <div className="relative w-[90%] mx-auto h-px bg-[#293040] my-4" />
-          
-          <div className="text-sm text-[#9CA3AF] mb-1">
-            {holderCount.toLocaleString()} holders
-          </div>
-          
-          <div className="text-sm text-[#C9CDD3] mb-4">
-            Current value represents 1:1 ratio with governance token.
-          </div>
-        </div>
-        
-        {/* Unlock badge */}
+        {/* Unlock badge with improved styling */}
         <div 
-          className="bg-[#F59E0B1A] rounded-full py-2 px-4 text-sm font-mono font-medium text-center text-[#F59E0B]" 
+          className="bg-[rgba(255,136,0,0.15)] rounded-full py-1.5 px-4 text-[11px] font-mono font-medium text-center text-[#F59E0B]" 
           aria-live="polite"
         >
           Unlocks in {timeUntilUnlock}
         </div>
         
-        {/* Audit and contract info */}
-        <div className="mt-4 space-y-3">
-          <div className="flex justify-between items-center text-xs">
-            <div className="flex items-center text-[#C9CDD3]">
-              <ShieldCheck className="h-4 w-4 mr-1.5 text-[#10B981]" />
-              <span>Audited by Certora</span>
-            </div>
-            <a 
-              href={auditUrl} 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#8F63FF] hover:underline flex items-center"
-            >
-              View Audit <ExternalLink className="h-3 w-3 ml-1" />
-            </a>
+        {/* Audit info with improved alignment */}
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-1 text-[#C9CDD3]">
+            <ShieldCheck className="h-3.5 w-3.5 text-[#10B981]" />
+            <span>Audited by Certora</span>
           </div>
-          
-          <Button 
-            variant="outline" 
-            size="lg"
-            className="w-full text-xs border-white/20 h-12 font-mono"
+          <a 
+            href={auditUrl} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#F59E0B] hover:underline flex items-center gap-1"
           >
-            <span className="font-mono mr-1">{contractAddress.substring(0, 10)}...</span>
+            View Audit
             <ExternalLink className="h-3 w-3" />
-          </Button>
+          </a>
         </div>
+        
+        {/* Contract address with truncation */}
+        <Button 
+          variant="outline" 
+          size="lg"
+          className="w-full text-xs border-white/20 h-12 font-mono truncate"
+        >
+          <span className="font-mono truncate">{contractAddress}</span>
+          <ExternalLink className="h-3 w-3 ml-1.5 flex-shrink-0" />
+        </Button>
       </CardContent>
     </Card>
   );

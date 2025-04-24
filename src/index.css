@@ -64,11 +64,11 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl shadow-[0_4px_24px_-8px_rgba(0,0,0,0.2)] transition-all duration-300 hover:border-white/20 hover:shadow-brand-hover;
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[20px] shadow-[0_4px_24px_-8px_rgba(0,0,0,0.2)] transition-all duration-300 hover:border-white/20;
   }
 
   .gradient-text-brand {
-    @apply bg-gradient-brand bg-clip-text text-transparent;
+    @apply bg-gradient-to-br from-[#FF8800] to-[#FFA822] bg-clip-text text-transparent;
   }
   
   .gradient-text-nova {
@@ -96,12 +96,8 @@
   }
   
   @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
   
   .animate-fade-in {

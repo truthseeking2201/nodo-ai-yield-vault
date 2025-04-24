@@ -18,7 +18,7 @@ export function VaultDetailHeader({ vaultName, styles }: VaultDetailHeaderProps)
     <div className="mb-10 mt-10">
       <Button 
         variant="ghost" 
-        className="mb-4 rounded-xl flex items-center gap-2 text-[#C9CDD3] hover:text-white" 
+        className="mb-4 mt-2 rounded-xl flex items-center gap-2 text-[#C9CDD3] hover:text-white font-medium text-xs tracking-wide" 
         onClick={() => navigate('/')}
       >
         <ArrowLeft className="h-4 w-4" /> Back to Vaults
