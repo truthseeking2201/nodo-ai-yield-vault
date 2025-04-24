@@ -8,15 +8,15 @@ import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
 interface UseDepositDrawerProps {
-  vault: VaultData;
-  onClose: () => void;
+  vault?: VaultData;
+  onClose?: () => void;
 }
 
-export const useDepositDrawer = ({ vault, onClose }: UseDepositDrawerProps) => {
+export const useDepositDrawer = (props?: UseDepositDrawerProps) => {
   const navigate = useNavigate();
   const { balance } = useWallet();
   const [amount, setAmount] = useState<string>("");
-  const [selectedLockup, setSelectedLockup] = useState<number>(vault.lockupPeriods[0].days);
+  const [selectedLockup, setSelectedLockup] = useState<number>(30); // Default to 30 days
   const [step, setStep] = useState<'details' | 'confirmation' | 'success'>('details');
   const [sliderValue, setSliderValue] = useState<number[]>([1000]);
   const [validationError, setValidationError] = useState<string>("");
@@ -26,6 +26,13 @@ export const useDepositDrawer = ({ vault, onClose }: UseDepositDrawerProps) => {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // If props include a vault with lockupPeriods, set the default selected lockup
+  useEffect(() => {
+    if (props?.vault?.lockupPeriods && props.vault.lockupPeriods.length > 0) {
+      setSelectedLockup(props.vault.lockupPeriods[0].days);
+    }
+  }, [props?.vault]);
 
   useEffect(() => {
     if (!prefersReducedMotion) {
@@ -93,9 +100,11 @@ export const useDepositDrawer = ({ vault, onClose }: UseDepositDrawerProps) => {
       setStep('success');
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3000);
-      window.dispatchEvent(new CustomEvent('deposit-success', { 
-        detail: { amount: parseFloat(amount), vaultId: vault.id } 
-      }));
+      if (props?.vault) {
+        window.dispatchEvent(new CustomEvent('deposit-success', { 
+          detail: { amount: parseFloat(amount), vaultId: props.vault.id } 
+        }));
+      }
     },
     onError: () => {
       toast({
@@ -153,7 +162,7 @@ export const useDepositDrawer = ({ vault, onClose }: UseDepositDrawerProps) => {
   const handleReviewClick = () => setStep('confirmation');
   
   const handleViewDashboard = () => {
-    onClose();
+    if (props?.onClose) props.onClose();
     navigate('/dashboard');
   };
 
@@ -161,25 +170,40 @@ export const useDepositDrawer = ({ vault, onClose }: UseDepositDrawerProps) => {
     setStep('details');
     setAmount("");
     setSliderValue([1000]);
-    setSelectedLockup(vault.lockupPeriods[0].days);
+    if (props?.vault?.lockupPeriods && props.vault.lockupPeriods.length > 0) {
+      setSelectedLockup(props.vault.lockupPeriods[0].days);
+    }
   };
 
   const handleConfirmDeposit = () => {
-    if (!amount) return;
+    if (!amount || !props?.vault) return;
     depositMutation.mutate({
-      vaultId: vault.id,
+      vaultId: props.vault.id,
       amount: parseFloat(amount),
       lockupPeriod: selectedLockup
     });
   };
 
   const calculateEstimatedReturns = () => {
-    if (!amount) return 0;
+    if (!amount || !props?.vault) return 0;
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum)) return 0;
     const boost = selectedLockup === 90 ? 0.025 : selectedLockup === 60 ? 0.012 : 0;
-    const effectiveApr = vault.apr + boost;
+    const effectiveApr = (props.vault.apr + boost) / 100;
     return amountNum * effectiveApr * selectedLockup / 365;
+  };
+
+  // Function to open deposit drawer with a specific vault and optional initial amount
+  const openDepositDrawer = (vault: VaultData, initialAmount?: number) => {
+    if (initialAmount) {
+      setAmount(initialAmount.toString());
+      setSliderValue([initialAmount]);
+      validateAmount(initialAmount.toString());
+    }
+    // This function would trigger drawer opening in the UI
+    // The actual implementation would depend on how your drawer system works
+    console.log(`Opening deposit drawer for vault ${vault.id} with amount ${initialAmount || 'default'}`);
+    return { vault, initialAmount };
   };
 
   return {
@@ -203,6 +227,7 @@ export const useDepositDrawer = ({ vault, onClose }: UseDepositDrawerProps) => {
       handleConfirmDeposit,
       handleViewDashboard,
       handleDepositAgain,
+      openDepositDrawer,
     },
     calculations: {
       calculateEstimatedReturns,

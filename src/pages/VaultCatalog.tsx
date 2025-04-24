@@ -29,6 +29,14 @@ export default function VaultCatalog() {
   const [carouselApi, setCarouselApi] = useState<any>(null);
   const [showPromo, setShowPromo] = useState(true);
 
+  // Define testimonial items
+  const testimonialItems = [
+    { quote: "Best yields on Sui!", handle: "@CryptoFanSUI" },
+    { quote: "Fast deposits & reliable performance.", handle: "@VaultHunter" },
+    { quote: "The AI rebalancing strategy really works.", handle: "@SuiWhale42" },
+    { quote: "Love the transparent fees and security.", handle: "@DeFiMaster" }
+  ];
+
   // Track scroll position for sticky button on mobile
   useEffect(() => {
     const handleScroll = () => {
@@ -106,7 +114,7 @@ export default function VaultCatalog() {
 
         {catalogV2Enabled && (
           <>
-            <TestimonialCarousel />
+            <TestimonialCarousel items={testimonialItems} />
             <HowNodoWorks />
           </>
         )}

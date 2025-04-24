@@ -32,7 +32,7 @@ export function VaultCard({
 }: VaultCardProps) {
   const [showRoiOverlay, setShowRoiOverlay] = useState(false);
   const { balance } = useWallet();
-  const { openDepositDrawer } = useDepositDrawer();
+  const { actions } = useDepositDrawer();
   
   const getVaultStyles = (type: 'nova' | 'orion' | 'emerald') => {
     switch (type) {
@@ -43,7 +43,7 @@ export function VaultCard({
           shadow: 'hover:shadow-neon-nova',
           accent: 'text-nova',
           border: 'border-nova/30',
-          riskColor: 'bg-emerald-500',
+          riskColor: 'bg-red-500',
           riskText: 'High returns, higher volatility'
         };
       case 'orion':
@@ -53,7 +53,7 @@ export function VaultCard({
           shadow: 'hover:shadow-neon-orion',
           accent: 'text-orion',
           border: 'border-orion/30',
-          riskColor: 'bg-orion-500',
+          riskColor: 'bg-orion',
           riskText: 'Balanced returns & manageable risk'
         };
       case 'emerald':
@@ -63,7 +63,7 @@ export function VaultCard({
           shadow: 'hover:shadow-neon-emerald',
           accent: 'text-emerald',
           border: 'border-emerald/30',
-          riskColor: 'bg-emerald-500',
+          riskColor: 'bg-emerald',
           riskText: 'Stable returns, minimal volatility'
         };
     }
@@ -145,7 +145,9 @@ export function VaultCard({
   const showQuickStake = isConnected && balance.usdc >= 100;
   
   const handleQuickStake = () => {
-    openDepositDrawer(vault, 100);
+    if (actions?.openDepositDrawer) {
+      actions.openDepositDrawer(vault, 100);
+    }
   };
 
   const tokenPair = getTokenPair(vault.id);
