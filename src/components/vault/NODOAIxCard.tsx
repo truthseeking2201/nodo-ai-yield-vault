@@ -1,28 +1,14 @@
 
-import { useState, useEffect } from "react";
-import { Shield, Copy, HelpCircle, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ShieldCheck, ExternalLink } from "lucide-react";
 
-interface NODOAIxCardProps {
+export interface NODOAIxCardProps {
   balance: number;
   principal: number;
   fees: number;
-  unlockTime?: Date;
+  unlockTime: Date;
   holderCount: number;
   contractAddress: string;
   auditUrl: string;
@@ -31,7 +17,7 @@ interface NODOAIxCardProps {
     gradientBg: string;
     shadow: string;
   };
-  unlockProgress?: number; // Add the optional unlockProgress prop
+  unlockProgress?: number;
 }
 
 export function NODOAIxCard({
@@ -43,187 +29,103 @@ export function NODOAIxCard({
   contractAddress,
   auditUrl,
   styles,
-  unlockProgress: initialUnlockProgress
+  unlockProgress = 0
 }: NODOAIxCardProps) {
-  const { toast } = useToast();
-  const [currentBalance, setCurrentBalance] = useState(balance);
-  const [timeLeft, setTimeLeft] = useState<string>("");
-  const [unlockProgress, setUnlockProgress] = useState<number>(initialUnlockProgress || 0);
-  const isLocked = unlockTime && new Date() < unlockTime;
-
-  useEffect(() => {
-    // Simulate balance counter animation
-    const step = balance / 20;
-    let current = 0;
-    const interval = setInterval(() => {
-      current += step;
-      if (current >= balance) {
-        setCurrentBalance(balance);
-        clearInterval(interval);
-      } else {
-        setCurrentBalance(current);
-      }
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, [balance]);
-
-  useEffect(() => {
-    if (!unlockTime) return;
-
-    const updateCountdown = () => {
-      const now = new Date();
-      const diff = unlockTime.getTime() - now.getTime();
-      
-      if (diff <= 0) {
-        setTimeLeft("");
-        setUnlockProgress(100);
-        return;
-      }
-
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      setTimeLeft(`${hours} h ${minutes} m`);
-      
-      // If unlockProgress wasn't provided as a prop, calculate it
-      if (initialUnlockProgress === undefined) {
-        // Calculate progress (assuming a 24 hour lockup)
-        const totalLockupTime = 24 * 60 * 60 * 1000; // 24 hours in ms
-        const elapsed = totalLockupTime - diff;
-        const progress = Math.min(100, Math.max(0, (elapsed / totalLockupTime) * 100));
-        setUnlockProgress(progress);
-      }
-    };
-
-    updateCountdown();
-    const timer = setInterval(updateCountdown, 60000); // Update every minute
-
-    return () => clearInterval(timer);
-  }, [unlockTime, initialUnlockProgress]);
-
-  const copyAddress = () => {
-    navigator.clipboard.writeText(contractAddress);
-    toast({
-      description: "Contract address copied to clipboard",
+  // Calculate days until unlock
+  const daysUntilUnlock = () => {
+    const now = new Date();
+    const diffTime = Math.abs(unlockTime.getTime() - now.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+  
+  // Format date for display
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
     });
   };
+  
+  // Calculate profit or loss
+  const profit = balance - principal;
+  const isProfitable = profit >= 0;
 
   return (
-    <Card className="glass-card hover:-translate-y-0.5 transition-all duration-80 mb-6">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <div>
-          <CardTitle className="flex items-center gap-2 text-xl">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald to-emerald-dark flex items-center justify-center">
-              <Check className="w-5 h-5 text-white" />
-            </div>
-            NODOAIx Certificate
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  aria-label="Learn more about NODOAIx"
-                >
-                  <HelpCircle className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[280px]">
-                <div className="space-y-4">
-                  <h4 className="font-medium text-lg">What is NODOAIx?</h4>
-                  <ul className="space-y-2 text-sm text-[#9CA3AF]">
-                    <li>• 1 NODOAIx = your deposited USDC + fees earned by the AI Market-Making Agent.</li>
-                    <li>• It's minted when you deposit and burned when you redeem.</li>
-                    <li>
-                      • Smart-contract address: {" "}
-                      <a
-                        href={`https://explorer.sui.io/address/${contractAddress}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-emerald hover:underline"
-                      >
-                        {contractAddress.slice(0, 6)}...{contractAddress.slice(-4)}
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </CardTitle>
-          <p className="text-sm text-[#9CA3AF]">{holderCount.toLocaleString()} holders</p>
-        </div>
+    <Card className="glass-card overflow-hidden">
+      <div className={`h-1 ${styles.gradientBg}`}></div>
+      <CardHeader className="pb-2">
+        <CardTitle className="flex justify-between items-center">
+          <span className={`${styles.gradientText}`}>NODOAIx Token</span>
+          <div className="flex items-center text-xs text-white/60">
+            <ShieldCheck className="h-3 w-3 mr-1 text-green-500" />
+            <span>Verified</span>
+          </div>
+        </CardTitle>
       </CardHeader>
+      
       <CardContent className="space-y-4">
-        <div className="bg-white/5 rounded-lg px-4 py-2">
-          <span className="text-lg font-mono">
-            You hold {currentBalance.toLocaleString()} NODOAIx
-          </span>
+        <div className="space-y-1">
+          <div className="flex justify-between items-center">
+            <span className="text-white/60 text-sm">Balance</span>
+            <span className="font-mono font-bold">
+              {balance.toLocaleString()} NODOAIx
+            </span>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-white/60 text-sm">Principal</span>
+            <span className="font-mono">
+              {principal.toLocaleString()} NODOAIx
+            </span>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-white/60 text-sm">Profit/Loss</span>
+            <span className={`font-mono ${isProfitable ? 'text-green-500' : 'text-red-500'}`}>
+              {isProfitable ? '+' : ''}{profit.toLocaleString()} NODOAIx
+            </span>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-white/60 text-sm">Fees Collected</span>
+            <span className="font-mono text-green-500">
+              +{fees.toLocaleString()} NODOAIx
+            </span>
+          </div>
         </div>
         
-        <div className="space-y-1">
-          <p className="text-[#9CA3AF]">
-            Current value: {principal.toLocaleString()} USDC principal + {fees.toFixed(1)} USDC fees
-          </p>
-          {isLocked && (
-            <Progress 
-              value={unlockProgress} 
-              className="h-[3px] mt-3 mb-1" 
-              indicatorClassName="bg-[#F59E0B]" 
-            />
-          )}
-          <p className="text-sm text-[#9CA3AF] flex items-center gap-2">
-            1 NODOAIx always equals your deposit plus all yield generated
-            <Check className="w-4 h-4 text-[#10B981]" />
-          </p>
-        </div>
-
-        {timeLeft && (
-          <div className="inline-flex items-center px-3 py-1 rounded-full bg-orion/20 text-orion text-sm">
-            Unlocks in {timeLeft}
+        <div className="space-y-2 pt-2 border-t border-white/10">
+          <div className="flex justify-between text-sm">
+            <span>Unlock Progress</span>
+            <span>{unlockProgress}%</span>
           </div>
-        )}
-
-        <div className="flex items-center gap-4 text-sm text-[#9CA3AF]">
-          <a
-            href={auditUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:text-white transition-colors"
-          >
-            <Shield className="w-4 h-4" />
-            Audited
-          </a>
-          <button
-            onClick={copyAddress}
-            className="flex items-center gap-1 hover:text-white transition-colors"
-          >
-            <Copy className="w-4 h-4" />
-            {contractAddress.slice(0, 6)}...{contractAddress.slice(-4)}
-          </button>
+          <Progress value={unlockProgress} className="h-1.5" />
+          <div className="flex justify-between text-xs text-white/60">
+            <span>Locked</span>
+            <span>Unlocks {formatDate(unlockTime)} ({daysUntilUnlock()} days)</span>
+          </div>
         </div>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <Button
-                  className={cn(
-                    "w-full transition-transform duration-80 hover:scale-[1.02] active:scale-95",
-                    isLocked ? "opacity-50 cursor-not-allowed" : styles.gradientBg
-                  )}
-                  disabled={isLocked}
-                >
-                  Redeem to USDC
-                </Button>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              {isLocked 
-                ? "Unlocks after countdown"
-                : "Gas ≈ 0.006 SUI"}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        
+        <div className="pt-2 space-y-2">
+          <div className="flex justify-between items-center text-xs">
+            <span className="text-white/60">Holders: {holderCount.toLocaleString()}</span>
+            <a 
+              href={auditUrl} 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline flex items-center"
+            >
+              View Audit <ExternalLink className="h-3 w-3 ml-1" />
+            </a>
+          </div>
+          
+          <Button variant="outline" size="sm" className="w-full text-xs border-white/20">
+            <span className="font-mono mr-1">{contractAddress.substring(0, 10)}...</span>
+            <ExternalLink className="h-3 w-3" />
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -178,6 +179,7 @@ export default function VaultDetail() {
                 contractAddress="0x1234567890abcdef1234567890abcdef12345678"
                 isAudited={true}
                 explorerUrl="https://explorer.sui.io/address/0x1234567890abcdef1234567890abcdef12345678"
+                defaultOpen={false}
               />
               <div>
                 <h3 className="text-lg font-medium mb-2">Investment Strategy</h3>
@@ -226,6 +228,7 @@ export default function VaultDetail() {
               contractAddress="0xAB1234567890ABCDEF1234567890ABCDEF123456"
               auditUrl="/audit.pdf"
               styles={styles}
+              unlockProgress={unlockProgress}
             />
           </div>
         </div>
