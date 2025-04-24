@@ -65,8 +65,7 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
   return (
     <Drawer open={open} onOpenChange={onClose}>
       <DrawerContent 
-        className="sm:max-w-[420px] rounded-[24px] bg-[#141517] bg-opacity-80 backdrop-blur-md border border-white/[0.06] shadow-[0_16px_32px_-8px_rgba(0,0,0,0.6)] p-0 overflow-hidden"
-        style={{ transitionTimingFunction: "cubic-bezier(.22,1,.36,1)", transitionDuration: "260ms" }}
+        className="sm:max-w-[420px] p-0 overflow-hidden"
         onKeyDown={handleKeyDown}
       >
         <div className="pt-8 pb-6 px-7">
