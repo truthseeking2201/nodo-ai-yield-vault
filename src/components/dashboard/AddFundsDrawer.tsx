@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import ReactConfetti from 'react-confetti';
 
@@ -22,6 +23,7 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
   const [amount, setAmount] = useState<number>(50);
   const [error, setError] = useState<string | null>(null);
   const { balance } = useWallet();
+  const [showConfetti, setShowConfetti] = useState(false);
   
   const walletBalance = 1200;
   const minDeposit = 50;
@@ -32,6 +34,17 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
   useEffect(() => {
     if (error) setError(null);
   }, [amount]);
+  
+  // Clean up confetti effect
+  useEffect(() => {
+    if (showConfetti) {
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showConfetti]);
   
   const handleAmountChange = (value: number) => {
     setAmount(value);
@@ -63,20 +76,9 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
       
       if (success) {
         setStage("success");
+        // Show confetti if user hasn't opted out of animations
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          const confettiInstance = ReactConfetti({
-            numberOfPieces: 100,
-            colors: ['#FF8A00', '#FF5E00', '#FFFFFF'],
-            width: window.innerWidth,
-            height: window.innerHeight,
-            recycle: false
-          });
-          
-          setTimeout(() => {
-            if (confettiInstance && typeof confettiInstance.destroy === 'function') {
-              confettiInstance.destroy();
-            }
-          }, 2000);
+          setShowConfetti(true);
         }
         
         toast.success("Successfully added funds", {
@@ -99,6 +101,16 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
   
   return (
     <DrawerContent className="rounded-l-[24px] overflow-hidden">
+      {showConfetti && (
+        <ReactConfetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          numberOfPieces={100}
+          colors={['#FF8A00', '#FF5E00', '#FFFFFF']}
+          recycle={false}
+        />
+      )}
+      
       <div className="absolute right-4 top-4">
         <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
           <X className="h-4 w-4" />
