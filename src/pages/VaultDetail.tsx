@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -164,8 +163,8 @@ export default function VaultDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 space-y-6">
-          <VaultPerformanceChart
-            data={vault.performance[timeRange]}
+          <VaultPerformanceSection
+            vault={vault}
             timeRange={timeRange}
             onTimeRangeChange={setTimeRange}
             styles={styles}
