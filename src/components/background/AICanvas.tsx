@@ -23,9 +23,9 @@ export const AICanvas: React.FC = () => {
         newParticles.push({
           id: i,
           x: Math.random() * 100, // Random position across the width (in percentage)
-          y: 30 + Math.random() * 70, // Random position across the height, avoiding the top
-          size: 2 + Math.random(), // Random size between 2-3px
-          delay: Math.random() * 20, // Random delay to stagger animation
+          y: Math.random() * 60 + 20, // Random position across the height, ensuring some are visible
+          size: 2 + Math.random() * 2, // Random size between 2-4px for better visibility
+          delay: Math.random() * 10, // Shorter delay for quicker animation start
           color: i % 2 === 0 ? "orange" : "cyan" // Alternate colors
         });
       }
@@ -37,7 +37,7 @@ export const AICanvas: React.FC = () => {
   }, []);
   
   return (
-    <>
+    <div className="fixed inset-0 z-[-1] pointer-events-none" aria-hidden="true">
       {particles.map((particle) => (
         <div
           key={particle.id}
@@ -52,6 +52,6 @@ export const AICanvas: React.FC = () => {
           aria-hidden="true"
         />
       ))}
-    </>
+    </div>
   );
 };

@@ -41,10 +41,12 @@ export default function VaultCatalog() {
 
   return (
     <PageContainer>
-      {/* AI Canvas Background */}
-      <AICanvas />
+      {/* AI Canvas Background - positioned at the beginning */}
+      <div className="absolute inset-0 overflow-hidden z-[-1]">
+        <AICanvas />
+      </div>
       
-      <div className="flex flex-col space-y-8">
+      <div className="flex flex-col space-y-8 relative z-0">
         <HeroSection />
 
         <div className="relative pt-8">
