@@ -9,21 +9,27 @@ interface VaultSecurityInfoProps {
   contractAddress: string;
   isAudited: boolean;
   explorerUrl: string;
+  defaultOpen?: boolean; // Make it optional
 }
 
 export function VaultSecurityInfo({ 
   contractAddress, 
   isAudited, 
-  explorerUrl 
+  explorerUrl,
+  defaultOpen = false // Default to false if not provided
 }: VaultSecurityInfoProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const { toast } = useToast();
 
   useEffect(() => {
     // Check localStorage for user preference, default to open for first-time visitors
     const securityCollapsed = localStorage.getItem("securityCollapsed");
-    setIsOpen(securityCollapsed !== "true");
-  }, []);
+    if (securityCollapsed === null) {
+      setIsOpen(defaultOpen);
+    } else {
+      setIsOpen(securityCollapsed !== "true");
+    }
+  }, [defaultOpen]);
 
   const toggleOpen = () => {
     const newState = !isOpen;

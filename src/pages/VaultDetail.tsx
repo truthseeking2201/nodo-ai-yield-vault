@@ -131,7 +131,8 @@ export default function VaultDetail() {
         </h1>
       </div>
 
-      <style jsx global>{`
+      <style>
+        {`
         @keyframes glow {
           0% { transform: scale(1); box-shadow: 0 0 0 rgba(111, 59, 255, 0); }
           50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(111, 59, 255, 0.6); }
@@ -163,7 +164,8 @@ export default function VaultDetail() {
           0% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
-      `}</style>
+        `}
+      </style>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 max-w-[640px] space-y-6">
@@ -184,7 +186,6 @@ export default function VaultDetail() {
                 contractAddress="0x1234567890abcdef1234567890abcdef12345678"
                 isAudited={true}
                 explorerUrl="https://explorer.sui.io/address/0x1234567890abcdef1234567890abcdef12345678"
-                defaultOpen={true}
               />
               <div>
                 <h3 className="text-lg font-medium mb-2">Investment Strategy</h3>
@@ -233,7 +234,6 @@ export default function VaultDetail() {
               contractAddress="0xAB1234567890ABCDEF1234567890ABCDEF123456"
               auditUrl="/audit.pdf"
               styles={styles}
-              unlockProgress={unlockProgress}
             />
           </div>
         </div>

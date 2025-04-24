@@ -31,6 +31,7 @@ interface NODOAIxCardProps {
     gradientBg: string;
     shadow: string;
   };
+  unlockProgress?: number; // Add the optional unlockProgress prop
 }
 
 export function NODOAIxCard({
@@ -41,12 +42,13 @@ export function NODOAIxCard({
   holderCount,
   contractAddress,
   auditUrl,
-  styles
+  styles,
+  unlockProgress: initialUnlockProgress
 }: NODOAIxCardProps) {
   const { toast } = useToast();
   const [currentBalance, setCurrentBalance] = useState(balance);
   const [timeLeft, setTimeLeft] = useState<string>("");
-  const [unlockProgress, setUnlockProgress] = useState<number>(0);
+  const [unlockProgress, setUnlockProgress] = useState<number>(initialUnlockProgress || 0);
   const isLocked = unlockTime && new Date() < unlockTime;
 
   useEffect(() => {
@@ -83,18 +85,21 @@ export function NODOAIxCard({
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       setTimeLeft(`${hours} h ${minutes} m`);
       
-      // Calculate progress (assuming a 24 hour lockup)
-      const totalLockupTime = 24 * 60 * 60 * 1000; // 24 hours in ms
-      const elapsed = totalLockupTime - diff;
-      const progress = Math.min(100, Math.max(0, (elapsed / totalLockupTime) * 100));
-      setUnlockProgress(progress);
+      // If unlockProgress wasn't provided as a prop, calculate it
+      if (initialUnlockProgress === undefined) {
+        // Calculate progress (assuming a 24 hour lockup)
+        const totalLockupTime = 24 * 60 * 60 * 1000; // 24 hours in ms
+        const elapsed = totalLockupTime - diff;
+        const progress = Math.min(100, Math.max(0, (elapsed / totalLockupTime) * 100));
+        setUnlockProgress(progress);
+      }
     };
 
     updateCountdown();
     const timer = setInterval(updateCountdown, 60000); // Update every minute
 
     return () => clearInterval(timer);
-  }, [unlockTime]);
+  }, [unlockTime, initialUnlockProgress]);
 
   const copyAddress = () => {
     navigator.clipboard.writeText(contractAddress);

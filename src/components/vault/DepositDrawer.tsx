@@ -96,7 +96,7 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
             totalReturn={totalReturn}
             isPending={depositMutation.isPending}
             onConfirm={handleConfirmDeposit}
-            onBack={() => step !== 'success' && handleDepositAgain()}
+            onBack={handleDepositAgain}
           />
         )}
 

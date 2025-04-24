@@ -151,6 +151,7 @@ export const useDepositDrawer = ({ vault, onClose }: UseDepositDrawerProps) => {
   };
 
   const handleReviewClick = () => setStep('confirmation');
+  
   const handleViewDashboard = () => {
     onClose();
     navigate('/dashboard');
