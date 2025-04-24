@@ -3,11 +3,21 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { DepositDrawer } from "@/components/vault/DepositDrawer";
 import { VaultPerformanceChart } from "@/components/vault/VaultPerformanceChart";
+import { VaultActivityTicker } from "@/components/vault/VaultActivityTicker";
+import { VaultSecurityInfo } from "@/components/vault/VaultSecurityInfo";
 import { useWallet } from "@/hooks/useWallet";
 import { useVaultDetail } from "@/hooks/useVaultDetail";
-import { ArrowRight, ChartBar, Wallet } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ArrowRight, Wallet, Info } from "lucide-react";
 
 export default function VaultDetail() {
   const { vaultId } = useParams<{ vaultId: string }>();
@@ -15,7 +25,9 @@ export default function VaultDetail() {
   const { isConnected } = useWallet();
   const [isDepositDrawerOpen, setIsDepositDrawerOpen] = useState(false);
   const [timeRange, setTimeRange] = useState<"daily" | "weekly" | "monthly">("daily");
-  
+  const [projectedAmount, setProjectedAmount] = useState<string>("");
+  const [unlockProgress, setUnlockProgress] = useState<number>(0);
+
   const { 
     vault, 
     isLoading, 
@@ -33,6 +45,13 @@ export default function VaultDetail() {
       currency: 'USD',
       maximumFractionDigits: 0
     }).format(value) : '-';
+  };
+
+  const calculateProjectedEarnings = (amount: string) => {
+    if (!amount || !vault) return 0;
+    const principal = parseFloat(amount);
+    if (isNaN(principal)) return 0;
+    return (principal * vault.apr / 100) / 12;
   };
 
   const styles = getVaultStyles(vault?.type);
@@ -140,6 +159,11 @@ export default function VaultDetail() {
               <CardDescription>Understanding this vault's investment approach</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <VaultSecurityInfo 
+                contractAddress="0x1234567890abcdef1234567890abcdef12345678"
+                isAudited={true}
+                explorerUrl="https://explorer.sui.io/address/0x1234567890abcdef1234567890abcdef12345678"
+              />
               <div>
                 <h3 className="text-lg font-medium mb-2">Investment Strategy</h3>
                 <p className="text-white/80">{vault.strategy}</p>
@@ -159,6 +183,12 @@ export default function VaultDetail() {
               </div>
             </CardContent>
           </Card>
+
+          <Card className="glass-card">
+            <CardContent>
+              <VaultActivityTicker />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-6">
@@ -169,11 +199,41 @@ export default function VaultDetail() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                <span className="text-white/60">APR</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-white/60">APR</span>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="h-4 w-4 text-white/40" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="max-w-xs text-sm">
+                          Calculated from last 7 days fees collected in pool block #123,456 – 123,999
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <span className={`font-mono text-lg font-bold ${styles.gradientText}`}>
                   {formatPercentage(vault.apr)}
                 </span>
               </div>
+
+              <div className="space-y-2">
+                <Input
+                  type="number"
+                  placeholder="Enter amount"
+                  value={projectedAmount}
+                  onChange={(e) => setProjectedAmount(e.target.value)}
+                  className="bg-white/5"
+                />
+                {projectedAmount && (
+                  <div className="text-sm text-white/80">
+                    Est. earnings in 30 days ≈ ${calculateProjectedEarnings(projectedAmount).toFixed(2)} USDC
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-between items-center border-b border-white/10 pb-3">
                 <span className="text-white/60">APY</span>
                 <span className={`font-mono text-lg font-bold ${styles.gradientText}`}>
@@ -204,29 +264,44 @@ export default function VaultDetail() {
 
           <Card className="glass-card">
             <CardHeader>
-              <CardTitle>Ready to Invest?</CardTitle>
-              <CardDescription>Start earning yield on your assets</CardDescription>
+              <CardTitle>
+                {unlockProgress > 0 ? "Unlocking Progress" : "Ready to Invest?"}
+              </CardTitle>
+              <CardDescription>
+                {unlockProgress > 0 
+                  ? "Time remaining until your funds are available"
+                  : "Start earning yield on your assets"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button 
-                className={`w-full ${styles.gradientBg} ${styles.shadow}`}
-                onClick={() => {
-                  if (isConnected) {
-                    setIsDepositDrawerOpen(true);
-                  } else {
-                    const walletBtn = document.querySelector('[data-wallet-connect]');
-                    if (walletBtn) {
-                      (walletBtn as HTMLElement).click();
+              {unlockProgress > 0 ? (
+                <div className="space-y-2">
+                  <Progress value={unlockProgress} className="h-2" />
+                  <p className="text-sm text-white/60 text-center">
+                    Unlocks in {Math.ceil((100 - unlockProgress) / 100 * 30)} days
+                  </p>
+                </div>
+              ) : (
+                <Button 
+                  className={`w-full ${styles.gradientBg} ${styles.shadow}`}
+                  onClick={() => {
+                    if (isConnected) {
+                      setIsDepositDrawerOpen(true);
+                    } else {
+                      const walletBtn = document.querySelector('[data-wallet-connect]');
+                      if (walletBtn) {
+                        (walletBtn as HTMLElement).click();
+                      }
                     }
-                  }
-                }}
-              >
-                {isConnected ? (
-                  <>Deposit Now <ArrowRight className="ml-2 h-4 w-4" /></>
-                ) : (
-                  <>Connect Wallet <Wallet className="ml-2 h-4 w-4" /></>
-                )}
-              </Button>
+                  }}
+                >
+                  {isConnected ? (
+                    <>Deposit Now <ArrowRight className="ml-2 h-4 w-4" /></>
+                  ) : (
+                    <>Connect Wallet <Wallet className="ml-2 h-4 w-4" /></>
+                  )}
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
