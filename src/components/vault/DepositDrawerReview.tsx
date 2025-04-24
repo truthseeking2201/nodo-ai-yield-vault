@@ -46,55 +46,55 @@ export function DepositDrawerReview({
   };
 
   return (
-    <div className="mt-8 space-y-6">
-      <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-        <h3 className="text-xl font-semibold mb-4 text-center">Confirm Your Deposit</h3>
+    <div className="space-y-7">
+      <div className="bg-white/[0.02] rounded-[20px] p-5 border border-white/[0.06]">
+        <h3 className="text-base font-medium text-center mb-4">Confirm Your Deposit</h3>
 
         <div className="space-y-3">
           <div className="flex justify-between">
-            <span className="text-[#9CA3AF]">Vault</span>
-            <span className="font-medium gradient-text-nova">{vault.name}</span>
+            <span className="text-xs text-[#9CA3AF]">Vault</span>
+            <span className="font-medium text-sm text-[#F59E0B]">{vault.name}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-[#9CA3AF]">Amount</span>
-            <span className="font-mono font-medium">{formatCurrency(parseFloat(amount))}</span>
+            <span className="text-xs text-[#9CA3AF]">Amount</span>
+            <span className="font-mono text-sm text-[#E5E7EB]">{formatCurrency(parseFloat(amount))}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-[#9CA3AF]">Lock-up Period</span>
-            <span className="font-medium">{selectedLockup} days</span>
+            <span className="text-xs text-[#9CA3AF]">Lock-up Period</span>
+            <span className="font-mono text-sm text-[#E5E7EB]">{selectedLockup} days</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-[#9CA3AF]">APR</span>
-            <span className="font-mono font-medium gradient-text-nova">
+            <span className="text-xs text-[#9CA3AF]">APR</span>
+            <span className="font-mono text-sm text-[#F59E0B]">
               {formatPercentage(vault.apr + (vault.lockupPeriods.find(p => p.days === selectedLockup)?.aprBoost || 0))}
             </span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-[#9CA3AF]">Unlock Date</span>
-            <span className="font-medium">{formatUnlockDate()}</span>
+            <span className="text-xs text-[#9CA3AF]">Unlock Date</span>
+            <span className="text-sm text-[#E5E7EB]">{formatUnlockDate()}</span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-[#9CA3AF]">Gas (est.)</span>
-            <span className="font-mono">{gasFeeNative} SUI (${gasFeeUsd})</span>
+            <span className="text-xs text-[#9CA3AF]">Gas (est.)</span>
+            <span className="font-mono text-sm text-[#E5E7EB]">{gasFeeNative} SUI (${gasFeeUsd})</span>
           </div>
 
-          <div className="border-t border-white/10 my-2"></div>
+          <div className="h-px bg-white/[0.06] my-2"></div>
 
           <div className="flex justify-between">
-            <span className="text-[#9CA3AF]">Est. Return</span>
-            <span className="font-mono font-medium text-[#10B981]">
+            <span className="text-xs text-[#9CA3AF]">Est. Return</span>
+            <span className="font-mono text-sm text-[#10B981]">
               {formatCurrency(returnAmount)}
             </span>
           </div>
 
           <div className="flex justify-between">
-            <span className="text-[#9CA3AF]">Est. Total Value</span>
-            <span className="font-mono font-medium">
+            <span className="text-xs text-[#9CA3AF]">Est. Total Value</span>
+            <span className="font-mono font-medium text-sm text-[#E5E7EB]">
               {formatCurrency(totalReturn)}
             </span>
           </div>
@@ -109,15 +109,14 @@ export function DepositDrawerReview({
         <Button 
           onClick={onConfirm}
           disabled={isPending}
-          className="w-full h-12 bg-[#10B981] hover:bg-[#0d9668] shadow-[0_3px_6px_-2px_rgba(16,185,129,0.4)] transition-all duration-300"
-          style={{ transition: "transform 80ms cubic-bezier(.22,1,.36,1)" }}
+          className="w-full h-[52px] rounded-xl font-mono text-sm bg-gradient-to-r from-[#FF8800] to-[#FFA822] hover:shadow-[0_4px_12px_-2px_rgba(255,136,0,0.4)] transition-all duration-300 hover:scale-[0.98]"
         >
           {isPending ? "Processing..." : "Confirm Deposit"}
         </Button>
         
         <Button 
           variant="outline" 
-          className="bg-white/5 border-[#374151] hover:bg-white/10"
+          className="bg-white/5 border-[#374151] hover:bg-white/10 h-12 rounded-xl"
           disabled={isPending}
           onClick={onBack}
         >

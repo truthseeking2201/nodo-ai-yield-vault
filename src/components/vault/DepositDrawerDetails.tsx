@@ -3,7 +3,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { VaultData } from "@/types/vault";
 
@@ -60,50 +59,50 @@ export function DepositDrawerDetails({
   };
 
   return (
-    <div className="mt-8 space-y-6">
+    <div className="space-y-7">
       <div className="space-y-2">
         <div className="flex justify-between text-sm mb-2">
-          <Label htmlFor="amount">Amount (USDC)</Label>
-          <div className="text-[#9CA3AF]">
-            Balance: <span className="font-mono">{balance.usdc} USDC</span>
-            <Button 
-              type="button" 
-              variant="ghost" 
-              onClick={onMaxClick} 
-              className="h-6 px-2 py-0 text-xs text-[#6F3BFF] hover:bg-[#6F3BFF]/10"
-            >
-              Max
-            </Button>
+          <Label htmlFor="amount" className="text-xs font-medium tracking-wide text-[#9CA3AF]">Amount (USDC)</Label>
+          <div className="text-[#9CA3AF] text-xs">
+            Balance: <span className="font-mono text-[#E5E7EB]">{balance.usdc} USDC</span>
           </div>
         </div>
-        <div className="space-y-1">
+        <div className="relative">
           <Input
             id="amount"
             type="text"
             value={amount}
             onChange={onAmountChange}
-            className="font-mono border-[#374151] focus-visible:ring-1 focus-visible:ring-[#6F3BFF] focus-visible:border-[#6F3BFF] bg-white/5"
-            placeholder="0.00"
+            className="font-mono text-right text-[#E5E7EB] border-[#28304B] focus-visible:ring-1 focus-visible:ring-[#F59E0B] focus-visible:border-[#F59E0B] bg-[#202124] h-12 rounded-xl shadow-inner text-base pr-16"
+            placeholder="$0"
           />
-          {validationError && (
-            <p className="text-red-500 text-xs">{validationError}</p>
-          )}
-          <div className="text-xs text-[#9CA3AF] mt-1">
-            Gas ≈ {gasFeeNative} SUI (${gasFeeUsd})
-          </div>
+          <Button 
+            type="button" 
+            variant="ghost" 
+            onClick={onMaxClick} 
+            className="absolute right-2 top-1/2 -translate-y-1/2 h-6 px-2 py-0 text-[10px] text-[#F59E0B] bg-[#F59E0B]/15 hover:bg-[#F59E0B]/20 rounded-full"
+          >
+            MAX
+          </Button>
+        </div>
+        {validationError && (
+          <p className="text-red-500 text-xs">{validationError}</p>
+        )}
+        <div className="text-xs text-[#9CA3AF] font-mono tracking-tight">
+          Gas ≈ {gasFeeNative} SUI (${gasFeeUsd})
         </div>
         
-        <div className="pt-2">
-          <Label className="text-sm mb-2 block">Adjust amount</Label>
+        <div className="pt-3">
+          <Label className="text-xs font-medium tracking-wide text-[#9CA3AF] mb-2 block">Adjust amount</Label>
           <Slider 
             value={sliderValue} 
             onValueChange={onSliderChange} 
             min={100} 
             max={10000} 
             step={50}
-            className="mt-2"
+            className="mt-4"
           />
-          <div className="flex justify-between text-xs text-[#9CA3AF] mt-1">
+          <div className="flex justify-between text-[11px] font-mono text-[#9CA3AF] mt-2">
             <span>$100</span>
             <span>$10,000</span>
           </div>
@@ -111,71 +110,75 @@ export function DepositDrawerDetails({
       </div>
 
       <div className="space-y-3">
-        <Label>Select Lock-up Period</Label>
-        <RadioGroup 
-          value={String(selectedLockup)} 
-          onValueChange={onLockupChange}
-          className="space-y-2 md:space-y-2"
-        >
+        <Label className="text-xs font-medium tracking-wide text-[#9CA3AF]">Select Lock-up Period</Label>
+        <div className="grid grid-cols-3 gap-2">
           {vault.lockupPeriods.map((period) => {
             const boost = period.days === 90 ? 0.025 : period.days === 60 ? 0.012 : 0;
             const totalApr = vault.apr + boost;
+            const isSelected = period.days === selectedLockup;
             
             return (
-              <div key={period.days} className="flex items-center space-x-3 bg-white/5 rounded-lg p-3 border border-white/10">
-                <RadioGroupItem value={String(period.days)} id={`lockup-${period.days}`} className="border-white/30" />
-                <div className="flex flex-1 justify-between">
-                  <Label htmlFor={`lockup-${period.days}`} className="cursor-pointer">
-                    {period.days} days
-                  </Label>
-                  <div className={`${boost > 0 ? "gradient-text-nova" : "text-white/80"} flex items-center`}>
-                    <span className="font-semibold transition-all duration-300">
-                      {formatPercentage(totalApr)}
-                    </span>
-                    {boost > 0 && <span className="ml-1 text-xs">(+{formatPercentage(boost)})</span>}
-                  </div>
-                </div>
-              </div>
+              <button
+                key={period.days}
+                onClick={() => onLockupChange(String(period.days))}
+                className={`h-11 rounded-xl flex flex-col justify-center items-center transition-all ${
+                  isSelected 
+                    ? 'bg-[#F59E0B]/15 border border-[#F59E0B]/30' 
+                    : 'bg-[#202124] border border-transparent hover:border-white/10'
+                }`}
+              >
+                <span className="font-medium text-xs">{period.days} days</span>
+                <span className={`font-mono text-xs ${boost > 0 ? 'text-[#10B981]' : 'text-white/80'}`}>
+                  {formatPercentage(totalApr)}
+                </span>
+              </button>
             );
           })}
-        </RadioGroup>
+        </div>
       </div>
 
       <div 
         aria-live="polite"
-        className={`bg-white/5 rounded-lg p-4 border border-white/10 ${fadeRefresh ? 'opacity-0' : 'opacity-100'}`}
+        className={`bg-white/[0.02] rounded-[20px] p-5 border border-white/[0.06] ${fadeRefresh ? 'opacity-0' : 'opacity-100'}`}
         style={{ transition: 'opacity 120ms ease-out' }}
       >
-        <h3 className="text-sm text-[#9CA3AF] mb-3">Estimated Returns</h3>
+        <h3 className="text-sm font-medium text-[#E5E7EB] mb-3">Estimated Returns</h3>
+        <div className="h-px bg-white/[0.06] mb-3"></div>
 
-        <div className="grid grid-cols-5 gap-y-2">
-          <div className="col-span-2 text-[#9CA3AF]">APR</div>
-          <div className="col-span-3 font-mono font-semibold text-right">
-            <span className="gradient-text-nova">
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <div className="text-xs text-[#9CA3AF]">APR</div>
+            <div className="font-mono text-[#F59E0B]">
               {formatPercentage(vault.apr + (vault.lockupPeriods.find(p => p.days === selectedLockup)?.aprBoost || 0))}
-            </span>
+            </div>
           </div>
 
-          <div className="col-span-2 text-[#9CA3AF]">Lock-up Duration</div>
-          <div className="col-span-3 font-mono text-right">{selectedLockup} days</div>
-
-          <div className="col-span-5 border-t border-white/10 my-1"></div>
-
-          <div className="col-span-2 text-[#9CA3AF]">Principal</div>
-          <div className="col-span-3 font-mono text-right">
-            {formatCurrency(amountNum > 0 ? amountNum : 0)}
+          <div className="flex justify-between">
+            <div className="text-xs text-[#9CA3AF]">Lock-up Duration</div>
+            <div className="font-mono text-[#E5E7EB]">{selectedLockup} days</div>
           </div>
 
-          <div className="col-span-2 text-[#9CA3AF]">Est. Return</div>
-          <div className="col-span-3 font-mono text-right text-[#10B981]">
-            {formatCurrency(returnAmount)}
+          <div className="flex justify-between">
+            <div className="text-xs text-[#9CA3AF]">Principal</div>
+            <div className="font-mono text-[#E5E7EB]">
+              {formatCurrency(amountNum > 0 ? amountNum : 0)}
+            </div>
           </div>
 
-          <div className="col-span-5 border-t border-white/10 my-1"></div>
+          <div className="flex justify-between">
+            <div className="text-xs text-[#9CA3AF]">Est. Return</div>
+            <div className="font-mono text-[#10B981]">
+              {formatCurrency(returnAmount)}
+            </div>
+          </div>
 
-          <div className="col-span-2 text-[#9CA3AF]">Total Value</div>
-          <div className="col-span-3 font-mono font-bold text-right">
-            {formatCurrency(totalReturn)}
+          <div className="h-px bg-white/[0.06] my-2"></div>
+
+          <div className="flex justify-between">
+            <div className="text-xs text-[#9CA3AF]">Total Value</div>
+            <div className="font-mono font-semibold text-[#E5E7EB]">
+              {formatCurrency(totalReturn)}
+            </div>
           </div>
         </div>
       </div>
@@ -183,11 +186,10 @@ export function DepositDrawerDetails({
       <Button 
         onClick={onReviewClick}
         disabled={!canContinue}
-        className={`w-full h-12 gradient-bg-nova hover:shadow-neon-nova transition-all duration-300`}
-        style={{ 
-          transition: "transform 80ms cubic-bezier(.22,1,.36,1), box-shadow 300ms ease-out", 
-          transform: canContinue ? "scale(1)" : "scale(1)",
-        }}
+        className={`w-full h-[52px] rounded-xl font-mono text-sm text-white bg-gradient-to-r from-[#FF8800] to-[#FFA822] hover:shadow-[0_4px_12px_-2px_rgba(255,136,0,0.4)] transition-all duration-300 ${
+          canContinue ? 'opacity-100' : 'opacity-70 cursor-not-allowed bg-[#1F2937] text-[#6B7280]'
+        }`}
+        style={{ transition: "transform 80ms cubic-bezier(.22,1,.36,1), box-shadow 300ms ease-out" }}
       >
         Review Deposit
       </Button>

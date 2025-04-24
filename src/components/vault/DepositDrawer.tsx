@@ -1,18 +1,21 @@
 
-import React from "react";
+import React, { useCallback } from "react";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { VaultData } from "@/types/vault";
 import { useDepositDrawer } from "@/hooks/useDepositDrawer";
 import { DepositDrawerDetails } from "./DepositDrawerDetails";
 import { DepositDrawerReview } from "./DepositDrawerReview";
 import { DepositDrawerSuccess } from "./DepositDrawerSuccess";
 import { useWallet } from "@/hooks/useWallet";
+import { X } from "lucide-react";
 
 interface DepositDrawerProps {
   open: boolean;
@@ -52,66 +55,85 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
   const returnAmount = calculateEstimatedReturns();
   const totalReturn = amount ? parseFloat(amount) + returnAmount : 0;
 
+  // Handle Escape key press
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  }, [onClose]);
+
   return (
-    <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent 
-        className="sm:max-w-md overflow-y-auto glass-card border-white/20"
-        style={{ transitionTimingFunction: "cubic-bezier(.22,1,.36,1)", transitionDuration: "240ms" }}
+    <Drawer open={open} onOpenChange={onClose}>
+      <DrawerContent 
+        className="sm:max-w-[420px] rounded-[24px] bg-[#141517] bg-opacity-80 backdrop-blur-md border border-white/[0.06] shadow-[0_16px_32px_-8px_rgba(0,0,0,0.6)] p-0 overflow-hidden"
+        style={{ transitionTimingFunction: "cubic-bezier(.22,1,.36,1)", transitionDuration: "260ms" }}
+        onKeyDown={handleKeyDown}
       >
-        <SheetHeader>
-          <SheetTitle className="text-2xl gradient-text-nova">
-            Deposit to {vault.name}
-          </SheetTitle>
-          <SheetDescription>
-            {step === 'details' && "Enter your deposit amount and select a lockup period"}
-            {step === 'confirmation' && "Confirm your deposit details"}
-            {step === 'success' && "Your deposit was successful!"}
-          </SheetDescription>
-        </SheetHeader>
+        <div className="pt-8 pb-6 px-7">
+          <div className="flex justify-between items-center mb-6">
+            <DrawerHeader className="p-0">
+              <DrawerTitle className="text-xl font-bold text-white">
+                Deposit to {vault.name}
+              </DrawerTitle>
+              <DrawerDescription className="text-sm text-white/60">
+                {step === 'details' && "Enter your deposit amount and select a lockup period"}
+                {step === 'confirmation' && "Confirm your deposit details"}
+                {step === 'success' && "Your deposit was successful!"}
+              </DrawerDescription>
+            </DrawerHeader>
+            <DrawerClose 
+              className="rounded-full h-8 w-8 flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors"
+              onClick={onClose}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </DrawerClose>
+          </div>
 
-        {step === 'details' && (
-          <DepositDrawerDetails
-            vault={vault}
-            amount={amount}
-            selectedLockup={selectedLockup}
-            sliderValue={sliderValue}
-            validationError={validationError}
-            fadeRefresh={fadeRefresh}
-            balance={balance}
-            onAmountChange={handleAmountChange}
-            onSliderChange={handleSliderChange}
-            onMaxClick={handleMaxClick}
-            onLockupChange={(value) => setSelectedLockup(parseInt(value))}
-            onReviewClick={handleReviewClick}
-            calculateEstimatedReturns={calculateEstimatedReturns}
-          />
-        )}
+          {step === 'details' && (
+            <DepositDrawerDetails
+              vault={vault}
+              amount={amount}
+              selectedLockup={selectedLockup}
+              sliderValue={sliderValue}
+              validationError={validationError}
+              fadeRefresh={fadeRefresh}
+              balance={balance}
+              onAmountChange={handleAmountChange}
+              onSliderChange={handleSliderChange}
+              onMaxClick={handleMaxClick}
+              onLockupChange={(value) => setSelectedLockup(parseInt(value))}
+              onReviewClick={handleReviewClick}
+              calculateEstimatedReturns={calculateEstimatedReturns}
+            />
+          )}
 
-        {step === 'confirmation' && (
-          <DepositDrawerReview
-            vault={vault}
-            amount={amount}
-            selectedLockup={selectedLockup}
-            returnAmount={returnAmount}
-            totalReturn={totalReturn}
-            isPending={depositMutation.isPending}
-            onConfirm={handleConfirmDeposit}
-            onBack={handleDepositAgain}
-          />
-        )}
+          {step === 'confirmation' && (
+            <DepositDrawerReview
+              vault={vault}
+              amount={amount}
+              selectedLockup={selectedLockup}
+              returnAmount={returnAmount}
+              totalReturn={totalReturn}
+              isPending={depositMutation.isPending}
+              onConfirm={handleConfirmDeposit}
+              onBack={handleDepositAgain}
+            />
+          )}
 
-        {step === 'success' && (
-          <DepositDrawerSuccess
-            vault={vault}
-            amount={amount}
-            selectedLockup={selectedLockup}
-            showConfetti={showConfetti}
-            countUpValue={countUpValue}
-            onViewDashboard={handleViewDashboard}
-            onDepositAgain={handleDepositAgain}
-          />
-        )}
-      </SheetContent>
-    </Sheet>
+          {step === 'success' && (
+            <DepositDrawerSuccess
+              vault={vault}
+              amount={amount}
+              selectedLockup={selectedLockup}
+              showConfetti={showConfetti}
+              countUpValue={countUpValue}
+              onViewDashboard={handleViewDashboard}
+              onDepositAgain={handleDepositAgain}
+            />
+          )}
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
