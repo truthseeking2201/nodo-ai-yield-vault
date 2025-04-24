@@ -11,7 +11,7 @@ import { WalletIcon, Download, Bell } from "lucide-react";
 
 // Dashboard components
 import { KpiBar } from "@/components/dashboard/KpiBar";
-import { PositionCard } from "@/components/dashboard/PositionCard";
+import { VaultRowAccordion } from "@/components/dashboard/VaultRowAccordion";
 import { TxTable } from "@/components/dashboard/TxTable";
 import { TxDrawer } from "@/components/dashboard/TxDrawer";
 import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
@@ -19,7 +19,6 @@ import { EmptyState } from "@/components/dashboard/EmptyState";
 import { WithdrawModal } from "@/components/vault/WithdrawModal";
 import { AssetSplitDonut } from "@/components/dashboard/AssetSplitDonut";
 import { NotificationsDrawer } from "@/components/dashboard/NotificationsDrawer";
-import { VaultActivitySection } from "@/components/vault/VaultActivitySection";
 
 export default function Dashboard() {
   const { isConnected, address, openWalletModal } = useWallet();
@@ -184,12 +183,9 @@ export default function Dashboard() {
         isLoading={isLoadingInvestments}
       />
 
-      {/* Activity Ticker - Repositioned above chart as per design */}
-      <VaultActivitySection />
-
-      <div className="grid grid-cols-1 lg:grid-cols-7 gap-6 mb-8">
-        {/* Performance Chart (takes 4/7 of width on large screens) */}
-        <div className="lg:col-span-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Performance Chart (takes 2/3 of width on large screens) */}
+        <div className="lg:col-span-2">
           <PerformanceChart 
             data={performanceData}
             transactions={transactions}
@@ -198,8 +194,8 @@ export default function Dashboard() {
           />
         </div>
         
-        {/* Asset Split Donut (takes 3/7 of width on large screens) */}
-        <div className="lg:col-span-3">
+        {/* Asset Split Donut (takes 1/3 of width on large screens) */}
+        <div>
           <AssetSplitDonut 
             investments={investments}
             isLoading={isLoadingInvestments}
@@ -218,7 +214,7 @@ export default function Dashboard() {
       ) : investments && investments.length > 0 ? (
         <div className="mb-8">
           {investments.map((investment) => (
-            <PositionCard 
+            <VaultRowAccordion 
               key={investment.vaultId} 
               investment={investment}
               onWithdraw={handleWithdrawClick}

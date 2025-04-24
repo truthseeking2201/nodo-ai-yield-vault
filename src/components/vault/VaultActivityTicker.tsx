@@ -137,7 +137,7 @@ export function VaultActivityTicker({ maxRows = 5, rowHeight = "h-8" }: VaultAct
               ease: [0.22, 1, 0.36, 1],
               delay: index * 0.05
             }}
-            className={`flex items-center justify-between text-sm ${rowHeight} rounded-lg p-2 ${index === 0 && hasNewActivity ? 'bg-white/5' : ''}`}
+            className={`flex items-center justify-between text-xs ${rowHeight} rounded-lg p-2 ${index === 0 && hasNewActivity ? 'bg-white/5' : ''}`}
           >
             <div className="flex items-center gap-2">
               <span className={`rounded-full p-1 ${activity.action === 'deposit' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>

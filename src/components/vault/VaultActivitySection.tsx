@@ -1,24 +1,18 @@
 
 import React from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { VaultActivityTicker } from "./VaultActivityTicker";
-import { Button } from "@/components/ui/button";
-import { ChevronRight, Activity } from "lucide-react";
 
 export function VaultActivitySection() {
   return (
-    <div className="space-y-2 my-6">
-      <div className="flex items-center gap-2 mb-2">
-        <Activity className="h-4 w-4 text-brand-orange-500" />
-        <h3 className="text-sm font-medium text-text-primary">Live Activity</h3>
-      </div>
-      <div className="rounded-xl backdrop-blur-md bg-nodo-glass/50 border border-stroke-soft p-2">
+    <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+      <CardHeader className="px-6 pt-6 pb-4">
+        <CardTitle className="text-lg font-medium text-[#E5E7EB]">Vault Activity</CardTitle>
+        <CardDescription className="text-sm text-[#9CA3AF]">Recent deposits and withdrawals</CardDescription>
+      </CardHeader>
+      <CardContent className="p-6 pt-0">
         <VaultActivityTicker />
-      </div>
-      <div className="flex justify-end">
-        <Button variant="ghost" size="sm" className="text-xs text-text-secondary flex items-center gap-1">
-          View full activity <ChevronRight className="h-3 w-3" />
-        </Button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
