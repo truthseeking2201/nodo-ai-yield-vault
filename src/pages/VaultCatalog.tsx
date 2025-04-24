@@ -11,6 +11,7 @@ import { VaultActivitySection } from "@/components/vault/VaultActivitySection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { AICanvas } from "@/components/background/AICanvas";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
@@ -40,6 +41,9 @@ export default function VaultCatalog() {
 
   return (
     <PageContainer>
+      {/* AI Canvas Background */}
+      <AICanvas />
+      
       <div className="flex flex-col space-y-8">
         <HeroSection />
 

@@ -9,7 +9,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="flex flex-col min-h-screen bg-nodo-darker">
+    <div className="flex flex-col min-h-screen bg-[#0E0F11]">
       <AppHeader />
       <div className="flex-1">
         {children}
