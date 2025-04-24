@@ -1,5 +1,6 @@
+import React, { useState, useEffect, useRef } from "react";
+import ReactConfetti from 'react-confetti';
 
-import { useState, useEffect, useRef } from "react";
 import { UserInvestment } from "@/types/vault";
 import { DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,6 @@ import { Slider } from "@/components/ui/slider";
 import { ChevronLeft, X, Check, Loader2 } from "lucide-react";
 import { useWallet } from "@/hooks/useWallet";
 import { toast } from "sonner";
-import ReactConfetti from 'react-confetti';
 
 type AddFundsStage = "input" | "review" | "processing" | "success";
 
@@ -23,15 +23,12 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
   const [error, setError] = useState<string | null>(null);
   const { balance } = useWallet();
   
-  // Simulate wallet balance
   const walletBalance = 1200;
   const minDeposit = 50;
   
-  // Gas fee estimation
   const estimatedGas = 0.006;
   const estimatedGasFiat = 0.02;
   
-  // Reset error when amount changes
   useEffect(() => {
     if (error) setError(null);
   }, [amount]);
@@ -61,26 +58,23 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
   const handleProcessDeposit = () => {
     setStage("processing");
     
-    // Simulate transaction processing
     setTimeout(() => {
-      // 95% success rate for demo
       const success = Math.random() > 0.05;
       
       if (success) {
         setStage("success");
-        // Show confetti if user hasn't opted out of animations
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
           const confettiInstance = ReactConfetti({
             numberOfPieces: 100,
-            spread: 70,
-            origin: { y: 0.3 },
-            colors: ['#FF8A00', '#FF5E00', '#FFFFFF']
+            colors: ['#FF8A00', '#FF5E00', '#FFFFFF'],
+            width: window.innerWidth,
+            height: window.innerHeight,
+            recycle: false
           });
           
-          // Clean up confetti after 2 seconds
           setTimeout(() => {
-            if (confettiInstance && typeof confettiInstance === 'object' && 'reset' in confettiInstance) {
-              (confettiInstance as any).reset();
+            if (confettiInstance && typeof confettiInstance.destroy === 'function') {
+              confettiInstance.destroy();
             }
           }, 2000);
         }
@@ -128,7 +122,6 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
       </DrawerHeader>
 
       <div className="px-6 pb-6 flex-1">
-        {/* Input Stage */}
         {stage === "input" && (
           <div className="space-y-6">
             <div className="bg-white/5 rounded-lg p-4 space-y-4">
@@ -191,7 +184,6 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
           </div>
         )}
         
-        {/* Review Stage */}
         {stage === "review" && (
           <div className="space-y-6">
             <div className="bg-white/5 rounded-lg p-4 space-y-3">
@@ -239,7 +231,6 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
           </div>
         )}
         
-        {/* Processing Stage */}
         {stage === "processing" && (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="mb-4">
@@ -252,7 +243,6 @@ export function AddFundsDrawer({ investment, onClose }: AddFundsDrawerProps) {
           </div>
         )}
         
-        {/* Success Stage */}
         {stage === "success" && (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="h-16 w-16 rounded-full bg-state-success flex items-center justify-center mb-4">
