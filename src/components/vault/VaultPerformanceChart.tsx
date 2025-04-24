@@ -1,173 +1,202 @@
 
-import { useMemo } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from "recharts";
-
-interface ChartData {
-  date: string;
-  value: number;
-}
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Area, AreaChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
 interface VaultPerformanceChartProps {
-  data: ChartData[];
-  vaultType: 'nova' | 'orion' | 'emerald';
-  showAxisLabels?: boolean;
-  highlightLastDataPoint?: boolean;
+  data: { date: string; value: number }[];
+  timeRange: "daily" | "weekly" | "monthly";
+  onTimeRangeChange: (value: "daily" | "weekly" | "monthly") => void;
+  styles: {
+    gradientText: string;
+    gradientBg: string;
+    shadow: string;
+    bgOpacity?: string;
+  };
 }
 
-export function VaultPerformanceChart({ 
-  data, 
-  vaultType,
-  showAxisLabels = true,
-  highlightLastDataPoint = true
-}: VaultPerformanceChartProps) {
-  // Get color based on vault type
-  const getColor = (type: 'nova' | 'orion' | 'emerald') => {
-    switch (type) {
-      case 'nova': return "#F97316";
-      case 'orion': return "#F59E0B";
-      case 'emerald': return "#10B981";
-      default: return "#8F63FF"; // Default to brand light
-    }
-  };
+const formatDate = (date: string, range: string) => {
+  const d = new Date(date);
+  if (range === "daily") {
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } else if (range === "weekly") {
+    return d.toLocaleDateString([], { weekday: 'short' });
+  } else {
+    return d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  }
+};
 
-  const color = getColor(vaultType);
+const formatValue = (value: number) => {
+  return `${value.toFixed(2)}%`;
+};
 
-  // Memoize gradient ID to prevent re-rendering issues
-  const gradientId = useMemo(() => `gradient-${vaultType}-${Math.random().toString(36).substring(2, 9)}`, [vaultType]);
+const getAnimationDuration = () => {
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+    ? 0 
+    : 1500;
+};
 
-  // Calculate Y-axis ticks for even 25% intervals
-  const yAxisTicks = useMemo(() => {
-    if (!data || data.length === 0) return [];
-    
-    const values = data.map(item => item.value);
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const range = max - min;
-    
-    // Create ticks at 5% intervals
-    const ticks = [];
-    const step = range / 5;
-    for (let i = 0; i <= 5; i++) {
-      ticks.push(min + (step * i));
-    }
-    
-    return ticks;
-  }, [data]);
-
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-[rgba(255,255,255,0.04)] p-3 rounded-xl border border-white/10 shadow-[0_8px_16px_-8px_rgba(0,0,0,0.6)]">
-          <p className="text-sm font-medium mb-1 font-sans">{label}</p>
-          <p className="text-xs font-mono tabular-nums" style={{ color }}>
-            {`Value: ${payload[0].value?.toFixed(2)}`}
-          </p>
-        </div>
-      );
-    }
+export const VaultPerformanceChart: React.FC<VaultPerformanceChartProps> = ({
+  data,
+  timeRange,
+  onTimeRangeChange,
+  styles
+}) => {
+  const chartColor = styles.gradientBg.includes('emerald') 
+    ? '#10B981' 
+    : styles.gradientBg.includes('orion')
+      ? '#F59E0B'
+      : '#F97316';
   
-    return null;
-  };
+  // Add percentage calculations
+  const initialValue = data[0]?.value || 0;
+  const lastValue = data[data.length - 1]?.value || 0;
+  const percentageChange = ((lastValue - initialValue) / initialValue) * 100;
+  const isPositive = percentageChange >= 0;
 
-  // Render a dot for the last data point if requested
-  const renderDot = (props: any) => {
+  const customizedDot = (props: any) => {
     const { cx, cy, index } = props;
     const isLast = index === data.length - 1;
-    
-    if (highlightLastDataPoint && isLast) {
-      return (
-        <circle 
-          cx={cx} 
-          cy={cy} 
-          r={6} 
-          fill="#10B981" 
-          stroke="#fff" 
-          strokeWidth={2} 
-        />
-      );
-    }
-    
-    return null;
+
+    if (!isLast) return null;
+
+    return (
+      <circle 
+        cx={cx} 
+        cy={cy} 
+        r={6}
+        stroke="transparent"
+        fill={isPositive ? "#10B981" : "#EF4444"}
+      />
+    );
   };
 
+  const chartData = React.useMemo(() => {
+    return data.map(item => ({
+      ...item,
+      dateFormatted: formatDate(item.date, timeRange),
+    }));
+  }, [data, timeRange]);
+
+  const animationDuration = getAnimationDuration();
+  
   return (
-    <div className="h-[260px] md:h-[260px]">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={data}
-          margin={{
-            top: 10,
-            right: 20,
-            left: showAxisLabels ? 20 : 10,
-            bottom: 10,
-          }}
-        >
-          <defs>
-            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8F63FF" stopOpacity={0.8}/>
-              <stop offset="95%" stopColor="#8F63FF" stopOpacity={0}/>
-            </linearGradient>
-          </defs>
-          <CartesianGrid 
-            strokeDasharray="3 3" 
-            stroke="rgba(255,255,255,0.06)" 
-            vertical={false}
-          />
-          <XAxis 
-            dataKey="date" 
-            stroke="#9CA3AF" 
-            fontSize={12}
-            fontFamily="'IBM Plex Mono', monospace"
-            tickMargin={10}
-            tickFormatter={(value) => {
-              // Handle different date formats
-              if (value.includes('Week') || value.includes('Month')) {
-                return value;
-              }
-              // Format date to display day only or month/day
-              const date = new Date(value);
-              return date.getDate().toString();
-            }}
-          />
-          <YAxis 
-            stroke="#9CA3AF" 
-            fontSize={12}
-            fontFamily="'IBM Plex Mono', monospace"
-            tickMargin={10}
-            ticks={showAxisLabels ? yAxisTicks : undefined}
-            domain={['dataMin - 1', 'dataMax + 1']}
-            tickFormatter={(value) => value.toFixed(1)}
-            width={showAxisLabels ? 40 : 30}
-          />
-          <Tooltip 
-            content={<CustomTooltip />} 
-            cursor={{stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1, strokeDasharray: '3 3'}}
-          />
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke="#8F63FF"
-            strokeWidth={2.5}
-            dot={false}
-            activeDot={{ r: 6 }}
-            fill={`url(#${gradientId})`}
-            fillOpacity={0.2}
-            animationDuration={1000}
-            animationEasing="cubic-bezier(.22,1,.36,1)"
-          />
-          {highlightLastDataPoint && (
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="transparent"
-              dot={renderDot}
-              activeDot={false}
-              isAnimationActive={false}
-            />
-          )}
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+    <Card className="glass-card rounded-[20px] overflow-hidden border border-white/[0.06] bg-white/[0.04] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
+      <CardHeader className="px-6 pt-6 pb-0 flex flex-row items-center justify-between">
+        <div className="space-y-1">
+          <CardTitle className="text-lg font-medium text-[#E5E7EB]">Performance</CardTitle>
+          <div className="flex items-center gap-2">
+            <span className={`text-xl font-mono font-medium ${isPositive ? 'text-[#10B981]' : 'text-[#EF4444]'}`}>
+              {isPositive ? '+' : ''}{percentageChange.toFixed(2)}%
+            </span>
+            <span className="text-[#9CA3AF] text-xs">
+              {timeRange === 'daily' ? '24h' : timeRange === 'weekly' ? '7d' : '30d'}
+            </span>
+          </div>
+        </div>
+        
+        <Tabs value={timeRange} onValueChange={(v) => onTimeRangeChange(v as any)} className="ml-auto">
+          <TabsList className="bg-[#1F2937]/30 border border-white/[0.06] h-8">
+            <TabsTrigger 
+              value="daily" 
+              className="text-xs px-3 h-6 data-[state=active]:bg-[#3B4455] data-[state=active]:text-white"
+            >
+              24H
+            </TabsTrigger>
+            <TabsTrigger 
+              value="weekly" 
+              className="text-xs px-3 h-6 data-[state=active]:bg-[#3B4455] data-[state=active]:text-white"
+            >
+              7D
+            </TabsTrigger>
+            <TabsTrigger 
+              value="monthly" 
+              className="text-xs px-3 h-6 data-[state=active]:bg-[#3B4455] data-[state=active]:text-white"
+            >
+              30D
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </CardHeader>
+      
+      <CardContent className="p-6 pt-4 h-[260px] md:h-[260px]">
+        <div className="h-full w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+            >
+              <defs>
+                <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={chartColor} stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor={chartColor} stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              
+              <CartesianGrid 
+                strokeDasharray="3 3" 
+                vertical={false} 
+                stroke="rgba(255,255,255,0.06)" 
+              />
+              
+              <XAxis 
+                dataKey="dateFormatted" 
+                tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
+                axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                tickLine={false}
+              />
+              
+              <YAxis 
+                tick={{ fill: '#9CA3AF', fontSize: 12, fontFamily: 'IBM Plex Mono' }} 
+                axisLine={{ stroke: 'rgba(255,255,255,0.06)' }}
+                tickFormatter={formatValue}
+                tickLine={false}
+                domain={['auto', 'auto']}
+              />
+              
+              <Tooltip 
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-[rgba(255,255,255,0.04)] border border-white/10 backdrop-blur-md rounded-xl p-3 shadow-lg text-xs">
+                        <div className="font-mono font-medium text-white">{payload[0].payload.dateFormatted}</div>
+                        <div className="font-mono font-medium text-[#10B981]">{formatValue(payload[0].value as number)}</div>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke={chartColor}
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorGradient)"
+                animationDuration={animationDuration} 
+                animationEasing="ease"
+              />
+              
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke={chartColor}
+                strokeWidth={2}
+                dot={false}
+                activeDot={{ r: 6, fill: chartColor }}
+                animationDuration={animationDuration}
+                animationEasing="ease"
+                isAnimationActive={animationDuration > 0}
+                animationBegin={0}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
   );
-}
+};
