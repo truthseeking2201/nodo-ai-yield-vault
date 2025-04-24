@@ -10,13 +10,6 @@ export default {
   ],
   prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       fontFamily: {
         sans: ['DM Sans', 'sans-serif'],
@@ -191,7 +184,10 @@ export default {
         'slide-in-right': 'slide-in-right 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
         'slide-out-right': 'slide-out-right 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
         'enter': 'fade-in 0.3s cubic-bezier(0.22, 1, 0.36, 1), scale-in 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
-      }
+      },
+      borderColor: {
+        'stroke-soft': 'rgba(255,255,255,0.06)',
+      },
     }
   },
   plugins: [require("tailwindcss-animate")],
