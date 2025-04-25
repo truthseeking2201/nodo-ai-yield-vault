@@ -5,12 +5,21 @@ import { useQuery } from "@tanstack/react-query";
 import { HeroSection } from "@/components/vault/HeroSection";
 import { VaultGrid } from "@/components/vault/VaultGrid";
 import { ActivitySection } from "@/components/vault/ActivitySection";
+import { useWallet } from "@/hooks/useWallet";
+import { useState } from "react";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
     queryKey: ['vaults'],
     queryFn: vaultService.getAllVaults,
   });
+  
+  const { isConnected, balance } = useWallet();
+  const [activeVaultId, setActiveVaultId] = useState<string | null>(null);
+
+  const handleVaultHover = (id: string) => {
+    setActiveVaultId(id);
+  };
 
   return (
     <PageContainer>
@@ -32,7 +41,13 @@ export default function VaultCatalog() {
             </div>
           ) : vaults && vaults.length > 0 ? (
             <div className="space-y-12">
-              <VaultGrid vaults={vaults} />
+              <VaultGrid 
+                vaults={vaults} 
+                isConnected={isConnected}
+                balance={balance}
+                activeVaultId={activeVaultId}
+                onVaultHover={handleVaultHover}
+              />
               <ActivitySection />
             </div>
           ) : (
