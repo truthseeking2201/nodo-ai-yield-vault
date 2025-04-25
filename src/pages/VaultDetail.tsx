@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -17,6 +16,7 @@ import { useVaultDetail } from "@/hooks/useVaultDetail";
 import { useWallet } from "@/hooks/useWallet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VaultSecurityInfo } from "@/components/vault/VaultSecurityInfo";
+import { VaultData } from "@/types/vault";
 
 export default function VaultDetail() {
   const { vaultId } = useParams<{ vaultId: string }>();
@@ -28,6 +28,7 @@ export default function VaultDetail() {
   const nodoaixCardRef = useRef<HTMLDivElement>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [activeTab, setActiveTab] = useState("strategy");
+  const [customVaultData, setCustomVaultData] = useState<VaultData | null>(null);
 
   const { 
     vault, 
@@ -52,13 +53,22 @@ export default function VaultDetail() {
       }
     };
     
+    const handleOpenDepositDrawer = (e: CustomEvent) => {
+      if (e.detail && e.detail.vault) {
+        setCustomVaultData(e.detail.vault);
+        setIsDepositDrawerOpen(true);
+      }
+    };
+    
     window.addEventListener('deposit-success', handleDepositSuccess as EventListener);
+    window.addEventListener('open-deposit-drawer', handleOpenDepositDrawer as EventListener);
+    
     return () => {
       window.removeEventListener('deposit-success', handleDepositSuccess as EventListener);
+      window.removeEventListener('open-deposit-drawer', handleOpenDepositDrawer as EventListener);
     };
   }, []);
   
-  // Handle ESC key for drawer closing
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isDepositDrawerOpen) {
@@ -86,6 +96,7 @@ export default function VaultDetail() {
 
   const handleCloseDrawer = () => {
     setIsDepositDrawerOpen(false);
+    setCustomVaultData(null);
   };
 
   if (isLoading) {
@@ -243,7 +254,7 @@ export default function VaultDetail() {
       <DepositDrawer 
         open={isDepositDrawerOpen}
         onClose={handleCloseDrawer}
-        vault={vault}
+        vault={customVaultData || vault}
       />
     </PageContainer>
   );

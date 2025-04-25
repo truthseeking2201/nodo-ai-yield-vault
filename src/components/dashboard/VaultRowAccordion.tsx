@@ -95,7 +95,6 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
   const aprEstimate = (investment.profit / investment.principal) * (365 / (investment.lockupPeriod - daysLeft)) * 100;
   
   const handleAddFunds = () => {
-    // Using the openDepositDrawer function from the hook
     if (investment.vaultId) {
       // Create minimal vault object for the deposit drawer
       const vaultData = {
@@ -108,7 +107,10 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
         }]
       };
       
-      actions.openDepositDrawer(vaultData as any);
+      // Dispatch the custom event that will be handled in VaultDetail.tsx
+      window.dispatchEvent(new CustomEvent('open-deposit-drawer', { 
+        detail: { vault: vaultData } 
+      }));
     }
   };
   
