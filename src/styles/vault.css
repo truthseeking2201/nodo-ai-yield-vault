@@ -1,0 +1,26 @@
+
+@layer components {
+  .risk-moderate {
+    @apply bg-orion-500;
+  }
+
+  .risk-low {
+    @apply bg-emerald-500;
+  }
+
+  .risk-high {
+    @apply bg-red-500;
+  }
+
+  .card-risk-pill {
+    @apply text-[11px] font-medium py-0.5 px-2.5 rounded-full;
+  }
+
+  .text-shadow-neon {
+    text-shadow: 0 0 6px rgba(255,138,0,0.25);
+  }
+
+  .vault-chart {
+    padding-bottom: 16px;
+  }
+}

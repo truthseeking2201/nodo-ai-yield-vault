@@ -1,0 +1,41 @@
+
+@layer components {
+  .gradient-text-brand {
+    @apply bg-gradient-to-br from-[#FF8800] to-[#FFA822] bg-clip-text text-transparent;
+  }
+  
+  .gradient-text-nova {
+    @apply bg-gradient-to-br from-nova to-nova-dark bg-clip-text text-transparent;
+  }
+  
+  .gradient-text-orion {
+    @apply bg-gradient-to-br from-orion to-orion-dark bg-clip-text text-transparent;
+  }
+  
+  .gradient-text-emerald {
+    @apply bg-gradient-to-br from-emerald to-emerald-dark bg-clip-text text-transparent;
+  }
+
+  .gradient-bg-nova {
+    @apply bg-gradient-to-br from-nova/90 to-nova-dark/80;
+  }
+  
+  .gradient-bg-orion {
+    @apply bg-gradient-to-br from-orion/90 to-orion-dark/80;
+  }
+  
+  .gradient-bg-emerald {
+    @apply bg-gradient-to-br from-emerald/90 to-emerald-dark/80;
+  }
+
+  .neural-orange-gradient {
+    background: linear-gradient(
+      100deg,
+      #FF8A00 0%,
+      #FF6B00 20%,
+      #FF3C5E 55%,
+      #AE34FF 85%,
+      #714BFF 100%
+    );
+  }
+}
