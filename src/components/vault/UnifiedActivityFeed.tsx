@@ -121,7 +121,7 @@ export function UnifiedActivityFeed() {
   };
 
   const getVaultColor = (vaultName: string): string => {
-    if (vaultName.includes('DEEP') || vaultName.includes('Deep')) return 'text-nova';
+    if (vaultName.includes('DEEP') || vaultName.includes('Deep')) return 'text-brand-500';
     if (vaultName.includes('CETUS') || vaultName.includes('Cetus')) return 'text-orion';
     return 'text-emerald';
   };
@@ -135,14 +135,14 @@ export function UnifiedActivityFeed() {
             initial={{ opacity: 0, y: -20, height: 0 }}
             animate={{ opacity: 1, y: 0, height: 'auto' }}
             exit={{ opacity: 0, y: 20, height: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] transition-colors"
+            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+            className="flex items-center gap-3 p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-sm hover:bg-white/[0.04] hover:border-white/[0.1] transition-all duration-300"
           >
             <div className="flex-shrink-0">
               {activity.type === 'ai' ? (
-                <div className="relative">
-                  <Brain className="w-5 h-5 text-nova" />
-                  <div className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-emerald rounded-full animate-pulse" />
+                <div className="relative ai-glow">
+                  <Brain className="w-5 h-5 text-brand-500" />
+                  <div className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-emerald rounded-full animate-pulse"></div>
                 </div>
               ) : (
                 activity.action === 'deposit' ? (
@@ -155,7 +155,10 @@ export function UnifiedActivityFeed() {
 
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <PairIcon tokens={activity.vault.split('-') as ["SUI" | "USDC" | "DEEP" | "CETUS", "SUI" | "USDC" | "DEEP" | "CETUS"]} size={20} />
+                <div className="relative">
+                  <PairIcon tokens={activity.vault.split('-') as ["SUI" | "USDC" | "DEEP" | "CETUS", "SUI" | "USDC" | "DEEP" | "CETUS"]} size={20} />
+                  <div className="absolute inset-0 bg-gradient-radial from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
                 <span className={`font-medium ${getVaultColor(activity.vault)}`}>
                   {activity.vault}
                 </span>

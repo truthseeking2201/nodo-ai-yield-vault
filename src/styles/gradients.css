@@ -1,7 +1,7 @@
 
 @layer components {
   .gradient-text-brand {
-    @apply bg-gradient-to-br from-[#FF8800] to-[#FFA822] bg-clip-text text-transparent;
+    @apply bg-gradient-to-br from-brand-400 to-brand-600 bg-clip-text text-transparent;
   }
   
   .gradient-text-nova {
@@ -14,6 +14,10 @@
   
   .gradient-text-emerald {
     @apply bg-gradient-to-br from-emerald to-emerald-dark bg-clip-text text-transparent;
+  }
+  
+  .gradient-text-violet {
+    @apply bg-gradient-to-br from-violet to-violet-dark bg-clip-text text-transparent;
   }
 
   .gradient-bg-nova {
@@ -28,14 +32,49 @@
     @apply bg-gradient-to-br from-emerald/90 to-emerald-dark/80;
   }
 
+  .gradient-brand-glow {
+    position: relative;
+  }
+
+  .gradient-brand-glow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(90deg, #FF9320, #EC6F05, #B45004, #3E1672);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0.8;
+    filter: blur(8px);
+  }
+
   .neural-orange-gradient {
     background: linear-gradient(
       100deg,
-      #FF8A00 0%,
-      #FF6B00 20%,
-      #FF3C5E 55%,
-      #AE34FF 85%,
-      #714BFF 100%
+      #FF9320 0%,
+      #EC6F05 30%,
+      #B45004 70%,
+      #5A2702 100%
     );
+  }
+  
+  .glow-overlay {
+    position: relative;
+  }
+  
+  .glow-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(236, 111, 5, 0.18), transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  .glow-overlay:hover::after {
+    opacity: 1;
   }
 }

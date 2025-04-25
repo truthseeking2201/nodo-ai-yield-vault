@@ -1,5 +1,5 @@
 
-/* Add this to animations.css */
+/* Spinner animation */
 @keyframes slow-spin {
   from {
     transform: rotate(0deg);
@@ -13,80 +13,81 @@
   animation: slow-spin 4s linear infinite;
 }
 
+/* Pulsing effect */
 @keyframes pulse {
   0% {
-    transform: scale(0.95);
-    opacity: 0.6;
+    transform: scale(0.97);
+    opacity: 0.8;
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.03);
     opacity: 1;
   }
   100% {
-    transform: scale(0.95);
-    opacity: 0.6;
+    transform: scale(0.97);
+    opacity: 0.8;
   }
 }
 
 .animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse 2s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
 }
 
-/* Add AI highlighting color glow effect */
+/* Glowing text effects */
 @keyframes glow-emerald {
   0% {
-    text-shadow: 0 0 4px rgba(16, 185, 129, 0.1);
+    text-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
   }
   50% {
-    text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
   }
   100% {
-    text-shadow: 0 0 4px rgba(16, 185, 129, 0.1);
+    text-shadow: 0 0 4px rgba(16, 185, 129, 0.2);
   }
 }
 
 .text-glow-emerald {
-  animation: glow-emerald 2s ease-in-out infinite;
+  animation: glow-emerald 3s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
 }
 
-/* Neural orange glow effect */
-@keyframes neural-pulse {
+/* Brand orange glow effect */
+@keyframes brand-pulse {
   0% {
-    box-shadow: 0 0 5px rgba(249, 115, 22, 0.2);
+    box-shadow: 0 0 5px rgba(236, 111, 5, 0.18);
   }
   50% {
-    box-shadow: 0 0 15px rgba(249, 115, 22, 0.6);
+    box-shadow: 0 0 20px rgba(236, 111, 5, 0.3);
   }
   100% {
-    box-shadow: 0 0 5px rgba(249, 115, 22, 0.2);
+    box-shadow: 0 0 5px rgba(236, 111, 5, 0.18);
   }
 }
 
-.neural-glow {
-  animation: neural-pulse 3s ease-in-out infinite;
+.brand-glow {
+  animation: brand-pulse 3s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
 }
 
-/* Neural orange text glow */
-@keyframes neural-text-pulse {
+/* Brand orange text glow */
+@keyframes brand-text-pulse {
   0% {
-    text-shadow: 0 0 4px rgba(249, 115, 22, 0.2);
+    text-shadow: 0 0 4px rgba(236, 111, 5, 0.18);
   }
   50% {
-    text-shadow: 0 0 12px rgba(249, 115, 22, 0.6);
+    text-shadow: 0 0 12px rgba(236, 111, 5, 0.3);
   }
   100% {
-    text-shadow: 0 0 4px rgba(249, 115, 22, 0.2);
+    text-shadow: 0 0 4px rgba(236, 111, 5, 0.18);
   }
 }
 
-.neural-text-glow {
-  animation: neural-text-pulse 3s ease-in-out infinite;
+.brand-text-glow {
+  animation: brand-text-pulse 3s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
 }
 
 /* AI working animation */
 @keyframes ai-working {
   0% {
-    opacity: 0.4;
+    opacity: 0.3;
     transform: translateX(-100%);
   }
   100% {
@@ -107,6 +108,69 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.8), transparent);
-  animation: ai-working 2s infinite;
+  background: linear-gradient(90deg, transparent, rgba(236, 111, 5, 0.5), transparent);
+  animation: ai-working 2s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-float {
+  animation: float 4s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+}
+
+/* Particle effect */
+@keyframes particle {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x, 20px), var(--y, -20px));
+    opacity: 0;
+  }
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: rgba(236, 111, 5, 0.6);
+  animation: particle 1.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+/* 3D transform effect for cards */
+.transform-3d {
+  transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.transform-3d:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Subtle parallax effect */
+.parallax {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.parallax-layer {
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.parallax:hover .parallax-layer--1 {
+  transform: translateZ(10px);
+}
+
+.parallax:hover .parallax-layer--2 {
+  transform: translateZ(20px);
 }

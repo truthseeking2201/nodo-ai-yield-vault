@@ -1,38 +1,49 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[20px] shadow-[0_4px_24px_-8px_rgba(0,0,0,0.2)] transition-all duration-300 hover:border-white/20;
+    @apply bg-white/5 backdrop-blur-glass border border-white/10 rounded-[24px] shadow-glass transition-all duration-300 hover:border-white/15;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(120deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+    opacity: 0.5;
+    pointer-events: none;
   }
 
   .nav-link {
-    @apply relative px-3 py-1.5 text-[#E5E7EB] opacity-90 transition-all duration-150 rounded-lg hover:bg-white/5;
+    @apply relative px-3 py-1.5 text-white/90 transition-all duration-150 rounded-lg hover:bg-white/5;
   }
 
   .nav-link::after {
     content: '';
-    @apply absolute left-0 -bottom-1 h-0.5 w-0 bg-gradient-to-r from-nova to-nova-light rounded-sm transition-all origin-left;
-    transition: width 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    @apply absolute left-0 -bottom-1 h-0.5 w-0 bg-gradient-brand rounded-sm transition-all origin-left;
+    transition: width 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .nav-link:hover {
     @apply text-white -translate-y-[1px];
-    text-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
+    text-shadow: 0 0 12px rgba(236, 111, 5, 0.4);
   }
 
   .nav-link:focus-visible {
     @apply outline-none;
-    outline: 2px solid rgba(249, 115, 22, 0.5);
+    outline: 2px solid rgba(236, 111, 5, 0.5);
     outline-offset: 4px;
     border-radius: 6px;
   }
 
   .nav-link:active {
     @apply scale-95;
-    text-shadow: 0 0 16px rgba(249, 115, 22, 0.6);
+    text-shadow: 0 0 16px rgba(236, 111, 5, 0.6);
   }
 
   .nav-link.active {
-    @apply text-nova bg-white/5;
+    @apply text-brand-500 bg-white/5;
   }
 
   .nav-link.active::after {
@@ -40,15 +51,15 @@
   }
 
   .deposit-gradient-btn {
-    @apply bg-gradient-to-r from-[#FF8800] to-[#FFA822] text-white;
+    @apply bg-gradient-brand text-white;
   }
 
   .deposit-input {
-    @apply bg-[#202124] border-[#28304B] text-white focus:border-[#FF8800];
+    @apply bg-nodo-darker/80 border-white/10 text-white focus:border-brand-500;
   }
 
   .deposit-card {
-    @apply bg-white/[0.02] border border-white/[0.06] rounded-[20px];
+    @apply bg-white/[0.02] border border-white/[0.08] rounded-[24px];
   }
 
   .wallet-address {
@@ -57,13 +68,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(11, 12, 16, 0.7);
     border-radius: 12px;
     padding: 8px 12px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
     cursor: pointer;
     position: relative;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
   }
   
   .wallet-address-icon {
@@ -74,7 +87,7 @@
   }
 
   .glass-card-premium {
-    @apply bg-white/[0.04] backdrop-blur-lg border border-white/[0.06] rounded-[20px];
+    @apply bg-white/[0.05] backdrop-blur-glass border border-white/[0.08] rounded-[24px] shadow-glass;
     position: relative;
   }
   
@@ -82,7 +95,7 @@
     content: "";
     position: absolute;
     inset: 0;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: inherit;
     pointer-events: none;
   }
@@ -94,8 +107,8 @@
     border: 1px solid transparent;
     border-radius: inherit;
     opacity: 0;
-    transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-    background: linear-gradient(to right, #FF8A00, #FF3C5E, #AE34FF) border-box;
+    transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    background: linear-gradient(to right, #FF9320, #EC6F05, #3E1672) border-box;
     mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
@@ -105,5 +118,70 @@
   
   .glass-card-premium:hover::after {
     opacity: 1;
+  }
+  
+  /* Activity section styling */
+  .activity-item {
+    @apply flex items-center gap-3 py-3 px-4 rounded-xl transition-all duration-300;
+    @apply bg-white/[0.02] hover:bg-white/[0.04];
+    @apply border border-white/[0.05] hover:border-white/[0.1];
+    @apply backdrop-blur-md;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .activity-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  .activity-item:hover::after {
+    opacity: 1;
+  }
+  
+  /* AI glow effects */
+  .ai-glow {
+    position: relative;
+  }
+  
+  .ai-glow::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    background: radial-gradient(circle closest-side, rgba(236, 111, 5, 0.18), transparent);
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  .ai-glow:hover::after {
+    opacity: 1;
+  }
+  
+  .violet-glow {
+    box-shadow: 0 0 20px rgba(62, 22, 114, 0.18);
+  }
+  
+  .orange-glow {
+    box-shadow: 0 0 20px rgba(236, 111, 5, 0.18);
+  }
+  
+  /* 3D effect for cards */
+  .card-3d {
+    transform: perspective(1000px) rotateX(0) rotateY(0);
+    transition: transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  .card-3d:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
   }
 }
