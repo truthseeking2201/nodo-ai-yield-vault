@@ -1,10 +1,9 @@
-
 import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { vaultService } from "@/services/vaultService";
 import { Badge } from "@/components/ui/badge";
-import { Gear } from "lucide-react";
+import { Cog } from 'lucide-react';
 
 interface RebalancingEvent {
   vault: string;
@@ -25,12 +24,10 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
   const tickerRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   
-  // In a real implementation, this would fetch from an API
-  // For now, we'll generate mock events
   const { data: events = [], isLoading } = useQuery({
     queryKey: ['rebalancing-events', vaultId],
     queryFn: () => generateMockEvents(vaultId),
-    refetchInterval: 60000, // Refetch every minute
+    refetchInterval: 60000,
   });
 
   useEffect(() => {
@@ -45,7 +42,6 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
     return () => clearInterval(interval);
   }, [events.length, isPaused]);
 
-  // Generate relative time string (e.g., "2 mins ago")
   const getTimeAgo = (timestamp: string): string => {
     const date = new Date(timestamp);
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -58,13 +54,11 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
     return `${Math.floor(hours / 24)}d ago`;
   };
 
-  // Format APR change with + or - prefix
   const formatAPRChange = (value: number): string => {
     const sign = value >= 0 ? '+' : '';
     return `${sign}${value.toFixed(2)}%`;
   };
 
-  // Format fee amount as currency
   const formatFees = (value: number): string => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -73,14 +67,12 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
     }).format(value);
   };
 
-  // Generate color based on vault type
   const getVaultColor = (vaultName: string): string => {
     if (vaultName.includes('DEEP') || vaultName.includes('deep')) return 'text-nova';
     if (vaultName.includes('CETUS') || vaultName.includes('cetus')) return 'text-orion';
     return 'text-emerald';
   };
 
-  // Generate mock rebalancing events
   const generateMockEvents = (specificVaultId?: string): Promise<RebalancingEvent[]> => {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -98,7 +90,6 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
         
         const mockEvents = [];
         
-        // Generate 5-10 events
         const numEvents = specificVaultId ? 5 : 10;
         for (let i = 0; i < numEvents; i++) {
           const randomVault = vaultNames[Math.floor(Math.random() * vaultNames.length)];
@@ -117,14 +108,12 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
           });
         }
         
-        // Sort by timestamp (most recent first)
         mockEvents.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
         resolve(mockEvents);
       }, 500);
     });
   };
 
-  // Convert vault ID to display name
   const vaultIdToName = (id: string): string => {
     if (id.includes('deep-sui')) return 'DEEP–SUI';
     if (id.includes('cetus-sui')) return 'CETUS–SUI';
@@ -138,7 +127,6 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
 
   const currentEvent = events[currentIndex];
 
-  // Render detail variant (for the vault detail page)
   if (variant === "detail") {
     return (
       <div 
@@ -149,7 +137,7 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
         <div className="flex items-center text-white/80 text-sm">
           <div className="flex items-center space-x-1.5">
             <div className="relative">
-              <Gear size={16} className="text-nova animate-slow-spin" />
+              <Cog size={16} className="text-nova animate-slow-spin" />
               <div className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-emerald rounded-full animate-pulse"></div>
             </div>
             <span className="font-medium">Last AI rebalance:</span>
@@ -171,7 +159,6 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
     );
   }
 
-  // Render catalog variant (for the vault catalog page)
   return (
     <div 
       ref={tickerRef}
@@ -189,7 +176,7 @@ export function AIRebalancingTicker({ vaultId, variant = "catalog", className = 
           className="flex items-center space-x-2 text-sm"
         >
           <div className="relative flex-shrink-0">
-            <Gear size={16} className="text-nova animate-slow-spin" />
+            <Cog size={16} className="text-nova animate-slow-spin" />
             <div className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 bg-emerald rounded-full animate-pulse"></div>
           </div>
           
