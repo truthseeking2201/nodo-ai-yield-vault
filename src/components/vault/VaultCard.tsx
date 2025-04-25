@@ -152,7 +152,7 @@ export function VaultCard({
             <Button 
               variant={hasBalance ? "default" : "secondary"}
               className={`w-full py-6 text-sm font-medium relative overflow-hidden
-                ${hasBalance ? 'bg-white text-black hover:bg-white/90' : 'bg-white/5 hover:bg-white/10'}`}
+                ${hasBalance ? 'bg-[#F97316] text-white hover:bg-[#F97316]/90' : 'bg-white/5 hover:bg-white/10'}`}
               asChild
             >
               <Link to={`/vaults/${vault.id}`}>
