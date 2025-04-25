@@ -148,17 +148,6 @@ export default function Dashboard() {
             Live snapshot of your vault positions
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={() => setIsNotificationsDrawerOpen(true)}
-            className="relative"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1 right-1 h-2 w-2 bg-orange-500 rounded-full"></span>
-          </Button>
-        </div>
       </div>
 
       <KpiBar 
