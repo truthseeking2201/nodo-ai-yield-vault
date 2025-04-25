@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ReactConfetti from "react-confetti";
 
@@ -22,6 +21,21 @@ export function DepositDrawerSuccess({
   onViewDashboard,
   onDepositAgain
 }: DepositDrawerSuccessProps) {
+  const [isConfettiRunning, setIsConfettiRunning] = useState(showConfetti);
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (showConfetti) {
+      timeoutId = setTimeout(() => {
+        setIsConfettiRunning(false);
+      }, 30000); // 30 seconds
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [showConfetti]);
+
   const transactionHash = "0xABCDEF1234567890ABCDEF1234567890ABCDEF12";
 
   const formatCurrency = (value?: number) => {
@@ -41,15 +55,15 @@ export function DepositDrawerSuccess({
 
   return (
     <div className="space-y-7 text-center">
-      {showConfetti && (
+      {isConfettiRunning && (
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <ReactConfetti
             width={window.innerWidth}
             height={window.innerHeight}
             numberOfPieces={140}
             recycle={false}
-            duration={30000} // Extended to 30 seconds
             colors={['#FF8800', '#10B981', '#F97316', '#F59E0B']}
+            run={isConfettiRunning}
           />
         </div>
       )}
