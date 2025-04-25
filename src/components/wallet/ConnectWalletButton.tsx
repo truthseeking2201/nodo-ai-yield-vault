@@ -91,13 +91,6 @@ export function ConnectWalletButton() {
                   </div>
                   <span className="font-mono text-sm text-emerald">{balance.usdc}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <TokenIcon token="NODOAIx" size={16} />
-                    <span className="text-gray-400 text-sm">NODOAIx</span>
-                  </div>
-                  <span className="font-mono text-sm text-[#FF8800]">{balance.nodoaix}</span>
-                </div>
               </div>
 
               <DropdownMenuSeparator className="bg-[#262B30] my-0" />

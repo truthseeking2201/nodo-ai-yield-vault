@@ -112,7 +112,7 @@ export function VaultActivityTicker({ maxRows = 5, rowHeight = "h-8" }: VaultAct
     return `${address.substring(0, 6)}...`;
   };
 
-  const getTokenPair = (vaultName: string): ["SUI" | "USDC" | "DEEP" | "CETUS" | "NODOAIx", "SUI" | "USDC" | "DEEP" | "CETUS" | "NODOAIx"] => {
+  const getTokenPair = (vaultName: string): ["SUI" | "USDC" | "DEEP" | "CETUS", "SUI" | "USDC" | "DEEP" | "CETUS"] => {
     if (vaultName === 'SUI-USDC') return ['SUI', 'USDC'];
     if (vaultName === 'Deep-SUI') return ['DEEP', 'SUI'];
     if (vaultName === 'Cetus-SUI') return ['CETUS', 'SUI'];

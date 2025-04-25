@@ -44,7 +44,7 @@ export default function VaultCatalog() {
               <VaultGrid 
                 vaults={vaults} 
                 isConnected={isConnected}
-                balance={balance || { usdc: 0, nodoaix: 0 }} // Provide default if balance is undefined
+                balance={balance || { usdc: 0 }} // Provide default if balance is undefined
                 activeVaultId={activeVaultId}
                 onVaultHover={handleVaultHover}
               />

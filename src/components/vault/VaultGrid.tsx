@@ -6,7 +6,7 @@ import { VaultData } from "@/types/vault";
 interface VaultGridProps {
   vaults: VaultData[];
   isConnected: boolean;
-  balance: { usdc: number; nodoaix: number };
+  balance: { usdc: number };
   activeVaultId: string | null;
   onVaultHover: (id: string) => void;
 }
@@ -19,7 +19,7 @@ export function VaultGrid({
   onVaultHover 
 }: VaultGridProps) {
   // Ensure balance is never undefined
-  const safeBalance = balance || { usdc: 0, nodoaix: 0 };
+  const safeBalance = balance || { usdc: 0 };
   
   return (
     <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
