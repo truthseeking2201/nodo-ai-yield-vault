@@ -8,7 +8,9 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  DrawerFooter,
 } from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 import { VaultData } from "@/types/vault";
 import { useDepositDrawer } from "@/hooks/useDepositDrawer";
 import { DepositDrawerDetails } from "./DepositDrawerDetails";
@@ -162,8 +164,17 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
               onDepositAgain={handleDepositAgain}
             />
           )}
+
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-full" onClick={onClose}>
+                Close
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
         </div>
       </DrawerContent>
     </Drawer>
   );
 }
+
