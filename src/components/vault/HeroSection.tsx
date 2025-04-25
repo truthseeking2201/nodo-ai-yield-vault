@@ -1,7 +1,6 @@
 
 import React from "react";
 import { KpiRibbon } from "./KpiRibbon";
-import { FeaturedVaultPill } from "./FeaturedVaultPill";
 
 export function HeroSection() {
   return (
@@ -16,7 +15,6 @@ export function HeroSection() {
       </div>
       
       <KpiRibbon />
-      <FeaturedVaultPill />
     </div>
   );
 }
