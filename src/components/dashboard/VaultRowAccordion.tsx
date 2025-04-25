@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { UserInvestment, VaultData } from "@/types/vault";
 import { 
@@ -81,7 +80,6 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
     return Math.max(0, diffDays);
   };
   
-  // Calculate estimated APR based on vault ID
   const calculateEstimatedApr = () => {
     if (investment.currentApr) return investment.currentApr;
     
@@ -90,14 +88,12 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
     else return 15.2;
   };
   
-  // Calculate estimated fees earned
   const calculateFeesEarned = () => {
     const apr = calculateEstimatedApr();
     const daysInvested = investment.lockupPeriod - calculateDaysLeft();
     return (investment.principal * (apr / 100) * (daysInvested / 365));
   };
   
-  // Calculate these values outside of the JSX to avoid undefined errors
   const aprEstimateValue = calculateEstimatedApr();
   const feesEarnedValue = calculateFeesEarned();
   const styles = getVaultStyles(investment.vaultId);
@@ -113,18 +109,15 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
   };
   
   const handleExtendLock = () => {
-    // This function would be implemented to handle extending the lock period
     console.log("Extending lock for", investment.vaultId);
   };
 
-  // Determine vault type as a proper union type
   const getVaultType = (id: string): "nova" | "orion" | "emerald" => {
     if (id.includes('deep') || id.includes('nova')) return "nova";
     if (id.includes('cetus') || id.includes('orion')) return "orion"; 
     return "emerald";
   };
 
-  // Create a VaultData object from the investment data
   const vaultData: VaultData = {
     id: investment.vaultId,
     name: formatVaultName(investment.vaultId),
