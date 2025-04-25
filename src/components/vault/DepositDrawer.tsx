@@ -89,8 +89,13 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
     onClose();
   };
 
+  // If the drawer is not open, don't render anything
+  if (!open) return null;
+
   return (
-    <Drawer open={open} onOpenChange={onClose}>
+    <Drawer open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) onClose();
+    }}>
       <DrawerContent 
         className="sm:max-w-[420px] p-0 overflow-hidden"
       >
