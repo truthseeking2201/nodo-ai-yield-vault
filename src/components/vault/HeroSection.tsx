@@ -2,21 +2,21 @@
 import React from "react";
 import { KpiRibbon } from "./KpiRibbon";
 import { FeaturedVaultPill } from "./FeaturedVaultPill";
-import { PromoRibbon } from "./PromoRibbon";
 
 export function HeroSection() {
   return (
-    <div className="text-center space-y-4 mb-16 relative">
-      <h1 className="text-3xl md:text-4xl font-bold font-sans tracking-tight mb-4">
-        Discover <span className="gradient-text-nova">NODO AI</span> Vaults
-      </h1>
-      <p className="text-[#C9CDD3] max-w-2xl mx-auto text-base mb-8">
-        AI-powered yield-generating vaults designed to maximize your returns while managing risk.
-      </p>
+    <div className="space-y-6 mb-8 relative">
+      <div className="max-w-[640px] mx-auto text-center">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-3">
+          Discover <span className="gradient-text-nova">NODO AI</span> Vaults
+        </h1>
+        <p className="text-[#9CA3AF] text-sm md:text-base">
+          AI-powered vaults maximizing returns with smart risk management
+        </p>
+      </div>
       
       <KpiRibbon />
       <FeaturedVaultPill />
-      <PromoRibbon />
     </div>
   );
 }
