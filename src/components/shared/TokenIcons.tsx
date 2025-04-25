@@ -1,10 +1,8 @@
-
 const TOKEN_ICONS = {
   USDC: "/lovable-uploads/77821401-b055-4857-ad36-bf928d64b288.png",
   SUI: "/lovable-uploads/e98fb767-5c17-48d9-8040-d6e980c817c6.png",
   CETUS: "/lovable-uploads/76692f5e-3066-420a-bf20-93440e752a83.png",
-  DEEP: "/lovable-uploads/1dd1c568-1e9b-4a6c-986d-a7b7efbab014.png",
-  NODOAIx: "/lovable-uploads/38504c38-f4d1-460e-8d33-330e31311a5d.png"
+  DEEP: "/lovable-uploads/1dd1c568-1e9b-4a6c-986d-a7b7efbab014.png"
 };
 
 export interface TokenIconProps {
@@ -25,30 +23,23 @@ export function TokenIcon({ token, size = 24, className }: TokenIconProps) {
   );
 }
 
-// Updated function to map vault ID segments to valid token names
 const mapVaultIdToTokens = (id: string): [TokenIconProps["token"], TokenIconProps["token"]] => {
   const parts = id.split('-');
   
-  // Map each part to a valid token from our TOKEN_ICONS
   const tokens = parts.map(part => {
-    // Convert to uppercase since our token keys are all uppercase
     const upperPart = part.toUpperCase();
     
-    // Check if this exact match exists in TOKEN_ICONS
     if (upperPart in TOKEN_ICONS) {
       return upperPart as TokenIconProps["token"];
     }
     
-    // Default to SUI if no match (shouldn't happen with our current vaults)
     return "SUI" as TokenIconProps["token"];
   });
   
-  // Always return a tuple of two tokens for our pair
   return [tokens[0], tokens[1]] as [TokenIconProps["token"], TokenIconProps["token"]];
 };
 
 export function PairIcon({ tokens, size = 24 }: { tokens: [TokenIconProps["token"], TokenIconProps["token"]] | string, size?: number }) {
-  // If tokens is a string (vault ID), convert it to token pair
   const tokenPair = typeof tokens === 'string' ? mapVaultIdToTokens(tokens) : tokens;
   
   return (
