@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -80,13 +79,11 @@ export function VaultCard({
   };
   
   const isHotVault = vault.apr > 18.0;
-  // Calculate monthly return correctly by ensuring we're working with numbers
   const monthlyReturn = (vault.apr / 100 / 12) * 1000;
-  const hasHighAPRChange = Math.abs(vault.apr - 18.0) > 5.0; // Example threshold
+  const hasHighAPRChange = Math.abs(vault.apr - 18.0) > 5.0;
   
   const aprGlowClass = (isActive || hasHighAPRChange) ? 'text-shadow-neon' : '';
   
-  // Get random AI insights for the vault
   const getRandomInsight = () => {
     const insights = [
       `📈 up ${(Math.random() * 0.5).toFixed(1)}% today via AI`,
