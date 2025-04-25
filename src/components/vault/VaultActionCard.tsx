@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowRight, Wallet } from "lucide-react";
+import { useWallet } from "@/hooks/useWallet";
 
 interface VaultActionCardProps {
   unlockProgress: number;
@@ -21,6 +22,16 @@ export function VaultActionCard({
   styles,
   onActionClick
 }: VaultActionCardProps) {
+  const { openWalletModal } = useWallet();
+
+  const handleButtonClick = () => {
+    if (!isConnected) {
+      openWalletModal();
+    } else {
+      onActionClick();
+    }
+  };
+
   return (
     <Card className="glass-card">
       <CardHeader>
@@ -44,7 +55,8 @@ export function VaultActionCard({
         ) : (
           <Button 
             className={`w-full ${styles.gradientBg} ${styles.shadow}`}
-            onClick={onActionClick}
+            onClick={handleButtonClick}
+            data-wallet-connect={!isConnected}
           >
             {isConnected ? (
               <>Deposit Now <ArrowRight className="ml-2 h-4 w-4" /></>
