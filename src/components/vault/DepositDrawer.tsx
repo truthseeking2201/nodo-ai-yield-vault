@@ -49,6 +49,7 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
     },
     calculations: {
       calculateEstimatedReturns,
+      getUnlockDate
     }
   } = useDepositDrawer({ vault, onClose });
 

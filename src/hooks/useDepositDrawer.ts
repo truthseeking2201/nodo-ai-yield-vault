@@ -147,14 +147,15 @@ export const useDepositDrawer = (props?: UseDepositDrawerProps) => {
           lockupPeriod: selectedLockup
         });
       },
-      // Add the missing openDepositDrawer method
       openDepositDrawer: (vault: VaultData) => {
-        // Since this is a standalone hook, we can't directly open the drawer
-        // Instead, we'll dispatch a custom event that can be listened for elsewhere
         window.dispatchEvent(new CustomEvent('open-deposit-drawer', { 
           detail: { vault } 
         }));
       },
+    },
+    calculations: {
+      calculateEstimatedReturns: () => calculateEstimatedReturns(amount, selectedLockup),
+      getUnlockDate: () => getUnlockDate(selectedLockup)
     }
   };
 };
