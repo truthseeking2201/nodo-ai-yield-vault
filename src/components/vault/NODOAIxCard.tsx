@@ -1,8 +1,7 @@
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, ExternalLink, Info } from "lucide-react";
+import { ShieldCheck, ExternalLink, Info, HelpCircle } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
 import { TokenIcon } from "@/components/shared/TokenIcons";
 import {
@@ -11,6 +10,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export interface NODOAIxCardProps {
   balance: number;
@@ -43,7 +47,6 @@ export function NODOAIxCard({
   const [timeUntilUnlock, setTimeUntilUnlock] = useState<string>("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   
-  // Update countdown every minute
   useEffect(() => {
     const updateCountdown = () => {
       const now = new Date();
@@ -84,24 +87,40 @@ export function NODOAIxCard({
                 NODOAIx Certificate
               </CardTitle>
             </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className="h-4 w-4 text-white/60 cursor-help" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs p-3 bg-white/10 backdrop-blur-lg text-sm">
-                <p>
-                  NODOAIx represents your deposit plus earned fees in this vault. 
-                  Each token equals 1 USDC of value plus any accrued yield.
-                  Upon redemption, you'll receive USDC for the full value.
-                </p>
-              </TooltipContent>
-            </Tooltip>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="cursor-help">
+                  <HelpCircle className="h-5 w-5 text-white/60 hover:text-white/80 transition-colors" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[400px] bg-black/80 backdrop-blur-xl border-white/10 text-white space-y-4 p-6">
+                <div className="space-y-2">
+                  <h3 className="text-base font-semibold">What is NODOAIx?</h3>
+                  <p className="text-sm text-white/70">
+                    NODOAIx is an AI-optimized yield certificate that represents your deposit 
+                    in our advanced vault strategy. It's not just a token, but a smart investment 
+                    vehicle powered by our neural AI.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium">Key Features:</h4>
+                  <ul className="list-disc list-inside text-sm text-white/70 space-y-1">
+                    <li>Automatically compounds yields</li>
+                    <li>AI-driven rebalancing for optimal returns</li>
+                    <li>Locked for a set period to maximize strategy effectiveness</li>
+                    <li>1 NODOAIx = 1 USDC + accrued yield</li>
+                  </ul>
+                </div>
+                <div className="text-xs text-white/50 italic">
+                  Note: Upon redemption, you'll receive USDC for the full value of your NODOAIx.
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           <p className="text-xs text-[#9CA3AF] mt-1">1 NODOAIx = 1 USDC + accrued fees</p>
         </CardHeader>
         
         <CardContent className="p-6 space-y-5">
-          {/* Balance info with 2-column grid */}
           <div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-2.5">
             <span className="text-[#9CA3AF] text-[13px] font-medium">Balance</span>
             <span className="font-mono font-medium text-right text-[#E5E7EB] text-lg tabular-nums">
@@ -124,7 +143,6 @@ export function NODOAIxCard({
             </span>
           </div>
           
-          {/* Unlock status */}
           <div className="flex flex-col items-center space-y-3">
             {isUnlocked ? (
               <>
@@ -148,7 +166,6 @@ export function NODOAIxCard({
             )}
           </div>
           
-          {/* Audit info with improved alignment */}
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-1 text-[#C9CDD3]">
               <ShieldCheck className="h-3.5 w-3.5 text-[#10B981]" />
@@ -165,7 +182,6 @@ export function NODOAIxCard({
             </a>
           </div>
           
-          {/* Contract address with truncation */}
           <Button 
             variant="outline" 
             size="lg"
