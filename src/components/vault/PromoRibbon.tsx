@@ -56,10 +56,10 @@ export function PromoRibbon({ active = true, endTime }: PromoRibbonProps) {
   
   return (
     <div 
-      className="w-full bg-gradient-to-r from-orange-400/30 to-orange-500/30 py-2 text-center text-sm animate-fade-in mb-6 rounded-lg border border-orange-500/20"
+      className="inline-flex items-center px-4 py-3 text-[13px] font-medium text-[#FF8A00] bg-[#FF8A00]/15 rounded-2xl animate-fade-in"
       aria-live="polite"
     >
-      ⚡ +0.5% APR boost ends in <span className="font-mono tabular-nums font-medium">{timeLeft}</span>
+      ⚡ +0.5% APR boost ends in <span className="font-mono font-semibold ml-2">{timeLeft}</span>
     </div>
   );
 }
