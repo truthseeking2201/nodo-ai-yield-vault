@@ -25,12 +25,36 @@ export function TokenIcon({ token, size = 24, className }: TokenIconProps) {
   );
 }
 
-export function PairIcon({ tokens, size = 24 }: { tokens: [TokenIconProps["token"], TokenIconProps["token"]], size?: number }) {
+// Updated function to map vault ID segments to valid token names
+const mapVaultIdToTokens = (id: string): [TokenIconProps["token"], TokenIconProps["token"]] => {
+  const parts = id.split('-');
+  
+  // Map each part to a valid token from our TOKEN_ICONS
+  const tokens = parts.map(part => {
+    // Convert to uppercase since our token keys are all uppercase
+    const upperPart = part.toUpperCase();
+    
+    // Check if this exact match exists in TOKEN_ICONS
+    if (upperPart in TOKEN_ICONS) {
+      return upperPart as TokenIconProps["token"];
+    }
+    
+    // Default to SUI if no match (shouldn't happen with our current vaults)
+    return "SUI" as TokenIconProps["token"];
+  });
+  
+  // Always return a tuple of two tokens for our pair
+  return [tokens[0], tokens[1]] as [TokenIconProps["token"], TokenIconProps["token"]];
+};
+
+export function PairIcon({ tokens, size = 24 }: { tokens: [TokenIconProps["token"], TokenIconProps["token"]] | string, size?: number }) {
+  // If tokens is a string (vault ID), convert it to token pair
+  const tokenPair = typeof tokens === 'string' ? mapVaultIdToTokens(tokens) : tokens;
+  
   return (
     <div className="relative flex items-center">
-      <TokenIcon token={tokens[0]} size={size} className="z-10" />
-      <TokenIcon token={tokens[1]} size={size} className="-ml-3" />
+      <TokenIcon token={tokenPair[0]} size={size} className="z-10" />
+      <TokenIcon token={tokenPair[1]} size={size} className="-ml-3" />
     </div>
   );
 }
-

@@ -92,13 +92,43 @@ const mockVaults: VaultData[] = [
         value: 100 + (Math.sin(i) + 1.2) * 7 + i * 1.2
       }))
     }
+  },
+  {
+    id: "nodoaix-sui",
+    name: "NODOAIx-SUI",
+    type: "nova",
+    tvl: 750000,
+    apr: 22.5,
+    apy: 25.1,
+    description: "Exclusive vault for NODOAIx token holders, providing enhanced yield from AI-optimized strategies.",
+    lockupPeriods: [
+      { days: 30, aprBoost: 0 },
+      { days: 60, aprBoost: 2.0 },
+      { days: 90, aprBoost: 4.5 }
+    ],
+    riskLevel: "high",
+    strategy: "AI-powered position management that adapts to market conditions in real-time, maximizing returns from the NODOAIx-SUI pool.",
+    performance: {
+      daily: Array.from({ length: 30 }, (_, i) => ({
+        date: new Date(Date.now() - (29-i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        value: 100 + (Math.sin(i / 2.5) + 1.3) * 3.8 + i / 7
+      })),
+      weekly: Array.from({ length: 12 }, (_, i) => ({
+        date: `Week ${i + 1}`,
+        value: 100 + (Math.sin(i / 1.2) + 1.3) * 4.8 + i / 1.3
+      })),
+      monthly: Array.from({ length: 6 }, (_, i) => ({
+        date: `Month ${i + 1}`,
+        value: 100 + (Math.sin(i) + 1.3) * 6.5 + i * 1.1
+      }))
+    }
   }
 ];
 
-// Mock user investments - Update to use new IDs
+// Mock user investments - Updated with NODOAIx investment
 const mockUserInvestments: UserInvestment[] = [
   {
-    vaultId: "deep-sui", // Changed from nova-yield to deep-sui
+    vaultId: "deep-sui",
     principal: 500,
     shares: 48.25,
     depositDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
@@ -109,7 +139,7 @@ const mockUserInvestments: UserInvestment[] = [
     isWithdrawable: false
   },
   {
-    vaultId: "cetus-sui", // Changed from orion-stable to cetus-sui
+    vaultId: "cetus-sui",
     principal: 750,
     shares: 73.12,
     depositDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
@@ -118,17 +148,29 @@ const mockUserInvestments: UserInvestment[] = [
     currentValue: 771.25,
     profit: 21.25,
     isWithdrawable: true
+  },
+  {
+    vaultId: "nodoaix-sui",
+    principal: 300,
+    shares: 28.75,
+    depositDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+    lockupPeriod: 30,
+    unlockDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
+    currentValue: 318.60,
+    profit: 18.60,
+    isWithdrawable: false,
+    currentApr: 22.5
   }
 ];
 
-// Mock transaction history - Update to use new IDs
+// Mock transaction history - Updated with NODOAIx transaction
 const mockTransactions: TransactionHistory[] = [
   {
     id: "tx1",
     type: "deposit",
     amount: 500,
-    vaultId: "deep-sui", // Changed from nova-yield to deep-sui
-    vaultName: "DEEP-SUI", // Updated vault name
+    vaultId: "deep-sui",
+    vaultName: "DEEP-SUI",
     timestamp: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   },
@@ -136,8 +178,8 @@ const mockTransactions: TransactionHistory[] = [
     id: "tx2",
     type: "deposit",
     amount: 750,
-    vaultId: "cetus-sui", // Changed from orion-stable to cetus-sui
-    vaultName: "CETUS-SUI", // Updated vault name
+    vaultId: "cetus-sui",
+    vaultName: "CETUS-SUI",
     timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   },
@@ -145,9 +187,18 @@ const mockTransactions: TransactionHistory[] = [
     id: "tx3",
     type: "withdraw",
     amount: 250,
-    vaultId: "sui-usdc", // Changed from emerald-growth to sui-usdc
-    vaultName: "SUI-USDC", // Updated vault name
+    vaultId: "sui-usdc",
+    vaultName: "SUI-USDC",
     timestamp: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+    status: "completed"
+  },
+  {
+    id: "tx4",
+    type: "deposit",
+    amount: 300,
+    vaultId: "nodoaix-sui",
+    vaultName: "NODOAIx-SUI",
+    timestamp: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   }
 ];

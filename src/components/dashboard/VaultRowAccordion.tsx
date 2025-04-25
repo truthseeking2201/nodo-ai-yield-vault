@@ -11,6 +11,7 @@ import { Lock } from "lucide-react";
 import { LockupProgress } from "./LockupProgress";
 import { useDepositDrawer } from "@/hooks/useDepositDrawer";
 import { DepositDrawer } from "@/components/vault/DepositDrawer";
+import { PairIcon } from "@/components/shared/TokenIcons";
 
 interface VaultRowAccordionProps {
   investment: UserInvestment;
@@ -155,27 +156,12 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
           <AccordionTrigger className="py-5 px-5 hover:no-underline">
             <div className="flex flex-1 items-center justify-between">
               <div className="flex items-center">
-                <div 
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${styles.textColor} bg-white/5`}
-                  style={{ color: styles.iconColor }}
-                >
-                  {investment.vaultId.includes('deep') || investment.vaultId.includes('nova') ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M12 6V18M6 12H18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-                    </svg>
-                  ) : investment.vaultId.includes('cetus') || investment.vaultId.includes('orion') ? (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="2.5"/>
-                    </svg>
-                  ) : (
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M4 8H20M4 16H20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
-                    </svg>
-                  )}
+                <div className="mr-3 flex items-center">
+                  <PairIcon tokens={investment.vaultId} size={24} />
                 </div>
-                <div className="ml-3">
+                <div className="ml-1">
                   <p className="font-medium text-[14px]">{formatVaultName(investment.vaultId)} Vault</p>
-                  <p className="text-white/60 text-xs">{displayDaysText}</p>
+                  <p className="text-white/60 text-xs">{investment.isWithdrawable ? 'Unlocked' : `Unlocks in ${calculateDaysLeft()} days`}</p>
                 </div>
               </div>
               <div className="text-right">

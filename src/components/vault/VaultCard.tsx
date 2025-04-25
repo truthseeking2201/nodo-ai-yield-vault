@@ -89,7 +89,8 @@ export function VaultCard({
           <div className="flex justify-between items-start gap-2">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <PairIcon tokens={vault.id.split('-') as ["SUI" | "USDC" | "DEEP" | "CETUS", "SUI" | "USDC" | "DEEP" | "CETUS"]} size={28} />
+                {/* Pass the vault.id directly to PairIcon, which will handle the mapping */}
+                <PairIcon tokens={vault.id} size={28} />
                 <div className="absolute -bottom-1 -right-1">
                   <AIIndicator vaultType={vault.type} className="scale-75" />
                 </div>
