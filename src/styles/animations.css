@@ -48,3 +48,65 @@
 .text-glow-emerald {
   animation: glow-emerald 2s ease-in-out infinite;
 }
+
+/* Neural orange glow effect */
+@keyframes neural-pulse {
+  0% {
+    box-shadow: 0 0 5px rgba(249, 115, 22, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(249, 115, 22, 0.2);
+  }
+}
+
+.neural-glow {
+  animation: neural-pulse 3s ease-in-out infinite;
+}
+
+/* Neural orange text glow */
+@keyframes neural-text-pulse {
+  0% {
+    text-shadow: 0 0 4px rgba(249, 115, 22, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(249, 115, 22, 0.6);
+  }
+  100% {
+    text-shadow: 0 0 4px rgba(249, 115, 22, 0.2);
+  }
+}
+
+.neural-text-glow {
+  animation: neural-text-pulse 3s ease-in-out infinite;
+}
+
+/* AI working animation */
+@keyframes ai-working {
+  0% {
+    opacity: 0.4;
+    transform: translateX(-100%);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translateX(100%);
+  }
+}
+
+.ai-working-indicator {
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-working-indicator::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(249, 115, 22, 0.8), transparent);
+  animation: ai-working 2s infinite;
+}

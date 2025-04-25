@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Shield, Info, TrendingUp, Clock, ExternalLink } from "lucide-react";
+import { ArrowRight, Shield, Info, TrendingUp, Clock, ExternalLink, Brain } from "lucide-react";
 import { VaultData } from "@/types/vault";
 import { TokenIcon, PairIcon } from "@/components/shared/TokenIcons";
 import { 
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useWallet } from "@/hooks/useWallet";
 import { useDepositDrawer } from "@/hooks/useDepositDrawer";
+import { AIIndicator } from "./AIIndicator";
 
 interface VaultCardProps {
   vault: VaultData;
@@ -84,6 +85,18 @@ export function VaultCard({
   const hasHighAPRChange = Math.abs(vault.apr - 18.0) > 5.0; // Example threshold
   
   const aprGlowClass = (isActive || hasHighAPRChange) ? 'text-shadow-neon' : '';
+  
+  // Get random AI insights for the vault
+  const getRandomInsight = () => {
+    const insights = [
+      `📈 up ${(Math.random() * 0.5).toFixed(1)}% today via AI`,
+      `🚀 APY boosted by AI strategy`,
+      `🤖 AI optimized position`,
+    ];
+    return insights[Math.floor(Math.random() * insights.length)];
+  };
+  
+  const aiInsight = getRandomInsight();
 
   return (
     <TooltipProvider>
@@ -103,6 +116,7 @@ export function VaultCard({
               <CardTitle className="text-base font-medium">
                 {vault.name}
               </CardTitle>
+              <AIIndicator vaultType={vault.type} className="ml-1" />
             </div>
             <div className={`text-[11px] font-medium py-0.5 px-2 rounded-full ${styles.riskColor}`}>
               {styles.riskText}
@@ -123,11 +137,11 @@ export function VaultCard({
                     <Info className="h-3 w-3 text-white/40 cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent className="text-xs max-w-[200px]">
-                    APR has risen {(Math.random() * 0.5).toFixed(1)}% in last 24h
+                    APR has risen {(Math.random() * 0.5).toFixed(1)}% in last 24h due to AI rebalancing
                   </TooltipContent>
                 </Tooltip>
               </p>
-              <p className="text-lg font-mono font-medium text-white/95">
+              <p className={`text-lg font-mono font-medium text-white/95 ${isActive ? 'text-glow-emerald' : ''}`}>
                 {vault.apr.toFixed(1)}%
               </p>
             </div>
@@ -143,6 +157,10 @@ export function VaultCard({
                 ${(vault.tvl / 1000000).toFixed(1)}M
               </p>
             </div>
+          </div>
+          
+          <div className="text-xs text-white/70 font-medium">
+            <span className={isActive ? 'text-glow-emerald' : ''}>{aiInsight}</span>
           </div>
 
           <div className="h-px w-full bg-white/[0.06]" />
@@ -160,7 +178,7 @@ export function VaultCard({
             </Button>
             
             <p className="text-[11px] text-center text-[#9CA3AF]">
-              Gas ≈ 0.006 SUI · 30-day lock
+              Gas ≈ 0.006 SUI · AI-optimized 30-day lock
             </p>
           </div>
         </CardContent>
