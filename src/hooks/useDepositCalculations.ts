@@ -6,8 +6,11 @@ export const useDepositCalculations = (vault?: VaultData) => {
     if (!amount || !vault) return 0;
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum)) return 0;
-    const boost = selectedLockup === 90 ? 0.025 : selectedLockup === 60 ? 0.012 : 0;
+    
+    const selectedPeriod = vault.lockupPeriods.find(p => p.days === selectedLockup);
+    const boost = selectedPeriod?.aprBoost || 0;
     const effectiveApr = (vault.apr + boost) / 100;
+    
     return amountNum * effectiveApr * selectedLockup / 365;
   };
 

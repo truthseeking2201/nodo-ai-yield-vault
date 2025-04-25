@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -113,7 +112,7 @@ export function DepositDrawerDetails({
         <Label className="text-xs font-medium tracking-wide text-[#9CA3AF]">Select Lock-up Period</Label>
         <div className="grid grid-cols-3 gap-2">
           {vault.lockupPeriods.map((period) => {
-            const boost = period.days === 90 ? 0.025 : period.days === 60 ? 0.012 : 0;
+            const boost = period.aprBoost || 0;
             const totalApr = vault.apr + boost;
             const isSelected = period.days === selectedLockup;
             
