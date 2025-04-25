@@ -43,6 +43,17 @@ const DrawerOverlay = React.forwardRef<
       "fixed inset-0 z-50 bg-black/55 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 cursor-pointer",
       className
     )}
+    onClick={(e) => {
+      // Make sure the overlay click triggers drawer closing
+      if (e.target === e.currentTarget) {
+        const drawer = document.querySelector('[data-state="open"]');
+        if (drawer) {
+          // Find the closest parent with onOpenChange prop
+          const closeEvent = new Event('vaul.close', { bubbles: true });
+          drawer.dispatchEvent(closeEvent);
+        }
+      }
+    }}
     {...props}
   />
 ))
