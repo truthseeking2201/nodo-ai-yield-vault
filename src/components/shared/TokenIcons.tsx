@@ -33,3 +33,4 @@ export function PairIcon({ tokens, size = 24 }: { tokens: [TokenIconProps["token
     </div>
   );
 }
+
