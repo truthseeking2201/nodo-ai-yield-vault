@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,11 @@ export function AppHeader() {
       <div className="container flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold gradient-text-nova">NODO AI</span>
+            <img 
+              src="/lovable-uploads/5e426b4d-ccda-486b-8980-761ff3c70294.png" 
+              alt="NODO AI Logo" 
+              className="h-8 w-auto"
+            />
             <span className="text-white/60 hidden md:inline">Yield Vaults</span>
           </Link>
         </div>
