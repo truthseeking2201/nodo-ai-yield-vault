@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { RiskLegend } from "@/components/vault/RiskLegend";
 import { LiveTicker } from "@/components/vault/LiveTicker";
-import { PromoRibbon } from "@/components/vault/PromoRibbon";
 import { TestimonialCarousel } from "@/components/vault/TestimonialCarousel";
 import { HowNodoWorks } from "@/components/vault/HowNodoWorks";
 import { AIRebalancingTicker } from "@/components/vault/AIRebalancingTicker";
@@ -65,8 +64,6 @@ export default function VaultCatalog() {
       `}</style>
       <div className="flex flex-col space-y-8 relative z-0">
         <HeroSection />
-
-        {catalogV2Enabled && showPromo && <PromoRibbon />}
 
         <div className="relative pt-4">
           {catalogV2Enabled && <RiskLegend />}
