@@ -5,34 +5,34 @@
   }
 
   .nav-link {
-    @apply relative px-2.5 text-[#E5E7EB] opacity-90 transition-all duration-150;
+    @apply relative px-3 py-1.5 text-[#E5E7EB] opacity-90 transition-all duration-150 rounded-lg hover:bg-white/5;
   }
 
   .nav-link::after {
     content: '';
-    @apply absolute left-0 -bottom-1 h-0.5 w-0 bg-[#FF8800] rounded-sm transition-all origin-left;
+    @apply absolute left-0 -bottom-1 h-0.5 w-0 bg-gradient-to-r from-nova to-nova-light rounded-sm transition-all origin-left;
     transition: width 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .nav-link:hover {
     @apply text-white -translate-y-[1px];
-    text-shadow: 0 0 6px rgba(255, 136, 0, 0.35);
+    text-shadow: 0 0 12px rgba(249, 115, 22, 0.4);
   }
 
   .nav-link:focus-visible {
     @apply outline-none;
-    outline: 2px solid #FF8800;
+    outline: 2px solid rgba(249, 115, 22, 0.5);
     outline-offset: 4px;
     border-radius: 6px;
   }
 
   .nav-link:active {
     @apply scale-95;
-    text-shadow: 0 0 8px rgba(255, 136, 0, 0.5);
+    text-shadow: 0 0 16px rgba(249, 115, 22, 0.6);
   }
 
   .nav-link.active {
-    @apply text-[#FF8800];
+    @apply text-nova bg-white/5;
   }
 
   .nav-link.active::after {
