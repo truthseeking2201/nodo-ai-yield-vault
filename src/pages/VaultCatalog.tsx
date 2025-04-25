@@ -15,6 +15,8 @@ import { LiveTicker } from "@/components/vault/LiveTicker";
 import { TestimonialCarousel } from "@/components/vault/TestimonialCarousel";
 import { HowNodoWorks } from "@/components/vault/HowNodoWorks";
 import { AIRebalancingTicker } from "@/components/vault/AIRebalancingTicker";
+import { AIStatusIndicator } from "@/components/vault/AIStatusIndicator";
+import { NeuralActivityTicker } from "@/components/vault/NeuralActivityTicker";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
@@ -65,6 +67,8 @@ export default function VaultCatalog() {
       <div className="flex flex-col space-y-8 relative z-0">
         <HeroSection />
 
+        <NeuralActivityTicker />
+
         <div className="relative pt-4">
           {catalogV2Enabled && <RiskLegend />}
 
@@ -97,7 +101,7 @@ export default function VaultCatalog() {
                 setCarouselApi={setCarouselApi}
               />
               
-              <div className="mt-6">
+              <div className="mt-8">
                 <AIRebalancingTicker variant="catalog" />
               </div>
             </>
@@ -117,8 +121,10 @@ export default function VaultCatalog() {
           </>
         )}
 
+        <AIStatusIndicator />
+
         {showStickyButton && isConnected && balance.usdc > 0 && activeVault && (
-          <div className="fixed bottom-4 left-0 right-0 z-50 md:hidden px-4">
+          <div className="fixed bottom-4 left-0 right-0 z-40 md:hidden px-4">
             <Button 
               className="w-full gradient-bg-nova py-6 rounded-xl shadow-lg text-[#0E0F11]"
               asChild

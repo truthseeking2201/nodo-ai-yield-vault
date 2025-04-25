@@ -11,15 +11,15 @@ import {
 export function AIStatusIndicator() {
   return (
     <TooltipProvider>
-      <div className="fixed bottom-24 right-6 z-40">
+      <div className="fixed bottom-24 right-6 z-50">
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="bg-black/40 backdrop-blur-lg rounded-full p-2 border border-white/10 neural-glow cursor-help flex items-center gap-2">
+            <div className="bg-black/60 backdrop-blur-lg rounded-full p-3 border border-white/20 neural-glow cursor-help flex items-center gap-2 shadow-xl">
               <div className="relative">
-                <Brain size={18} className="text-nova" />
+                <Brain size={20} className="text-nova" />
                 <div className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-emerald rounded-full animate-pulse"></div>
               </div>
-              <span className="mr-1 text-xs font-medium text-white/80">AI active</span>
+              <span className="mr-1 text-sm font-medium text-white neural-text-glow">AI active</span>
             </div>
           </TooltipTrigger>
           <TooltipContent side="left" className="max-w-[280px] text-xs">

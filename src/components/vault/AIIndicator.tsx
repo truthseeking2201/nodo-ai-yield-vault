@@ -25,8 +25,8 @@ export function AIIndicator({ vaultType, className = "", showTooltip = true }: A
   };
 
   const indicator = (
-    <div className={`relative flex items-center ${className}`}>
-      <Brain size={14} className={`${getColorClass()}`} />
+    <div className={`relative flex items-center ${className} neural-text-glow`}>
+      <Brain size={16} className={`${getColorClass()}`} />
       <div className={`absolute -top-0.5 -right-0.5 h-1.5 w-1.5 ${getColorClass()} bg-opacity-70 rounded-full animate-pulse`}></div>
     </div>
   );
