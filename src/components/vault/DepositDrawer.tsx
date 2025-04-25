@@ -25,6 +25,14 @@ interface DepositDrawerProps {
 
 export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
   const { balance } = useWallet();
+  
+  // Properly initialize the deposit drawer hook with vault and onClose
+  const depositDrawer = useDepositDrawer({ 
+    vault, 
+    onClose 
+  });
+  
+  // Destructure all needed properties and methods from the hook
   const {
     state: {
       amount,
@@ -51,8 +59,9 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
       calculateEstimatedReturns,
       getUnlockDate
     }
-  } = useDepositDrawer({ vault, onClose });
+  } = depositDrawer;
 
+  // Calculate return amount and total return using the calculation function
   const returnAmount = calculateEstimatedReturns();
   const totalReturn = amount ? parseFloat(amount) + returnAmount : 0;
 
@@ -74,6 +83,7 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
     }
   }, [open, handleKeyDown]);
 
+  // Handle close button click
   const handleCloseClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onClose();

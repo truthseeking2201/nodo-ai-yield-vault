@@ -24,28 +24,33 @@ export const useDepositDrawer = (props?: UseDepositDrawerProps) => {
   const [sliderValue, setSliderValue] = useState<number[]>([1000]);
   const [validationError, setValidationError] = useState<string>("");
 
+  // Use the refactored hooks
   const { calculateEstimatedReturns, getUnlockDate } = useDepositCalculations(props?.vault);
   const { showConfetti, setShowConfetti, countUpValue, fadeRefresh, setFadeRefresh } = useDepositAnimations(step, amount);
   useDepositAudio(step, amount);
 
+  // Set default lockup period based on vault data
   useEffect(() => {
     if (props?.vault?.lockupPeriods && props.vault.lockupPeriods.length > 0) {
       setSelectedLockup(props.vault.lockupPeriods[0].days);
     }
   }, [props?.vault]);
 
+  // Update amount when slider value changes
   useEffect(() => {
     setAmount(sliderValue[0].toString());
   }, [sliderValue]);
 
+  // Handle fade refresh animation
   useEffect(() => {
     if (amount || selectedLockup) {
       setFadeRefresh(true);
       const timer = setTimeout(() => setFadeRefresh(false), 120);
       return () => clearTimeout(timer);
     }
-  }, [amount, selectedLockup]);
+  }, [amount, selectedLockup, setFadeRefresh]);
 
+  // Deposit mutation
   const depositMutation = useMutation({
     mutationFn: (params: { vaultId: string; amount: number; lockupPeriod: number }) => {
       return vaultService.deposit(params.vaultId, params.amount, params.lockupPeriod);
@@ -69,6 +74,7 @@ export const useDepositDrawer = (props?: UseDepositDrawerProps) => {
     }
   });
 
+  // Handle amount input change
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
@@ -85,6 +91,7 @@ export const useDepositDrawer = (props?: UseDepositDrawerProps) => {
     }
   };
 
+  // Validate deposit amount
   const validateAmount = (value: string) => {
     if (!value) {
       setValidationError("");
