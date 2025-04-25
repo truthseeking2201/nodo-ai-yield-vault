@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { UserInvestment } from "@/types/vault";
 import { 
@@ -80,6 +81,24 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
     return Math.max(0, diffDays);
   };
   
+  // Calculate estimated APR based on vault ID
+  const calculateEstimatedApr = () => {
+    if (investment.currentApr) return investment.currentApr;
+    
+    if (investment.vaultId.includes('deep')) return 21.5;
+    else if (investment.vaultId.includes('cetus')) return 18.9;
+    else return 15.2;
+  };
+  
+  // Calculate estimated fees earned
+  const calculateFeesEarned = () => {
+    const apr = calculateEstimatedApr();
+    const daysInvested = investment.lockupPeriod - calculateDaysLeft();
+    return (investment.principal * (apr / 100) * (daysInvested / 365));
+  };
+  
+  const aprEstimate = calculateEstimatedApr();
+  const feesEarned = calculateFeesEarned();
   const styles = getVaultStyles(investment.vaultId);
   const daysLeft = calculateDaysLeft();
   const showExtendLock = daysLeft <= 7 && daysLeft > 0;
@@ -91,17 +110,36 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
   const handleAddFunds = () => {
     setIsDepositDrawerOpen(true);
   };
+  
+  const handleExtendLock = () => {
+    // This function would be implemented to handle extending the lock period
+    console.log("Extending lock for", investment.vaultId);
+  };
 
+  // Create a VaultData object from the investment data
   const vaultData = {
     id: investment.vaultId,
     name: formatVaultName(investment.vaultId),
-    apr: investment.currentApr || 0,
-    apy: investment.currentApr ? (Math.pow(1 + investment.currentApr / 100 / 12, 12) - 1) * 100 : 0,
+    type: investment.vaultId.includes('deep') || investment.vaultId.includes('nova') 
+      ? 'nova' 
+      : investment.vaultId.includes('cetus') || investment.vaultId.includes('orion')
+        ? 'orion'
+        : 'emerald',
+    apr: aprEstimate,
+    apy: aprEstimate ? (Math.pow(1 + aprEstimate / 100 / 12, 12) - 1) * 100 : 0,
     tvl: investment.currentValue,
     lockupPeriods: [{
       days: investment.lockupPeriod,
       aprBoost: 0
-    }]
+    }],
+    description: `${formatVaultName(investment.vaultId)} vault strategy`,
+    riskLevel: investment.vaultId.includes('deep') ? 'high' : investment.vaultId.includes('cetus') ? 'medium' : 'low',
+    strategy: `Automated yield optimization for ${formatVaultName(investment.vaultId)}`,
+    performance: {
+      daily: [],
+      weekly: [],
+      monthly: []
+    }
   };
 
   return (

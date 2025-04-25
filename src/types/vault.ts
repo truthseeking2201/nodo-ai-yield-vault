@@ -34,6 +34,7 @@ export interface UserInvestment {
   currentValue: number;
   profit: number;
   isWithdrawable: boolean;
+  currentApr?: number; // Added currentApr property as optional
 }
 
 export interface TransactionHistory {
