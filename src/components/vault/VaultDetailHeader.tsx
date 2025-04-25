@@ -35,7 +35,7 @@ export function VaultDetailHeader({ vaultName, styles }: VaultDetailHeaderProps)
   
   return (
     <div className="mb-10 mt-10">
-      <Link to="/vaults">
+      <Link to="/">
         <Button 
           variant="ghost" 
           className="mb-4 mt-2 rounded-xl flex items-center gap-2 text-[#C9CDD3] hover:text-white font-medium text-xs tracking-wide"
