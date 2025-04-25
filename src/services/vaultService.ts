@@ -1,3 +1,4 @@
+
 import { VaultData, UserInvestment, TransactionHistory } from "@/types/vault";
 
 // Mock data for the vaults
@@ -97,7 +98,7 @@ const mockVaults: VaultData[] = [
 // Mock user investments - Update to use new IDs
 const mockUserInvestments: UserInvestment[] = [
   {
-    vaultId: "deep-sui",
+    vaultId: "deep-sui", // Changed from nova-yield to deep-sui
     principal: 500,
     shares: 48.25,
     depositDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
@@ -108,7 +109,7 @@ const mockUserInvestments: UserInvestment[] = [
     isWithdrawable: false
   },
   {
-    vaultId: "cetus-sui",
+    vaultId: "cetus-sui", // Changed from orion-stable to cetus-sui
     principal: 750,
     shares: 73.12,
     depositDate: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
@@ -117,17 +118,6 @@ const mockUserInvestments: UserInvestment[] = [
     currentValue: 771.25,
     profit: 21.25,
     isWithdrawable: true
-  },
-  {
-    vaultId: "nodoaix",
-    principal: 522.75,
-    shares: 522.75,
-    depositDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    lockupPeriod: 60,
-    unlockDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    currentValue: 522.75,
-    profit: 0,
-    isWithdrawable: false
   }
 ];
 
@@ -137,8 +127,8 @@ const mockTransactions: TransactionHistory[] = [
     id: "tx1",
     type: "deposit",
     amount: 500,
-    vaultId: "deep-sui",
-    vaultName: "DEEP-SUI",
+    vaultId: "deep-sui", // Changed from nova-yield to deep-sui
+    vaultName: "DEEP-SUI", // Updated vault name
     timestamp: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   },
@@ -146,8 +136,8 @@ const mockTransactions: TransactionHistory[] = [
     id: "tx2",
     type: "deposit",
     amount: 750,
-    vaultId: "cetus-sui",
-    vaultName: "CETUS-SUI",
+    vaultId: "cetus-sui", // Changed from orion-stable to cetus-sui
+    vaultName: "CETUS-SUI", // Updated vault name
     timestamp: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   },
@@ -155,8 +145,8 @@ const mockTransactions: TransactionHistory[] = [
     id: "tx3",
     type: "withdraw",
     amount: 250,
-    vaultId: "sui-usdc",
-    vaultName: "SUI-USDC",
+    vaultId: "sui-usdc", // Changed from emerald-growth to sui-usdc
+    vaultName: "SUI-USDC", // Updated vault name
     timestamp: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
     status: "completed"
   }
