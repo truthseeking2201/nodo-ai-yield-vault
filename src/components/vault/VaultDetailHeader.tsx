@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,25 @@ interface VaultDetailHeaderProps {
 }
 
 export function VaultDetailHeader({ vaultName, styles }: VaultDetailHeaderProps) {
+  const getRiskBadge = () => {
+    if (vaultName.includes('SUI-USDC')) {
+      return {
+        text: 'Low Risk',
+        class: 'bg-emerald/20 text-emerald'
+      };
+    } else if (vaultName.includes('Cetus')) {
+      return {
+        text: 'Moderate Risk',
+        class: 'bg-orion/20 text-orion'
+      };
+    } else {
+      return {
+        text: 'High Risk',
+        class: 'bg-nova/20 text-nova'
+      };
+    }
+  };
+
   const riskBadge = getRiskBadge();
   
   return (
