@@ -48,6 +48,7 @@ export function DepositDrawerSuccess({
             height={window.innerHeight}
             numberOfPieces={140}
             recycle={false}
+            duration={30000} // Extended to 30 seconds
             colors={['#FF8800', '#10B981', '#F97316', '#F59E0B']}
           />
         </div>
