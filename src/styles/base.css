@@ -42,7 +42,7 @@
   }
 
   body {
-    @apply bg-nodo-darker text-foreground antialiased font-sans;
+    @apply bg-nodo-darker text-foreground antialiased font-sans leading-relaxed;
     position: relative;
     background-image: 
       radial-gradient(circle at 50% 50%, rgba(249, 115, 22, 0.15) 0%, transparent 50%),
@@ -52,6 +52,14 @@
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight leading-tight;
+  }
+  
+  p {
+    @apply leading-relaxed;
   }
   
   body::before {

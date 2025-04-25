@@ -5,18 +5,10 @@ import { vaultService } from "@/services/vaultService";
 import { useWallet } from "@/hooks/useWallet";
 import { HeroSection } from "@/components/vault/HeroSection";
 import { VaultGrid } from "@/components/vault/VaultGrid";
-import { VaultCarousel } from "@/components/vault/VaultCarousel";
-import { VaultActivitySection } from "@/components/vault/VaultActivitySection";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { RiskLegend } from "@/components/vault/RiskLegend";
-import { LiveTicker } from "@/components/vault/LiveTicker";
-import { TestimonialCarousel } from "@/components/vault/TestimonialCarousel";
-import { HowNodoWorks } from "@/components/vault/HowNodoWorks";
-import { AIRebalancingTicker } from "@/components/vault/AIRebalancingTicker";
-import { AIStatusIndicator } from "@/components/vault/AIStatusIndicator";
-import { NeuralActivityTicker } from "@/components/vault/NeuralActivityTicker";
 import { ActivitySection } from "@/components/vault/ActivitySection";
 
 export default function VaultCatalog() {
@@ -65,51 +57,44 @@ export default function VaultCatalog() {
           display: none !important;
         }
       `}</style>
-      <div className="flex flex-col space-y-12 relative z-0">
-        <HeroSection />
+      <div className="flex flex-col space-y-24 relative z-0">
+        <section className="mt-8">
+          <HeroSection />
+        </section>
 
-        <NeuralActivityTicker />
+        <section>
+          <div className="relative">
+            {catalogV2Enabled && <RiskLegend />}
+            
+            {isLoading ? (
+              <div className="space-y-8">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <div key={index} className="glass-card animate-pulse h-[300px]" />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="col-span-full text-center p-8 glass-card">
+                <p className="text-red-500">Error loading vaults. Please try again later.</p>
+              </div>
+            ) : vaults && vaults.length > 0 ? (
+              <div className="space-y-24">
+                <VaultGrid 
+                  vaults={vaults}
+                  isConnected={isConnected}
+                  balance={balance}
+                  activeVaultId={activeVaultId}
+                  onVaultHover={setActiveVaultId}
+                />
 
-        <div className="relative">
-          {catalogV2Enabled && <RiskLegend />}
-
-          {isLoading ? (
-            <div className="space-y-6">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="glass-card animate-pulse h-[300px]" />
-              ))}
-            </div>
-          ) : error ? (
-            <div className="col-span-full text-center p-8 glass-card">
-              <p className="text-red-500">Error loading vaults. Please try again later.</p>
-            </div>
-          ) : vaults && vaults.length > 0 ? (
-            <div className="space-y-12">
-              <VaultGrid 
-                vaults={vaults}
-                isConnected={isConnected}
-                balance={balance}
-                activeVaultId={activeVaultId}
-                onVaultHover={setActiveVaultId}
-              />
-
-              <ActivitySection />
-
-              {catalogV2Enabled && (
-                <>
-                  <TestimonialCarousel items={testimonialItems} />
-                  <HowNodoWorks />
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="col-span-full text-center p-8 glass-card">
-              <p>No vaults available at this time.</p>
-            </div>
-          )}
-        </div>
-
-        <AIStatusIndicator />
+                <ActivitySection />
+              </div>
+            ) : (
+              <div className="col-span-full text-center p-8 glass-card">
+                <p>No vaults available at this time.</p>
+              </div>
+            )}
+          </div>
+        </section>
 
         {showStickyButton && isConnected && balance.usdc > 0 && activeVault && (
           <div className="fixed bottom-4 left-0 right-0 z-40 md:hidden px-4">
@@ -123,8 +108,6 @@ export default function VaultCatalog() {
             </Button>
           </div>
         )}
-
-        {catalogV2Enabled && <LiveTicker />}
       </div>
     </PageContainer>
   );
