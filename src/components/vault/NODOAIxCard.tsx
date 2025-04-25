@@ -152,6 +152,7 @@ export function NODOAIxCard({
                 <Button 
                   variant="default"
                   className="w-full h-12 bg-gradient-to-r from-[#10B981] to-[#059669] hover:opacity-90 text-white text-base font-semibold"
+                  onClick={() => window.location.href = '/dashboard'}
                 >
                   Redeem NODOAIx
                 </Button>

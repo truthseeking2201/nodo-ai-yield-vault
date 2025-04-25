@@ -25,7 +25,7 @@ const useWalletStore = create<WalletState>((set) => ({
   balance: {
     usdc: 0,
     nodoaix: 0
-  }, // Initialize with default values
+  },
   connect: async () => {
     set({ isConnecting: true })
     // Simulate connecting
