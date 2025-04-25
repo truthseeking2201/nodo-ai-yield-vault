@@ -1,5 +1,5 @@
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -56,17 +56,27 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
   const totalReturn = amount ? parseFloat(amount) + returnAmount : 0;
 
   // Handle Escape key press
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       onClose();
     }
   }, [onClose]);
 
+  // Add event listener for Escape key
+  useEffect(() => {
+    if (open) {
+      window.addEventListener('keydown', handleKeyDown);
+      
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [open, handleKeyDown]);
+
   return (
     <Drawer open={open} onOpenChange={onClose}>
       <DrawerContent 
         className="sm:max-w-[420px] p-0 overflow-hidden"
-        onKeyDown={handleKeyDown}
       >
         <div className="pt-8 pb-6 px-7">
           <div className="flex justify-between items-center mb-6">
@@ -81,7 +91,7 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
               </DrawerDescription>
             </DrawerHeader>
             <DrawerClose 
-              className="rounded-full h-8 w-8 flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors"
+              className="rounded-full h-8 w-8 flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
               onClick={onClose}
             >
               <X className="h-4 w-4" />

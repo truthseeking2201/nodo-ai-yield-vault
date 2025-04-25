@@ -57,6 +57,20 @@ export default function VaultDetail() {
       window.removeEventListener('deposit-success', handleDepositSuccess as EventListener);
     };
   }, []);
+  
+  // Handle ESC key for drawer closing
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isDepositDrawerOpen) {
+        setIsDepositDrawerOpen(false);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDepositDrawerOpen]);
 
   const handleActionClick = () => {
     setHasInteracted(true);
@@ -68,6 +82,10 @@ export default function VaultDetail() {
         (walletBtn as HTMLElement).click();
       }
     }
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDepositDrawerOpen(false);
   };
 
   if (isLoading) {
@@ -224,7 +242,7 @@ export default function VaultDetail() {
 
       <DepositDrawer 
         open={isDepositDrawerOpen}
-        onClose={() => setIsDepositDrawerOpen(false)}
+        onClose={handleCloseDrawer}
         vault={vault}
       />
     </PageContainer>
