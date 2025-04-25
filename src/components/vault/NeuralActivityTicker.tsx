@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +17,11 @@ interface NeuralActivity {
   vault: string;
 }
 
-export function NeuralActivityTicker() {
+interface NeuralActivityTickerProps {
+  variant?: 'default' | 'compact';
+}
+
+export function NeuralActivityTicker({ variant = 'default' }: NeuralActivityTickerProps) {
   const [activities, setActivities] = useState<NeuralActivity[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -30,7 +33,6 @@ export function NeuralActivityTicker() {
     queryFn: vaultService.getAllVaults,
   });
 
-  // Generate mock AI activities
   useEffect(() => {
     if (!vaults || vaults.length === 0) return;
     
@@ -84,7 +86,6 @@ export function NeuralActivityTicker() {
     
     setActivities(generateActivities());
     
-    // Refresh activities every 2 minutes
     const interval = setInterval(() => {
       setActivities(generateActivities());
     }, 120000);
@@ -92,7 +93,6 @@ export function NeuralActivityTicker() {
     return () => clearInterval(interval);
   }, [vaults]);
 
-  // Rotate through activities
   useEffect(() => {
     if (activities.length === 0 || isPaused) return;
     
@@ -103,7 +103,6 @@ export function NeuralActivityTicker() {
     return () => clearInterval(interval);
   }, [activities.length, isPaused]);
   
-  // Auto-hide after 2 minutes
   useEffect(() => {
     const hideTimeout = setTimeout(() => {
       setIsVisible(false);
@@ -126,13 +125,49 @@ export function NeuralActivityTicker() {
     }
   };
   
-  // Get time ago string
   const getTimeAgo = (timestamp: Date): string => {
     const seconds = Math.floor((new Date().getTime() - timestamp.getTime()) / 1000);
     if (seconds < 60) return `${seconds}s ago`;
     const minutes = Math.floor(seconds / 60);
     return `${minutes}m ago`;
   };
+
+  if (variant === 'compact') {
+    return (
+      <div className="space-y-4">
+        <AnimatePresence mode="wait">
+          {activities.map((activity, index) => (
+            <motion.div
+              key={activity.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="flex items-start justify-between gap-4 text-sm"
+            >
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  {getIconByType(activity.type)}
+                  <span className="font-medium text-white/90">{activity.vault}</span>
+                </div>
+                <p className="text-white/70">{activity.message}</p>
+                {activity.impact && (
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="text-emerald font-mono">
+                      +{activity.impact.value.toFixed(2)}% {activity.impact.metric}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <span className="text-xs text-white/40 whitespace-nowrap">
+                {getTimeAgo(activity.timestamp)}
+              </span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    );
+  }
 
   return (
     <div 

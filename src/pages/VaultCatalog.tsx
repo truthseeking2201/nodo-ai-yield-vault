@@ -17,6 +17,7 @@ import { HowNodoWorks } from "@/components/vault/HowNodoWorks";
 import { AIRebalancingTicker } from "@/components/vault/AIRebalancingTicker";
 import { AIStatusIndicator } from "@/components/vault/AIStatusIndicator";
 import { NeuralActivityTicker } from "@/components/vault/NeuralActivityTicker";
+import { ActivitySection } from "@/components/vault/ActivitySection";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
@@ -64,12 +65,12 @@ export default function VaultCatalog() {
           display: none !important;
         }
       `}</style>
-      <div className="flex flex-col space-y-8 relative z-0">
+      <div className="flex flex-col space-y-12 relative z-0">
         <HeroSection />
 
         <NeuralActivityTicker />
 
-        <div className="relative pt-4">
+        <div className="relative">
           {catalogV2Enabled && <RiskLegend />}
 
           {isLoading ? (
@@ -83,7 +84,7 @@ export default function VaultCatalog() {
               <p className="text-red-500">Error loading vaults. Please try again later.</p>
             </div>
           ) : vaults && vaults.length > 0 ? (
-            <>
+            <div className="space-y-12">
               <VaultGrid 
                 vaults={vaults}
                 isConnected={isConnected}
@@ -91,35 +92,22 @@ export default function VaultCatalog() {
                 activeVaultId={activeVaultId}
                 onVaultHover={setActiveVaultId}
               />
-              <VaultCarousel 
-                vaults={vaults}
-                isConnected={isConnected}
-                balance={balance}
-                activeVaultId={activeVaultId}
-                onVaultHover={setActiveVaultId}
-                carouselApi={carouselApi}
-                setCarouselApi={setCarouselApi}
-              />
-              
-              <div className="mt-8">
-                <AIRebalancingTicker variant="catalog" />
-              </div>
-            </>
+
+              <ActivitySection />
+
+              {catalogV2Enabled && (
+                <>
+                  <TestimonialCarousel items={testimonialItems} />
+                  <HowNodoWorks />
+                </>
+              )}
+            </div>
           ) : (
             <div className="col-span-full text-center p-8 glass-card">
               <p>No vaults available at this time.</p>
             </div>
           )}
         </div>
-        
-        <VaultActivitySection />
-
-        {catalogV2Enabled && (
-          <>
-            <TestimonialCarousel items={testimonialItems} />
-            <HowNodoWorks />
-          </>
-        )}
 
         <AIStatusIndicator />
 
