@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 
+/** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
   content: [
@@ -148,7 +149,9 @@ export default {
         shimmer: 'shimmer 2s linear infinite',
         'fade-in': 'fade-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards',
         'scale-in': 'scale-in 0.2s ease-out',
-        'hover-scale': 'hover-scale 0.2s ease-out'
+        'hover-scale': 'hover-scale 0.2s ease-out',
+        "slow-spin": "slow-spin 4s linear infinite",
+        "pulse": "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       }
     }
   },

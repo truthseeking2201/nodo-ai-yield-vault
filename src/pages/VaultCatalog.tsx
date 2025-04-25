@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -16,6 +15,7 @@ import { LiveTicker } from "@/components/vault/LiveTicker";
 import { PromoRibbon } from "@/components/vault/PromoRibbon";
 import { TestimonialCarousel } from "@/components/vault/TestimonialCarousel";
 import { HowNodoWorks } from "@/components/vault/HowNodoWorks";
+import { AIRebalancingTicker } from "@/components/vault/AIRebalancingTicker";
 
 export default function VaultCatalog() {
   const { data: vaults, isLoading, error } = useQuery({
@@ -29,7 +29,6 @@ export default function VaultCatalog() {
   const [carouselApi, setCarouselApi] = useState<any>(null);
   const [showPromo, setShowPromo] = useState(true);
 
-  // Define testimonial items
   const testimonialItems = [
     { quote: "Best yields on Sui!", handle: "@CryptoFanSUI" },
     { quote: "Fast deposits & reliable performance.", handle: "@VaultHunter" },
@@ -37,7 +36,6 @@ export default function VaultCatalog() {
     { quote: "Love the transparent fees and security.", handle: "@DeFiMaster" }
   ];
 
-  // Track scroll position for sticky button on mobile
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -50,7 +48,6 @@ export default function VaultCatalog() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Feature flag for catalog v2 (always true for this implementation)
   const catalogV2Enabled = true;
 
   const activeVault = vaults?.find(vault => vault.id === activeVaultId);
@@ -102,6 +99,10 @@ export default function VaultCatalog() {
                 carouselApi={carouselApi}
                 setCarouselApi={setCarouselApi}
               />
+              
+              <div className="mt-6">
+                <AIRebalancingTicker variant="catalog" />
+              </div>
             </>
           ) : (
             <div className="col-span-full text-center p-8 glass-card">

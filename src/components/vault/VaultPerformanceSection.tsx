@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { BarChart } from "lucide-react";
 import { VaultPerformanceChart } from "./VaultPerformanceChart";
 import { VaultData } from "@/types/vault";
+import { AIRebalancingTicker } from "./AIRebalancingTicker";
 
 interface VaultPerformanceSectionProps {
   vault: VaultData;
@@ -83,6 +84,11 @@ export function VaultPerformanceSection({
             onTimeRangeChange={onTimeRangeChange}
             styles={styles}
           />
+          
+          {/* Add AI Rebalancing Ticker */}
+          <div className="mt-4 border-t border-white/10 pt-4">
+            <AIRebalancingTicker variant="detail" vaultId={vault.id} />
+          </div>
         </div>
       </CardContent>
     </Card>
