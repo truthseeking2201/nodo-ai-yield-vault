@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -7,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWallet } from "@/hooks/useWallet";
 import { vaultService } from "@/services/vaultService";
 import { UserInvestment, TransactionHistory } from "@/types/vault";
-import { WalletIcon, Download, Bell } from "lucide-react";
+import { WalletIcon, Download } from "lucide-react";
 
 // Dashboard components
 import { KpiBar } from "@/components/dashboard/KpiBar";
@@ -18,7 +17,6 @@ import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { WithdrawModal } from "@/components/vault/WithdrawModal";
 import { AssetSplitDonut } from "@/components/dashboard/AssetSplitDonut";
-import { NotificationsDrawer } from "@/components/dashboard/NotificationsDrawer";
 
 export default function Dashboard() {
   const { isConnected, address, openWalletModal } = useWallet();
@@ -26,8 +24,6 @@ export default function Dashboard() {
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [selectedTx, setSelectedTx] = useState<TransactionHistory | null>(null);
   const [isTxDrawerOpen, setIsTxDrawerOpen] = useState(false);
-  const [isNotificationsDrawerOpen, setIsNotificationsDrawerOpen] = useState(false);
-  const [isAutoClaimEnabled, setIsAutoClaimEnabled] = useState(false);
   const [exportingCSV, setExportingCSV] = useState(false);
 
   const { 
@@ -52,29 +48,23 @@ export default function Dashboard() {
   const totalPrincipal = investments?.reduce((sum, inv) => sum + inv.principal, 0) || 0;
   const totalProfit = investments?.reduce((sum, inv) => sum + inv.profit, 0) || 0;
 
-  // Generate performance data with deposit markers
   const performanceData = useMemo(() => {
     if (!transactions) return [];
     
-    // Create a base timeline of 30 days
     const now = new Date();
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
     
-    // Generate data points for each day
     const data = [];
     for (let i = 0; i <= 29; i++) {
       const date = new Date(thirtyDaysAgo);
       date.setDate(date.getDate() + i);
       const dateStr = date.toISOString().split('T')[0];
       
-      // Calculate a somewhat realistic portfolio value progression
-      // Start with total principal and gradually increase to current value
       const dayFactor = i / 29;
       const growthFactor = 1 + (Math.sin(i/5) * 0.01) + (dayFactor * 0.08);
       const baseValue = totalPrincipal * growthFactor;
       
-      // Find deposit events on this day
       const depositsOnThisDay = transactions?.filter(tx => 
         tx.type === 'deposit' && tx.timestamp.split('T')[0] === dateStr
       ) || [];
@@ -92,12 +82,10 @@ export default function Dashboard() {
     return data;
   }, [transactions, totalPrincipal]);
 
-  // Calculate average APR across all investments
   const averageAPR = useMemo(() => {
     if (!investments || investments.length === 0) return 0;
     
     const totalValueWithAPR = investments.reduce((sum, inv) => {
-      // Extract APR from vaultId (simplification for demo)
       let aprEstimate = 0;
       if (inv.vaultId.includes('deep')) aprEstimate = 21.5;
       else if (inv.vaultId.includes('cetus')) aprEstimate = 18.9;
@@ -121,10 +109,8 @@ export default function Dashboard() {
 
   const handleExportCSV = () => {
     setExportingCSV(true);
-    // Simulate CSV export
     setTimeout(() => {
       setExportingCSV(false);
-      // In a real implementation, this would download a CSV file
       alert("Transactions exported to CSV");
     }, 1500);
   };
@@ -175,7 +161,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* KPI Bar */}
       <KpiBar 
         portfolioValue={totalInvestmentValue}
         profit={totalProfit}
@@ -184,7 +169,6 @@ export default function Dashboard() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Performance Chart (takes 2/3 of width on large screens) */}
         <div className="lg:col-span-2">
           <PerformanceChart 
             data={performanceData}
@@ -194,7 +178,6 @@ export default function Dashboard() {
           />
         </div>
         
-        {/* Asset Split Donut (takes 1/3 of width on large screens) */}
         <div>
           <AssetSplitDonut 
             investments={investments}
@@ -278,14 +261,12 @@ export default function Dashboard() {
         </TabsContent>
       </Tabs>
 
-      {/* Transaction drawer */}
       <TxDrawer 
         tx={selectedTx} 
         open={isTxDrawerOpen} 
         onClose={() => setIsTxDrawerOpen(false)}
       />
 
-      {/* Withdraw modal */}
       {selectedInvestment && (
         <WithdrawModal 
           open={isWithdrawModalOpen}
@@ -293,12 +274,6 @@ export default function Dashboard() {
           investment={selectedInvestment}
         />
       )}
-      
-      {/* Notifications Drawer */}
-      <NotificationsDrawer
-        open={isNotificationsDrawerOpen}
-        onClose={() => setIsNotificationsDrawerOpen(false)}
-      />
     </PageContainer>
   );
 }
