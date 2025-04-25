@@ -1,15 +1,15 @@
 
 @layer components {
   .risk-moderate {
-    @apply bg-orion-500;
+    @apply bg-orion-500/60 text-orion-500;
   }
 
   .risk-low {
-    @apply bg-emerald-500;
+    @apply bg-emerald-500/60 text-emerald-500;
   }
 
   .risk-high {
-    @apply bg-red-500;
+    @apply bg-red-500/60 text-red-500;
   }
 
   .card-risk-pill {
@@ -21,6 +21,34 @@
   }
 
   .vault-chart {
-    padding-bottom: 16px;
+    @apply pb-4;
+  }
+
+  .activity-item {
+    @apply flex items-center gap-3 py-3 px-4 rounded-xl transition-colors;
+    @apply bg-white/[0.02] hover:bg-white/[0.04];
+    @apply border border-transparent hover:border-white/[0.06];
+  }
+
+  .vault-card {
+    @apply relative overflow-hidden rounded-[20px] transition-all duration-300;
+    @apply border border-white/[0.06] bg-white/[0.04];
+    @apply hover:translate-y-[-4px] hover:shadow-[0_8px_24px_-6px_rgba(0,0,0,0.45)];
+  }
+
+  .vault-metrics {
+    @apply grid grid-cols-3 gap-4 py-4 px-6 border-t border-white/[0.06];
+  }
+
+  .vault-metric-label {
+    @apply text-[13px] text-[#9CA3AF] font-medium mb-1;
+  }
+
+  .vault-metric-value {
+    @apply font-mono font-semibold text-2xl text-white/95 tabular-nums;
+  }
+
+  .vault-delta {
+    @apply text-sm font-mono text-[#4ADE80];
   }
 }
