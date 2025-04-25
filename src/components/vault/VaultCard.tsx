@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -78,6 +79,7 @@ export function VaultCard({
   };
   
   const isHotVault = vault.apr > 18.0;
+  // Calculate monthly return correctly by ensuring we're working with numbers
   const monthlyReturn = (vault.apr / 100 / 12) * 1000;
   const hasHighAPRChange = Math.abs(vault.apr - 18.0) > 5.0; // Example threshold
   
@@ -165,7 +167,7 @@ export function VaultCard({
         
         {showRoiOverlay && (
           <div className="absolute bottom-3 right-3 bg-white/10 backdrop-blur-md px-2 py-1 rounded-lg border border-white/20 text-xs font-medium animate-fade-in">
-            ${1000 * (vault.apr / 100 / 12).toFixed(2)}/mo with $1,000
+            ${((vault.apr / 100 / 12) * 1000).toFixed(2)}/mo with $1,000
           </div>
         )}
       </Card>
