@@ -1,8 +1,7 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { NeuralActivityTicker } from "./NeuralActivityTicker";
-import { VaultActivityTicker } from "./VaultActivityTicker";
+import { UnifiedActivityFeed } from "./UnifiedActivityFeed";
 
 export function ActivitySection() {
   return (
@@ -10,14 +9,11 @@ export function ActivitySection() {
       <div className="px-8 pt-8 pb-6">
         <div className="space-y-2">
           <h3 className="text-lg font-medium text-[#E5E7EB]">Live Activity</h3>
-          <p className="text-sm text-[#9CA3AF] font-light">Real-time vault activity from AI and users</p>
+          <p className="text-sm text-[#9CA3AF] font-light">Real-time vault updates from AI and users</p>
         </div>
       </div>
-      <div className="p-8 pt-0 space-y-6">
-        <div className="space-y-4">
-          <NeuralActivityTicker variant="compact" />
-          <VaultActivityTicker />
-        </div>
+      <div className="p-8 pt-0">
+        <UnifiedActivityFeed />
       </div>
     </Card>
   );
