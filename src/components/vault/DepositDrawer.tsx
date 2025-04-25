@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect } from "react";
 import {
   Drawer,
@@ -95,13 +94,12 @@ export function DepositDrawer({ open, onClose, vault }: DepositDrawerProps) {
                 {step === 'success' && "Your deposit was successful!"}
               </DrawerDescription>
             </DrawerHeader>
-            <div 
+            <DrawerClose 
               className="rounded-full h-8 w-8 flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors cursor-pointer"
-              onClick={handleCloseClick}
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
-            </div>
+            </DrawerClose>
           </div>
 
           {step === 'details' && (
