@@ -2,7 +2,7 @@
 import { VaultData } from "@/types/vault";
 
 export const useDepositCalculations = (vault?: VaultData) => {
-  const calculateEstimatedReturns = (amount: string, selectedLockup: number) => {
+  const calculateEstimatedReturns = (amount: string = "0", selectedLockup: number = 30) => {
     if (!amount || !vault) return 0;
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum)) return 0;
@@ -11,7 +11,7 @@ export const useDepositCalculations = (vault?: VaultData) => {
     return amountNum * effectiveApr * selectedLockup / 365;
   };
 
-  const getUnlockDate = (selectedLockup: number) => {
+  const getUnlockDate = (selectedLockup: number = 30) => {
     const date = new Date();
     date.setDate(date.getDate() + selectedLockup);
     return date;

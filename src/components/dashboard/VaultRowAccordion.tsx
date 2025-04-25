@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { UserInvestment } from "@/types/vault";
+import { UserInvestment, VaultData } from "@/types/vault";
 import { 
   Accordion,
   AccordionContent,
@@ -97,8 +97,9 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
     return (investment.principal * (apr / 100) * (daysInvested / 365));
   };
   
-  const aprEstimate = calculateEstimatedApr();
-  const feesEarned = calculateFeesEarned();
+  // Calculate these values outside of the JSX to avoid undefined errors
+  const aprEstimateValue = calculateEstimatedApr();
+  const feesEarnedValue = calculateFeesEarned();
   const styles = getVaultStyles(investment.vaultId);
   const daysLeft = calculateDaysLeft();
   const showExtendLock = daysLeft <= 7 && daysLeft > 0;
@@ -116,17 +117,20 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
     console.log("Extending lock for", investment.vaultId);
   };
 
+  // Determine vault type as a proper union type
+  const getVaultType = (id: string): "nova" | "orion" | "emerald" => {
+    if (id.includes('deep') || id.includes('nova')) return "nova";
+    if (id.includes('cetus') || id.includes('orion')) return "orion"; 
+    return "emerald";
+  };
+
   // Create a VaultData object from the investment data
-  const vaultData = {
+  const vaultData: VaultData = {
     id: investment.vaultId,
     name: formatVaultName(investment.vaultId),
-    type: investment.vaultId.includes('deep') || investment.vaultId.includes('nova') 
-      ? 'nova' 
-      : investment.vaultId.includes('cetus') || investment.vaultId.includes('orion')
-        ? 'orion'
-        : 'emerald',
-    apr: aprEstimate,
-    apy: aprEstimate ? (Math.pow(1 + aprEstimate / 100 / 12, 12) - 1) * 100 : 0,
+    type: getVaultType(investment.vaultId),
+    apr: aprEstimateValue,
+    apy: aprEstimateValue ? (Math.pow(1 + aprEstimateValue / 100 / 12, 12) - 1) * 100 : 0,
     tvl: investment.currentValue,
     lockupPeriods: [{
       days: investment.lockupPeriod,
@@ -206,11 +210,11 @@ export function VaultRowAccordion({ investment, onWithdraw }: VaultRowAccordionP
               </div>
               <div>
                 <p className="text-xs uppercase tracking-wide text-white/60 mb-1">APR (avg)</p>
-                <p className="font-mono text-[14px] text-emerald">{aprEstimate.toFixed(1)}%</p>
+                <p className="font-mono text-[14px] text-emerald">{aprEstimateValue.toFixed(1)}%</p>
               </div>
               <div>
                 <p className="text-xs uppercase tracking-wide text-white/60 mb-1">Fees Earned</p>
-                <p className="font-mono text-[14px] text-emerald">{formatCurrency(feesEarned)}</p>
+                <p className="font-mono text-[14px] text-emerald">{formatCurrency(feesEarnedValue)}</p>
               </div>
               <div>
                 <p className="text-xs uppercase tracking-wide text-white/60 mb-1">Unlock Date</p>
