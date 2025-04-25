@@ -1,9 +1,7 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ConnectWalletButton } from "@/components/wallet/ConnectWalletButton";
-import { BrainCircuit } from "lucide-react";
 
 export function AppHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -19,7 +17,6 @@ export function AppHeader() {
               alt="NODO AI Logo" 
               className="h-8 w-auto transition-transform duration-300 group-hover:scale-105"
             />
-            <BrainCircuit className="h-5 w-5 text-nova/80 hidden md:block" />
           </Link>
 
           {/* Desktop Navigation */}
