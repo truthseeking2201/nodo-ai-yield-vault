@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -8,7 +9,6 @@ import { VaultDetailHeader } from "@/components/vault/VaultDetailHeader";
 import { VaultDetailLayout } from "@/components/vault/VaultDetailLayout";
 import { VaultPerformanceSection } from "@/components/vault/VaultPerformanceSection";
 import { VaultMetricsCard } from "@/components/vault/VaultMetricsCard";
-import { NODOAIxCard } from "@/components/vault/NODOAIxCard";
 import { VaultActivityTicker } from "@/components/vault/VaultActivityTicker";
 import { DepositDrawer } from "@/components/vault/DepositDrawer";
 import { VaultStickyBar } from "@/components/vault/VaultStickyBar";
@@ -25,7 +25,6 @@ export default function VaultDetail() {
   const [timeRange, setTimeRange] = useState<"daily" | "weekly" | "monthly">("daily");
   const [projectedAmount, setProjectedAmount] = useState<string>("1000");
   const [unlockProgress, setUnlockProgress] = useState<number>(0);
-  const nodoaixCardRef = useRef<HTMLDivElement>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [activeTab, setActiveTab] = useState("strategy");
   const [customVaultData, setCustomVaultData] = useState<VaultData | null>(null);
@@ -44,15 +43,6 @@ export default function VaultDetail() {
   }, [isConnected, hasInteracted, isDepositDrawerOpen]);
 
   useEffect(() => {
-    const handleDepositSuccess = (e: CustomEvent) => {
-      if (nodoaixCardRef.current) {
-        nodoaixCardRef.current.classList.add('glow-animation');
-        setTimeout(() => {
-          nodoaixCardRef.current?.classList.remove('glow-animation');
-        }, 2000);
-      }
-    };
-    
     const handleOpenDepositDrawer = (e: CustomEvent) => {
       if (e.detail && e.detail.vault) {
         setCustomVaultData(e.detail.vault);
@@ -60,11 +50,9 @@ export default function VaultDetail() {
       }
     };
     
-    window.addEventListener('deposit-success', handleDepositSuccess as EventListener);
     window.addEventListener('open-deposit-drawer', handleOpenDepositDrawer as EventListener);
     
     return () => {
-      window.removeEventListener('deposit-success', handleDepositSuccess as EventListener);
       window.removeEventListener('open-deposit-drawer', handleOpenDepositDrawer as EventListener);
     };
   }, []);
@@ -153,26 +141,6 @@ export default function VaultDetail() {
 
   return (
     <PageContainer>
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @keyframes glow {
-            0% { transform: scale(1); box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
-            50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(245, 158, 11, 0.6); }
-            100% { transform: scale(1); box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
-          }
-          
-          .glow-animation {
-            animation: glow 0.6s cubic-bezier(.22,1,.36,1);
-          }
-          
-          @media (prefers-reduced-motion: reduce) {
-            .glow-animation {
-              animation: none;
-            }
-          }
-        `
-      }} />
-
       <VaultDetailLayout
         children={<VaultDetailHeader vaultName={vault.name} styles={styles} />}
         leftColumn={
@@ -219,29 +187,14 @@ export default function VaultDetail() {
           </>
         }
         rightColumn={
-          <>
-            <VaultMetricsCard
-              vault={vault}
-              styles={styles}
-              projectedAmount={projectedAmount}
-              onProjectedAmountChange={setProjectedAmount}
-              isConnected={isConnected}
-              onActionClick={handleActionClick}
-            />
-            <div ref={nodoaixCardRef}>
-              <NODOAIxCard
-                balance={1000}
-                principal={1000}
-                fees={12.3}
-                unlockTime={new Date(Date.now() + 24 * 60 * 60 * 1000)}
-                holderCount={1203}
-                contractAddress="0xAB1234567890ABCDEF1234567890ABCDEF123456"
-                auditUrl="/audit.pdf"
-                styles={styles}
-                unlockProgress={unlockProgress}
-              />
-            </div>
-          </>
+          <VaultMetricsCard
+            vault={vault}
+            styles={styles}
+            projectedAmount={projectedAmount}
+            onProjectedAmountChange={setProjectedAmount}
+            isConnected={isConnected}
+            onActionClick={handleActionClick}
+          />
         }
       />
 
